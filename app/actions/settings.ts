@@ -48,7 +48,6 @@ export async function getExchangeRate() {
 
 export async function updateExchangeRate(rate: number, autoUpdate: boolean) {
     try {
-        // We force autoUpdate to true even if the UI somehow sends false
         const forcedAutoUpdate = true;
 
         await prisma.$transaction([
@@ -72,7 +71,32 @@ export async function updateExchangeRate(rate: number, autoUpdate: boolean) {
             }),
         ]);
 
+        // Recalculate ARS prices for all products
+        // We can do this asynchronously if there are many products, but for now we wait to ensure consistency
+        const products = await prisma.product.findMany({
+            select: { id: true, pvpUsd: true, price: true }
+        });
+
+        const updates = products.map(p => {
+            // pvpUsd is the primary source if it exists, otherwise legacy price
+            const usdPrice = p.pvpUsd ? Number(p.pvpUsd) : Number(p.price);
+            const newArs = usdPrice * rate;
+
+            return prisma.product.update({
+                where: { id: p.id },
+                data: {
+                    pvpArs: newArs,
+                    cotizacion: rate
+                }
+            });
+        });
+
+        // Execute in batches to avoid connection saturation
+        // Simple Promise.all for now
+        await Promise.all(updates);
+
         revalidatePath("/admin/settings");
+        revalidatePath("/products");
         revalidatePath("/");
         return { success: true };
     } catch (error) {
@@ -108,8 +132,37 @@ export async function updateGlobalMarkup(markup: number) {
             },
         });
 
+        // Get current exchange rate for full recalculation
+        const rateData = await getExchangeRate();
+        const rate = rateData.rate;
+
+        // Recalculate ALL prices based on Base Cost (precio)
+        const products = await prisma.product.findMany({
+            select: { id: true, precio: true }
+        });
+
+        const updates = products.map(p => {
+            const cost = Number(p.precio || 0);
+            const newPvpUsd = cost * (1 + markup / 100);
+            const newPvpArs = newPvpUsd * rate;
+
+            return prisma.product.update({
+                where: { id: p.id },
+                data: {
+                    markup: markup,
+                    pvpUsd: newPvpUsd,
+                    pvpArs: newPvpArs,
+                    price: newPvpUsd, // Update legacy price field too
+                    // We don't update cotizacion here as it hasn't changed, but valid to keep sync
+                }
+            });
+        });
+
+        await Promise.all(updates);
+
         revalidatePath("/admin/settings");
         revalidatePath("/products");
+        revalidatePath("/");
         return { success: true };
     } catch (error) {
         console.error("Error updating markup:", error);
