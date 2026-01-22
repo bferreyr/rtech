@@ -3,6 +3,7 @@
 import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
+import { getExchangeRate, getGlobalMarkup } from "@/app/actions/settings";
 
 export async function getCategories() {
     try {
@@ -118,22 +119,48 @@ export async function getProducts(options?: {
         })
     ]);
 
+    // Fetch global settings for runtime markup application
+    const [rateData, globalMarkup] = await Promise.all([
+        getExchangeRate(),
+        getGlobalMarkup()
+    ]);
+    const exchangeRate = rateData.rate;
+
     const totalPages = Math.ceil(total / limit);
 
-    const serializedProducts = (products as any[]).map(p => ({
-        ...p,
-        // Convert all Decimal fields to numbers for Client Component serialization
-        price: p.pvpUsd ? Number(p.pvpUsd) : Number(p.price),
-        precio: p.precio ? Number(p.precio) : null,
-        impuestoInterno: p.impuestoInterno ? Number(p.impuestoInterno) : null,
-        iva: p.iva ? Number(p.iva) : null,
-        markup: p.markup ? Number(p.markup) : null,
-        cotizacion: p.cotizacion ? Number(p.cotizacion) : null,
-        pvpUsd: p.pvpUsd ? Number(p.pvpUsd) : null,
-        pvpArs: p.pvpArs ? Number(p.pvpArs) : null,
-        peso: p.peso ? Number(p.peso) : null,
-        weight: p.weight ? Number(p.weight) : null,
-    }));
+    const serializedProducts = (products as any[]).map(p => {
+        // Runtime Price Calculation
+        // 1. Identify Base Cost (prefer 'precio', fallback to 'price')
+        const baseCost = p.precio ? Number(p.precio) : Number(p.price);
+
+        // 2. Apply Global Markup
+        const markupMultiplier = 1 + (globalMarkup / 100);
+        const finalPvpUsd = baseCost * markupMultiplier;
+
+        // 3. Calculate ARS
+        const finalPvpArs = finalPvpUsd * exchangeRate;
+
+        return {
+            ...p,
+            // Convert all Decimal fields to numbers for Client Component serialization
+            // OVERRIDE price with calculated markup price for Frontend Display
+            price: Number(finalPvpUsd.toFixed(2)),
+
+            // Keep original cost accessible if needed (though usually internal)
+            precio: Number(baseCost),
+
+            impuestoInterno: p.impuestoInterno ? Number(p.impuestoInterno) : null,
+            iva: p.iva ? Number(p.iva) : null,
+            markup: globalMarkup, // Show the markup being applied
+            cotizacion: exchangeRate,
+
+            pvpUsd: Number(finalPvpUsd.toFixed(2)),
+            pvpArs: Number(finalPvpArs.toFixed(2)),
+
+            peso: p.peso ? Number(p.peso) : null,
+            weight: p.weight ? Number(p.weight) : null,
+        };
+    });
 
     return {
         products: serializedProducts,

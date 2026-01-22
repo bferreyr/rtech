@@ -3,7 +3,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import { Metadata } from "next";
-import { getExchangeRate } from "@/app/actions/settings";
+import { getExchangeRate, getGlobalMarkup } from "@/app/actions/settings";
 import { ShieldCheck } from "lucide-react";
 
 // Force dynamic rendering to ensure fresh data
@@ -57,16 +57,30 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ProductPage({ params }: Props) {
     const { id } = await params;
-    const [product, { rate }] = await Promise.all([
+    const [productData, { rate }, globalMarkup] = await Promise.all([
         getProduct(id),
-        getExchangeRate()
+        getExchangeRate(),
+        getGlobalMarkup()
     ]);
 
-    if (!product) {
+    if (!productData) {
         notFound();
     }
 
-    const priceARS = Number(product.price) * rate;
+    // Runtime Calculation
+    const baseCost = productData.precio || productData.price;
+    const markupMultiplier = 1 + (globalMarkup / 100);
+    const finalPvpUsd = baseCost * markupMultiplier;
+    const finalPvpArs = finalPvpUsd * rate;
+
+    // Override product object with calculated values for rendering
+    const product = {
+        ...productData,
+        price: finalPvpUsd,
+        pvpArs: finalPvpArs
+    };
+
+    const priceARS = finalPvpArs;
 
     // SEO: Structure Data (Schema.org)
     // Esto es lo que leen los agentes de IA para entender el producto

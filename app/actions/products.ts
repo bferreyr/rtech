@@ -209,9 +209,22 @@ export async function getAdminProducts(options?: {
     };
 }
 
+import { getExchangeRate, getGlobalMarkup } from "@/app/actions/settings";
+
+// ... existing imports
+
 export async function bulkUploadProducts(formData: FormData) {
     const file = formData.get('file') as File;
     if (!file) throw new Error('No se subió ningún archivo');
+
+    // Fetch global settings once
+    const [rateData, globalMarkup] = await Promise.all([
+        getExchangeRate(),
+        getGlobalMarkup()
+    ]);
+
+    const exchangeRate = rateData.rate;
+    console.log(`Starting bulk upload. Rate: ${exchangeRate}, Markup: ${globalMarkup}%`);
 
     const buffer = await file.arrayBuffer();
     const workbook = XLSX.read(buffer);
@@ -223,6 +236,7 @@ export async function bulkUploadProducts(formData: FormData) {
     const categoryCache = new Map<string, string>(); // slug -> id
 
     const resolveCategory = async (name: string, parentId: string | null = null) => {
+        // ... (keep existing category logic)
         const slug = name.toLowerCase()
             .normalize('NFD').replace(/[\u0300-\u036f]/g, '')
             .replace(/ /g, '-').replace(/[^\w-]+/g, '');
@@ -312,10 +326,16 @@ export async function bulkUploadProducts(formData: FormData) {
             impuestoInterno: row.impuesto_interno ? parseFloat(String(row.impuesto_interno)) : null,
             iva: row.iva ? parseFloat(String(row.iva)) : null,
             moneda: row.moneda ? String(row.moneda) : 'USD',
-            markup: row.markup ? parseFloat(String(row.markup)) : null,
-            cotizacion: row.cotizacion ? parseFloat(String(row.cotizacion)) : null,
-            pvpUsd: row.pvp_usd ? parseFloat(String(row.pvp_usd)) : null,
-            pvpArs: row.pvp_ars ? parseFloat(String(row.pvp_ars)) : null,
+
+            // Dynamic Calculation
+            markup: globalMarkup, // Store the markup used at this time
+            cotizacion: exchangeRate, // Store the rate used at this time
+
+            // Logic: Cost * (1 + markup/100)
+            pvpUsd: parseFloat(String((parseFloat(String(row.precio || row.price || 0)) * (1 + globalMarkup / 100)).toFixed(2))),
+
+            // Logic: pvpUsd * exchangeRate
+            pvpArs: parseFloat(String(((parseFloat(String(row.precio || row.price || 0)) * (1 + globalMarkup / 100)) * exchangeRate).toFixed(2))),
 
             // Physical Properties
             peso: row.peso ? parseFloat(String(row.peso)) : null,
@@ -340,7 +360,7 @@ export async function bulkUploadProducts(formData: FormData) {
             gamer: row.gamer === true || row.gamer === 'true' || row.gamer === 1 || row.gamer === '1',
 
             // Legacy fields for backward compatibility
-            price: parseFloat(String(row.precio || row.price || 0)),
+            price: parseFloat(String((parseFloat(String(row.precio || row.price || 0)) * (1 + globalMarkup / 100)).toFixed(2))), // Now reflects pvpUsd
             stock: parseInt(String(row.stock_total || row.stock || 0)),
             imageUrl: row.imagen || row.imageUrl || null,
             weight: row.peso ? parseFloat(String(row.peso)) : null,
