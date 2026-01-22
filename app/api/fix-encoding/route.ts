@@ -44,7 +44,7 @@ export async function GET() {
             // @ts-ignore
             await prisma.category.update({
                 where: { id: cat.id },
-                data: { name: fixedName }
+                data: { name: fixedName || cat.name }
             });
             catFixed++;
         }
@@ -72,8 +72,8 @@ export async function GET() {
             await prisma.product.update({
                 where: { id: prod.id },
                 data: {
-                    name: fixedName,
-                    description: fixedDesc
+                    name: fixedName || prod.name,
+                    description: fixedDesc || prod.description
                 }
             });
             prodFixed++;
