@@ -10,9 +10,9 @@ import { ShieldCheck } from "lucide-react";
 export const dynamic = 'force-dynamic';
 
 interface Props {
-    params: {
+    params: Promise<{
         id: string;
-    };
+    }>;
 }
 
 // Helper to fetch product

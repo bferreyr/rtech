@@ -6,9 +6,10 @@ import { notFound } from 'next/navigation';
 
 export const dynamic = 'force-dynamic';
 
-export default async function ShipmentDetailPage({ params }: { params: { id: string } }) {
+export default async function ShipmentDetailPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
     const shipment = await prisma.shipment.findUnique({
-        where: { id: params.id },
+        where: { id },
         include: {
             order: {
                 include: {

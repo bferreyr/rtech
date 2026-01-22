@@ -5,9 +5,9 @@ import { ArrowLeft, Package, User, MapPin } from "lucide-react";
 import { OrderStatusSelector } from "../_components/OrderStatusSelector";
 
 interface Props {
-    params: {
+    params: Promise<{
         id: string;
-    };
+    }>;
 }
 
 export default async function OrderDetailPage({ params }: Props) {

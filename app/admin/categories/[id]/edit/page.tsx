@@ -4,9 +4,10 @@ import Link from "next/link";
 import { ArrowLeft, Save } from "lucide-react";
 import { notFound } from "next/navigation";
 
-export default async function EditCategoryPage({ params }: { params: { id: string } }) {
+export default async function EditCategoryPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
     const category = await prisma.category.findUnique({
-        where: { id: params.id }
+        where: { id }
     });
 
     if (!category) notFound();

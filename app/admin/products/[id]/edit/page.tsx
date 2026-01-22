@@ -6,9 +6,9 @@ import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 
 interface Props {
-    params: {
+    params: Promise<{
         id: string;
-    };
+    }>;
 }
 
 export default async function EditProductPage({ params }: Props) {
