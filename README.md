@@ -1,2 +1,0 @@
-# rtech
-rincon tech ecommerce
