@@ -4,9 +4,9 @@ import { prisma } from "@/lib/prisma";
 import { notFound } from "next/navigation";
 
 interface Props {
-    searchParams: {
+    searchParams: Promise<{
         orderId?: string;
-    };
+    }>;
 }
 
 export default async function CheckoutSuccessPage({ searchParams }: Props) {
