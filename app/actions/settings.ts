@@ -80,3 +80,39 @@ export async function updateExchangeRate(rate: number, autoUpdate: boolean) {
         return { success: false, error: "Failed to update settings" };
     }
 }
+
+const GLOBAL_MARKUP_KEY = "GLOBAL_MARKUP";
+
+export async function getGlobalMarkup() {
+    try {
+        const setting = await prisma.setting.findUnique({
+            where: { key: GLOBAL_MARKUP_KEY }
+        });
+        // Default markup 30% if not set
+        return setting ? parseFloat(setting.value) : 30;
+    } catch (error) {
+        console.error("Error getting markup:", error);
+        return 30;
+    }
+}
+
+export async function updateGlobalMarkup(markup: number) {
+    try {
+        await prisma.setting.upsert({
+            where: { key: GLOBAL_MARKUP_KEY },
+            update: { value: markup.toString() },
+            create: {
+                key: GLOBAL_MARKUP_KEY,
+                value: markup.toString(),
+                description: "Global profit margin percentage",
+            },
+        });
+
+        revalidatePath("/admin/settings");
+        revalidatePath("/products");
+        return { success: true };
+    } catch (error) {
+        console.error("Error updating markup:", error);
+        return { success: false, error: "Failed to update markup" };
+    }
+}

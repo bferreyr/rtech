@@ -1,11 +1,12 @@
 'use client';
 
 import { useState, useTransition, useEffect } from "react";
-import { getExchangeRate, updateExchangeRate } from "@/app/actions/settings";
-import { DollarSign, RefreshCw, Save, Loader2, Info } from "lucide-react";
+import { getExchangeRate, updateExchangeRate, getGlobalMarkup, updateGlobalMarkup } from "@/app/actions/settings";
+import { DollarSign, RefreshCw, Save, Loader2, Info, TrendingUp } from "lucide-react";
 
 export default function AdminSettingsPage() {
     const [rate, setRate] = useState<number>(1000);
+    const [markup, setMarkup] = useState<number>(30);
     const [autoUpdate, setAutoUpdate] = useState<boolean>(true);
     const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
     const [isPending, startTransition] = useTransition();
@@ -13,10 +14,14 @@ export default function AdminSettingsPage() {
 
     useEffect(() => {
         async function loadSettings() {
-            const data = await getExchangeRate();
-            setRate(data.rate);
-            setAutoUpdate(data.isAutoUpdate);
-            setLastUpdated(data.lastUpdated);
+            const [rateData, markupData] = await Promise.all([
+                getExchangeRate(),
+                getGlobalMarkup()
+            ]);
+            setRate(rateData.rate);
+            setAutoUpdate(rateData.isAutoUpdate);
+            setLastUpdated(rateData.lastUpdated);
+            setMarkup(markupData);
         }
         loadSettings();
     }, []);
@@ -25,14 +30,18 @@ export default function AdminSettingsPage() {
         e.preventDefault();
         setStatus(null);
         startTransition(async () => {
-            const result = await updateExchangeRate(rate, autoUpdate);
-            if (result.success) {
+            const [rateResult, markupResult] = await Promise.all([
+                updateExchangeRate(rate, autoUpdate),
+                updateGlobalMarkup(markup)
+            ]);
+
+            if (rateResult.success && markupResult.success) {
                 setStatus({ message: "Configuración guardada correctamente", type: 'success' });
                 // Reload settings to get updated lastUpdated time
                 const data = await getExchangeRate();
                 setLastUpdated(data.lastUpdated);
             } else {
-                setStatus({ message: result.error || "Error al guardar", type: 'error' });
+                setStatus({ message: rateResult.error || markupResult.error || "Error al guardar", type: 'error' });
             }
         });
     };
@@ -42,11 +51,12 @@ export default function AdminSettingsPage() {
             <div>
                 <h1 className="text-3xl font-bold mb-2">Configuración</h1>
                 <p className="text-[hsl(var(--text-secondary))]">
-                    Gestiona la cotización del dólar y otros parámetros globales de la tienda.
+                    Gestiona la cotización del dólar, márgenes de ganancia y otros parámetros globales.
                 </p>
             </div>
 
             <form onSubmit={handleSubmit} className="space-y-6">
+                {/* Exchange Rate Card */}
                 <div className="glass-card p-8">
                     <div className="flex items-center gap-3 mb-6">
                         <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[hsl(var(--accent-primary))] to-[hsl(var(--accent-secondary))] flex items-center justify-center">
@@ -110,6 +120,54 @@ export default function AdminSettingsPage() {
                     </div>
                 </div>
 
+                {/* Markup Card */}
+                <div className="glass-card p-8">
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-purple-500 to-indigo-600 flex items-center justify-center">
+                            <TrendingUp className="w-5 h-5 text-white" />
+                        </div>
+                        <div>
+                            <h2 className="text-xl font-bold">Ganancia Global (Markup)</h2>
+                            <p className="text-xs text-[hsl(var(--text-secondary))]">Este porcentaje se aplica sobre el costo base de todos los productos.</p>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                        <div>
+                            <label className="block text-sm font-medium mb-2 text-[hsl(var(--text-secondary))]">
+                                Porcentaje de Ganancia (%)
+                            </label>
+                            <div className="relative">
+                                <input
+                                    type="number"
+                                    step="0.1"
+                                    min="0"
+                                    value={markup}
+                                    onChange={(e) => setMarkup(parseFloat(e.target.value))}
+                                    disabled={isPending}
+                                    className="w-full pl-4 pr-12 py-3 rounded-xl bg-[hsl(var(--bg-primary))] border border-[hsl(var(--border-color))] focus:border-[hsl(var(--accent-primary))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--accent-primary))]/20 transition-all disabled:opacity-50 font-bold text-xl"
+                                />
+                                <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                                    <span className="text-[hsl(var(--text-tertiary))] font-bold">%</span>
+                                </div>
+                            </div>
+                            <p className="mt-2 text-xs text-[hsl(var(--text-tertiary))]">
+                                Ejemplo: Un producto con costo $100 + 30% markup = $130 precio de venta.
+                            </p>
+                        </div>
+
+                        <div className="p-4 rounded-xl bg-purple-500/5 border border-purple-500/10">
+                            <h3 className="text-sm font-bold text-purple-400 mb-2 flex items-center gap-2">
+                                <Info className="w-4 h-4" />
+                                Importante
+                            </h3>
+                            <p className="text-xs text-[hsl(var(--text-secondary))] leading-relaxed">
+                                Este valor se usará automáticamente al importar nuevos productos desde Excel. Para productos ya existentes, deberás volver a importar el Excel o actualizarlos manualmente si deseas aplicar el nuevo margen.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
                 {status && (
                     <div className={`p-4 rounded-xl border animate-in fade-in zoom-in duration-300 ${status.type === 'success'
                         ? 'bg-green-500/10 border-green-500/30 text-green-400'
@@ -119,18 +177,18 @@ export default function AdminSettingsPage() {
                     </div>
                 )}
 
-                <div className="flex justify-end">
+                <div className="flex justify-end pt-4">
                     <button
                         type="submit"
                         disabled={isPending}
-                        className="btn btn-primary flex items-center gap-2 h-12 px-8"
+                        className="btn btn-primary flex items-center gap-2 h-12 px-8 shadow-lg shadow-[hsl(var(--accent-primary))]/20 hover:shadow-[hsl(var(--accent-primary))]/40 hover:-translate-y-1 transition-all"
                     >
                         {isPending ? (
                             <Loader2 className="w-5 h-5 animate-spin" />
                         ) : (
                             <Save className="w-5 h-5" />
                         )}
-                        Guardar Cambios
+                        Guardar Configuración Global
                     </button>
                 </div>
             </form>
