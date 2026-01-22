@@ -1,0 +1,131 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Modern Color Palette */
+    --bg-primary: 220 15% 6%;
+    --bg-secondary: 220 13% 10%;
+    --bg-tertiary: 220 11% 14%;
+
+    --text-primary: 0 0% 98%;
+    --text-secondary: 220 9% 65%;
+    --text-tertiary: 220 7% 46%;
+
+    /* Vibrant Accent Gradient - Electric Blue Theme */
+    --accent-primary: 210 100% 50%;
+    --accent-secondary: 190 100% 45%;
+    --accent-glow: 210 100% 50% / 0.25;
+
+    --border-color: 220 13% 18%;
+    --border-active: 220 13% 28%;
+
+    --radius-sm: 0.5rem;
+    --radius-md: 0.75rem;
+    --radius-lg: 1rem;
+    --radius-xl: 1.5rem;
+  }
+
+  * {
+    @apply border-border;
+  }
+
+  body {
+    @apply bg-background text-foreground antialiased;
+    font-feature-settings: "rlig" 1, "calt" 1;
+  }
+}
+
+@layer components {
+
+  /* Modern Glass Card */
+  .glass-card {
+    @apply bg-gradient-to-br from-white/[0.07] to-white/[0.02] backdrop-blur-xl border border-white/10 rounded-xl shadow-2xl;
+  }
+
+  /* Premium Buttons */
+  .btn {
+    @apply inline-flex items-center justify-center rounded-lg px-6 py-3 font-semibold transition-all duration-300 cursor-pointer border border-transparent relative overflow-hidden;
+  }
+
+  .btn-primary {
+    @apply bg-gradient-to-r from-[hsl(var(--accent-primary))] to-[hsl(var(--accent-secondary))] text-white shadow-lg shadow-[hsl(var(--accent-glow))] hover:shadow-xl hover:shadow-[hsl(var(--accent-glow))] hover:scale-[1.02] active:scale-[0.98];
+  }
+
+  .btn-outline {
+    @apply bg-transparent border-[hsl(var(--border-active))] text-foreground hover:border-[hsl(var(--accent-primary))] hover:bg-[hsl(var(--accent-primary))]/10 hover:text-[hsl(var(--accent-primary))];
+  }
+
+  /* Modern Card */
+  .card {
+    @apply glass-card p-6 transition-all duration-300 hover:border-white/20 hover:shadow-xl;
+  }
+
+  /* Gradient Text */
+  .gradient-text {
+    @apply bg-gradient-to-r from-[hsl(var(--accent-primary))] to-[hsl(var(--accent-secondary))] bg-clip-text text-transparent;
+  }
+}
+
+@layer utilities {
+
+  /* Custom Animations */
+  @keyframes float {
+
+    0%,
+    100% {
+      transform: translateY(0px);
+    }
+
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  @keyframes glow {
+
+    0%,
+    100% {
+      opacity: 1;
+    }
+
+    50% {
+      opacity: 0.5;
+    }
+  }
+
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+
+  .animate-glow {
+    animation: glow 2s ease-in-out infinite;
+  }
+
+  /* Custom Scrollbar */
+  .custom-scrollbar {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--accent-primary) / 0.3) rgba(255, 255, 255, 0.05);
+  }
+
+  .custom-scrollbar::-webkit-scrollbar {
+    height: 6px;
+    width: 6px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: 99px;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb {
+    background: hsl(var(--accent-primary) / 0.3);
+    border-radius: 99px;
+    transition: background 0.3s;
+  }
+
+  .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--accent-primary) / 0.6);
+  }
+}
