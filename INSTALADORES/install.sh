@@ -61,7 +61,8 @@ if [ ! -f .env ]; then
     cat <<EOT >> .env
 DATABASE_URL="postgresql://$DB_USER:$DB_PASS@localhost:5432/$DB_NAME?schema=public"
 AUTH_SECRET="$(openssl rand -base64 32)"
-NEXTAUTH_URL="http://$(curl -s ifconfig.me)"
+NEXTAUTH_URL="http://$(curl -s ifconfig.me):3000"
+AUTH_TRUST_HOST=true
 # Agrega aquí tus otras claves (MERCADOPAGO, CORREO ARGENTINO, etc.)
 EOT
     echo "Archivo .env creado. POR FAVOR EDÍTALO con tus credenciales reales de MercadoPago y demás servicios."
