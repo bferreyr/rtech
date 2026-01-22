@@ -1,5 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import { NextResponse } from "next/server";
+import bcrypt from "bcryptjs";
 
 export async function GET() {
     try {
@@ -12,17 +13,16 @@ export async function GET() {
             return NextResponse.json({ message: "Admin user already exists" });
         }
 
-        // Create admin user
-        // NOTA: En producción, NUNCA guardar contraseñas en texto plano. Usar bcrypt/argon2.
-        // Para este MVP local usaremos texto plano por simplicidad como solicitado, 
-        // pero dejaré una nota de seguridad.
+        const hashedPassword = await bcrypt.hash('admin123', 10);
+
         await prisma.user.create({
             data: {
                 email: 'admin@rtech.com',
-                // Password simple para desarrollo local
-                password: 'admin123',
+                password: hashedPassword,
                 name: 'Administrador',
-                role: 'ADMIN'
+                role: 'ADMIN',
+                isBlocked: false,
+                canPurchase: true
             }
         });
 
