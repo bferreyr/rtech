@@ -81,6 +81,37 @@ export async function deleteProduct(id: string) {
     revalidatePath('/products');
 }
 
+export async function deleteProducts(ids: string[]) {
+    if (!ids || ids.length === 0) return { success: false, error: "No IDs provided" };
+
+    try {
+        await prisma.product.deleteMany({
+            where: { id: { in: ids } }
+        });
+
+        revalidatePath('/admin/products');
+        revalidatePath('/products');
+        return { success: true };
+    } catch (error) {
+        console.error("Error deleting products:", error);
+        return { success: false, error: "Failed to delete products" };
+    }
+}
+
+export async function deleteAllProducts() {
+    try {
+        // Delete all products
+        await prisma.product.deleteMany({});
+
+        revalidatePath('/admin/products');
+        revalidatePath('/products');
+        return { success: true };
+    } catch (error) {
+        console.error("Error deleting all products:", error);
+        return { success: false, error: "Failed to delete all products" };
+    }
+}
+
 export async function searchProducts(query: string) {
     if (!query || query.length < 2) return [];
 
