@@ -43,13 +43,14 @@ export function ProductCard({ product }: ProductCardProps) {
                         <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
 
                         {/* Stock Badge */}
-                        <div className="absolute top-4 right-4">
+                        {/* Stock Badge */}
+                        <div className="absolute top-4 right-4 z-10">
                             {product.stock > 0 ? (
-                                <div className="px-3 py-1 rounded-full bg-[#10b981] shadow-lg shadow-green-900/20 border border-green-400/20">
+                                <div className="h-6 px-3 rounded-full bg-[#10b981] shadow-lg shadow-green-900/20 border border-green-400/20 flex items-center justify-center">
                                     <span className="text-[10px] font-bold text-white uppercase tracking-wider">En Stock</span>
                                 </div>
                             ) : (
-                                <div className="px-3 py-1 rounded-full bg-[#ef4444] shadow-lg shadow-red-900/20 border border-red-400/20">
+                                <div className="h-6 px-3 rounded-full bg-[#ef4444] shadow-lg shadow-red-900/20 border border-red-400/20 flex items-center justify-center">
                                     <span className="text-[10px] font-bold text-white uppercase tracking-wider">Agotado</span>
                                 </div>
                             )}
@@ -57,7 +58,7 @@ export function ProductCard({ product }: ProductCardProps) {
                         {/* Gamer Badge */}
                         {isGamer && (
                             <div className="absolute top-4 left-4 z-10">
-                                <div className="px-3 py-1 rounded-md bg-indigo-600 shadow-lg shadow-indigo-500/50 flex items-center gap-2 border border-indigo-400/50">
+                                <div className="h-6 px-3 rounded-md bg-indigo-600 shadow-lg shadow-indigo-500/50 flex items-center gap-2 border border-indigo-400/50">
                                     <Gamepad2 size={12} className="text-white fill-current animate-pulse" />
                                     <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white">GAMER</span>
                                 </div>
