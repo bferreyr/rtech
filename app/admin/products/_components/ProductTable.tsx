@@ -114,7 +114,7 @@ export function ProductTable({ products, globalMarkup, exchangeRate }: ProductTa
                                 <th className="h-12 px-4 font-medium align-middle">Marca / Cat</th>
                                 <th className="h-12 px-4 font-medium align-middle text-center bg-blue-500/5">Precio Base</th>
                                 <th className="h-12 px-4 font-medium align-middle text-center bg-blue-500/5">Impuestos</th>
-                                <th className="h-12 px-4 font-medium align-middle text-center bg-green-500/5" title={`Markup Global: ${globalMarkup}%`}>Precio Final (Ars)</th>
+                                <th className="h-12 px-4 font-medium align-middle text-center bg-green-500/5" title={`Markup Global: ${globalMarkup}%`}>Precio Final (USD)</th>
                                 <th className="h-12 px-4 font-medium align-middle text-center bg-green-500/5">PVP USD</th>
                                 <th className="h-12 px-4 font-medium align-middle text-center bg-green-500/5">PVP ARS</th>
                                 <th className="h-12 px-4 font-medium align-middle text-center">Stock Total</th>
