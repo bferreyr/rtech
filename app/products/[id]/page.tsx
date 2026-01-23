@@ -68,7 +68,7 @@ export default async function ProductPage({ params }: Props) {
     }
 
     // Runtime Calculation
-    const baseCost = productData.precio || productData.price;
+    const baseCost = productData.pvpUsd ? Number(productData.pvpUsd) : (productData.precio || productData.price);
     const markupMultiplier = 1 + (globalMarkup / 100);
     const finalPvpUsd = baseCost * markupMultiplier;
     const finalPvpArs = finalPvpUsd * rate;
