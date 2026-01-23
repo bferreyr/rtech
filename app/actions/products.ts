@@ -225,10 +225,9 @@ export async function bulkUploadProducts(formData: FormData) {
     const fixEncoding = (str: string | null | undefined): string => {
         if (!str) return '';
         try {
-            // Common fix for "PerifÃ©ricos" -> "Periféricos"
-            // If the string contains common UTF-8 double-encoding artifacts, decode it.
-            // This happens when Latin1 bytes are read as UTF-8 chars.
-            return decodeURIComponent(escape(str));
+            // FIX: Use Node.js Buffer to reverse Latin1 interpretation of UTF-8 bytes
+            // This handles "PerifÃ©ricos" -> "Periféricos" properly at the byte level
+            return Buffer.from(str, 'binary').toString('utf-8');
         } catch (e) {
             return str;
         }
