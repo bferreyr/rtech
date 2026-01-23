@@ -316,15 +316,15 @@ export async function bulkUploadProducts(formData: FormData) {
             iva: row.iva ? parseFloat(String(row.iva)) : null,
             moneda: row.moneda ? String(row.moneda) : 'USD',
 
-            // Dynamic Calculation
-            markup: globalMarkup, // Store the markup used at this time
-            cotizacion: exchangeRate, // Store the rate used at this time
+            // Dynamic Calculation - Raw
+            markup: row.markup ? parseFloat(String(row.markup)) : null,
+            cotizacion: row.cotizacion ? parseFloat(String(row.cotizacion)) : null,
 
-            // Logic: Cost * (1 + markup/100)
-            pvpUsd: parseFloat(String((parseFloat(String(row.precio || row.price || 0)) * (1 + globalMarkup / 100)).toFixed(2))),
+            // Logic: Raw pvp_usd from Excel
+            pvpUsd: row.pvp_usd ? parseFloat(String(row.pvp_usd)) : null,
 
-            // Logic: pvpUsd * exchangeRate
-            pvpArs: parseFloat(String(((parseFloat(String(row.precio || row.price || 0)) * (1 + globalMarkup / 100)) * exchangeRate).toFixed(2))),
+            // Logic: Raw pvp_ars from Excel
+            pvpArs: row.pvp_ars ? parseFloat(String(row.pvp_ars)) : null,
 
             // Physical Properties
             peso: row.peso ? parseFloat(String(row.peso)) : null,
