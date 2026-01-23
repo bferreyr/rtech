@@ -12,11 +12,14 @@ export default async function ProductsPage(props: {
     const categoryId = searchParams.category as string;
     const sortBy = searchParams.sort as any;
 
+    const search = searchParams.search as string;
+
     const { products, pagination } = await getProducts({
         page,
         limit: 12,
         categoryId,
-        sortBy
+        sortBy,
+        search
     });
     const categories = await getCategories();
 

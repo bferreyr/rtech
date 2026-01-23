@@ -1,22 +1,23 @@
 'use client';
 
+// SimpleIcons slugs mapping where name differs
 const TOP_BRANDS = [
-    { name: 'AMD', domain: 'amd.com' },
-    { name: 'Intel', domain: 'intel.com' },
-    { name: 'Nvidia', domain: 'nvidia.com' }, // Agregado aunque no salió en la lista, es clave en tech
-    { name: 'Logitech', domain: 'logitech.com' },
-    { name: 'Samsung', domain: 'samsung.com' },
-    { name: 'MSI', domain: 'msi.com' },
-    { name: 'Gigabyte', domain: 'gigabyte.com' },
-    { name: 'Asus', domain: 'asus.com' },
-    { name: 'Kingston', domain: 'kingston.com' },
-    { name: 'HyperX', domain: 'hyperx.com' },
-    { name: 'Lenovo', domain: 'lenovo.com' },
-    { name: 'HP', domain: 'hp.com' },
-    { name: 'Epson', domain: 'epson.com' },
-    { name: 'WD', domain: 'westerndigital.com' },
-    { name: 'Cooler Master', domain: 'coolermaster.com' },
-    { name: 'Microsoft', domain: 'microsoft.com' },
+    { name: 'AMD', slug: 'amd' },
+    { name: 'Intel', slug: 'intel' },
+    { name: 'Nvidia', slug: 'nvidia' },
+    { name: 'Logitech', slug: 'logitech' },
+    { name: 'Samsung', slug: 'samsung' },
+    { name: 'MSI', slug: 'msi' },
+    { name: 'Gigabyte', slug: 'gigabyte' },
+    { name: 'Asus', slug: 'asus' },
+    { name: 'Kingston', slug: 'kingstontechnology' }, // Kingston Technology
+    { name: 'HyperX', slug: 'hyperx' }, // Check availability or use kingston fallback
+    { name: 'Lenovo', slug: 'lenovo' },
+    { name: 'HP', slug: 'hp' },
+    { name: 'Epson', slug: 'epson' },
+    { name: 'WD', slug: 'westerndigital' },
+    { name: 'Cooler Master', slug: 'coolermaster' },
+    { name: 'Microsoft', slug: 'microsoft' },
 ];
 
 export function BrandsCarousel() {
@@ -32,25 +33,33 @@ export function BrandsCarousel() {
                 <div className="flex animate-marquee whitespace-nowrap gap-16 items-center">
                     {/* First Loop */}
                     {TOP_BRANDS.map((brand) => (
-                        <div key={brand.name} className="flex items-center justify-center grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300 w-32 h-16 shrink-0">
+                        <a
+                            key={brand.name}
+                            href={`/products?search=${brand.name}`}
+                            className="flex items-center justify-center grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all duration-300 w-32 h-16 shrink-0"
+                        >
                             <img
-                                src={`https://logo.clearbit.com/${brand.domain}?size=128&format=png`}
+                                src={`https://cdn.simpleicons.org/${brand.slug || brand.name.toLowerCase().replace(/ /g, '')}/white`}
                                 alt={brand.name}
-                                className="max-w-full max-h-full object-contain"
+                                className="max-w-[70%] max-h-[70%] object-contain"
                                 loading="lazy"
                             />
-                        </div>
+                        </a>
                     ))}
                     {/* Duplicate for infinite loop */}
                     {TOP_BRANDS.map((brand) => (
-                        <div key={`${brand.name}-dup`} className="flex items-center justify-center grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-300 w-32 h-16 shrink-0">
+                        <a
+                            key={`${brand.name}-dup`}
+                            href={`/products?search=${brand.name}`}
+                            className="flex items-center justify-center grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all duration-300 w-32 h-16 shrink-0"
+                        >
                             <img
-                                src={`https://logo.clearbit.com/${brand.domain}?size=128&format=png`}
+                                src={`https://cdn.simpleicons.org/${brand.slug || brand.name.toLowerCase().replace(/ /g, '')}/white`}
                                 alt={brand.name}
-                                className="max-w-full max-h-full object-contain"
+                                className="max-w-[70%] max-h-[70%] object-contain"
                                 loading="lazy"
                             />
-                        </div>
+                        </a>
                     ))}
                 </div>
             </div>
