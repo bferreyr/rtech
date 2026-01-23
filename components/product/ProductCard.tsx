@@ -3,7 +3,7 @@
 import Link from 'next/link';
 import { Product } from '@prisma/client';
 import { AddToCartButton } from '@/components/cart/AddToCartButton';
-import { ShoppingCart, Zap } from 'lucide-react';
+import { ShoppingCart, Zap, Gamepad2 } from 'lucide-react';
 import { useCurrency } from '@/context/CurrencyContext';
 
 // Serialized product type for client components
@@ -45,12 +45,12 @@ export function ProductCard({ product }: ProductCardProps) {
                         {/* Stock Badge */}
                         <div className="absolute top-4 right-4">
                             {product.stock > 0 ? (
-                                <div className="px-3 py-1.5 rounded-full bg-green-500/20 backdrop-blur-md border border-green-500/30">
-                                    <span className="text-xs font-bold text-green-300">En Stock</span>
+                                <div className="px-3 py-1 rounded-full bg-[#10b981] shadow-lg shadow-green-900/20 border border-green-400/20">
+                                    <span className="text-[10px] font-bold text-white uppercase tracking-wider">En Stock</span>
                                 </div>
                             ) : (
-                                <div className="px-3 py-1.5 rounded-full bg-red-500/20 backdrop-blur-md border border-red-500/30">
-                                    <span className="text-xs font-bold text-red-300">Agotado</span>
+                                <div className="px-3 py-1 rounded-full bg-[#ef4444] shadow-lg shadow-red-900/20 border border-red-400/20">
+                                    <span className="text-[10px] font-bold text-white uppercase tracking-wider">Agotado</span>
                                 </div>
                             )}
                         </div>
@@ -58,8 +58,8 @@ export function ProductCard({ product }: ProductCardProps) {
                         {isGamer && (
                             <div className="absolute top-4 left-4 z-10">
                                 <div className="px-3 py-1 rounded-md bg-indigo-600 shadow-lg shadow-indigo-500/50 flex items-center gap-2 border border-indigo-400/50">
-                                    <Zap size={10} className="text-white fill-current animate-pulse" />
-                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white">Gamer Edition</span>
+                                    <Gamepad2 size={12} className="text-white fill-current animate-pulse" />
+                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white">GAMER</span>
                                 </div>
                             </div>
                         )}
