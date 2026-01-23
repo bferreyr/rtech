@@ -130,8 +130,8 @@ export async function getProducts(options?: {
 
     const serializedProducts = (products as any[]).map(p => {
         // Runtime Price Calculation
-        // 1. Identify Base Cost (prefer 'precio', fallback to 'price')
-        const baseCost = p.precio ? Number(p.precio) : Number(p.price);
+        // 1. Identify Base Cost (prefer 'pvpUsd', then 'precio', fallback to 'price')
+        const baseCost = p.pvpUsd ? Number(p.pvpUsd) : (p.precio ? Number(p.precio) : Number(p.price));
 
         // 2. Apply Global Markup
         const markupMultiplier = 1 + (globalMarkup / 100);
