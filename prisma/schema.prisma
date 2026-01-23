@@ -68,6 +68,7 @@ model Product {
   weight               Decimal?
   dimensions           String?
   categoryId           String?
+  provider             String      @default("ELIT") // ELIT or MOBE
   createdAt            DateTime    @default(now())
   updatedAt            DateTime    @updatedAt
   items                OrderItem[]

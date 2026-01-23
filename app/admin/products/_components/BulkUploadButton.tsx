@@ -4,7 +4,7 @@ import { useState, useTransition } from 'react';
 import { Upload, FileSpreadsheet, Loader2, CheckCircle2, AlertCircle } from 'lucide-react';
 import { bulkUploadProducts } from '@/app/actions/products';
 
-export function BulkUploadButton() {
+export function BulkUploadButton({ provider = 'ELIT' }: { provider?: string }) {
     const [isPending, startTransition] = useTransition();
     const [status, setStatus] = useState<'idle' | 'success' | 'error'>('idle');
     const [message, setMessage] = useState('');
@@ -18,6 +18,7 @@ export function BulkUploadButton() {
 
         const formData = new FormData();
         formData.append('file', file);
+        formData.append('provider', provider);
 
         startTransition(async () => {
             try {
@@ -79,7 +80,7 @@ export function BulkUploadButton() {
 
             {message && status !== 'idle' && (
                 <div className={`absolute top-full mt-2 right-0 w-64 p-3 rounded-lg text-xs font-medium backdrop-blur-md border animate-in fade-in slide-in-from-top-2 z-10 ${status === 'success' ? 'bg-green-500/10 border-green-500/20 text-green-400' :
-                        'bg-red-500/10 border-red-500/20 text-red-400'
+                    'bg-red-500/10 border-red-500/20 text-red-400'
                     }`}>
                     {message}
                 </div>

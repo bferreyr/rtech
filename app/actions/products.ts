@@ -98,10 +98,12 @@ export async function deleteProducts(ids: string[]) {
     }
 }
 
-export async function deleteAllProducts() {
+export async function deleteAllProducts(provider?: string) {
     try {
-        // Delete all products
-        await prisma.product.deleteMany({});
+        const where = provider ? { provider } : {};
+        // Delete all products for specific provider
+        // @ts-ignore
+        await prisma.product.deleteMany({ where });
 
         revalidatePath('/admin/products');
         revalidatePath('/products');
@@ -166,6 +168,7 @@ export async function getAdminProducts(options?: {
     limit?: number;
     search?: string;
     categoryId?: string;
+    provider?: string;
 }) {
     const { page = 1, limit = 50, search, categoryId } = options || {};
     const skip = (page - 1) * limit;
@@ -183,6 +186,11 @@ export async function getAdminProducts(options?: {
 
     if (categoryId && categoryId !== 'all') {
         where.categoryId = categoryId;
+    }
+
+    if (options?.provider) {
+        // @ts-ignore
+        where.provider = options.provider;
     }
 
     const [total, products] = await Promise.all([
@@ -213,6 +221,8 @@ export async function getAdminProducts(options?: {
 
 export async function bulkUploadProducts(formData: FormData) {
     const file = formData.get('file') as File;
+    const provider = (formData.get('provider') as string) || 'ELIT';
+
     if (!file) throw new Error('No se subió ningún archivo');
 
     const buffer = await file.arrayBuffer();
@@ -365,6 +375,7 @@ export async function bulkUploadProducts(formData: FormData) {
             stock: parseInt(String(row.stock_total || row.stock || 0)),
             imageUrl: row.imagen || row.imageUrl || null,
             weight: row.peso ? parseFloat(String(row.peso)) : null,
+            provider, // Add Provider Tag
         };
 
         await prisma.product.upsert({
