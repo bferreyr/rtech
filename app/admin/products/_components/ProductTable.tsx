@@ -189,13 +189,9 @@ export function ProductTable({ products, globalMarkup, exchangeRate }: ProductTa
                                             const base = product.pvpUsd ? Number(product.pvpUsd) : (product.precio || product.price);
                                             // Apply global markup
                                             const finalUsd = Number(base) * (1 + globalMarkup / 100);
-                                            // Convert to ARS
-                                            const finalArs = finalUsd * (product.cotizacion || 0);
 
-                                            // Display logic
-                                            return product.cotizacion
-                                                ? `$${new Intl.NumberFormat('es-AR').format(finalArs)}`
-                                                : 'Sin Cotiz.';
+                                            // Display logic (USD only)
+                                            return `$${finalUsd.toFixed(2)}`;
                                         })()}
                                     </td>
                                     <td className="p-4 text-center bg-green-500/5">
