@@ -7,9 +7,11 @@ import { deleteProduct, deleteProducts, deleteAllProducts } from '@/app/actions/
 
 interface ProductTableProps {
     products: any[];
+    globalMarkup: number;
+    exchangeRate: number;
 }
 
-export function ProductTable({ products }: ProductTableProps) {
+export function ProductTable({ products, globalMarkup, exchangeRate }: ProductTableProps) {
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
     const [isPending, startTransition] = useTransition();
 
@@ -112,7 +114,7 @@ export function ProductTable({ products }: ProductTableProps) {
                                 <th className="h-12 px-4 font-medium align-middle">Marca / Cat</th>
                                 <th className="h-12 px-4 font-medium align-middle text-center bg-blue-500/5">Precio Base</th>
                                 <th className="h-12 px-4 font-medium align-middle text-center bg-blue-500/5">Impuestos</th>
-                                <th className="h-12 px-4 font-medium align-middle text-center bg-green-500/5">Markup</th>
+                                <th className="h-12 px-4 font-medium align-middle text-center bg-green-500/5" title={`Markup Global: ${globalMarkup}%`}>Precio Final (Ars)</th>
                                 <th className="h-12 px-4 font-medium align-middle text-center bg-green-500/5">PVP USD</th>
                                 <th className="h-12 px-4 font-medium align-middle text-center bg-green-500/5">PVP ARS</th>
                                 <th className="h-12 px-4 font-medium align-middle text-center">Stock Total</th>
@@ -182,7 +184,19 @@ export function ProductTable({ products }: ProductTableProps) {
 
                                     {/* Precios Venta */}
                                     <td className="p-4 text-center bg-green-500/5 font-mono text-xs">
-                                        {product.markup ? `${product.markup}%` : '-'}
+                                        {(() => {
+                                            // Cost base
+                                            const base = product.pvpUsd ? Number(product.pvpUsd) : (product.precio || product.price);
+                                            // Apply global markup
+                                            const finalUsd = Number(base) * (1 + globalMarkup / 100);
+                                            // Convert to ARS
+                                            const finalArs = finalUsd * (product.cotizacion || 0);
+
+                                            // Display logic
+                                            return product.cotizacion
+                                                ? `$${new Intl.NumberFormat('es-AR').format(finalArs)}`
+                                                : 'Sin Cotiz.';
+                                        })()}
                                     </td>
                                     <td className="p-4 text-center bg-green-500/5">
                                         <span className="font-bold text-green-400">
