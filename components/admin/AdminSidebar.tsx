@@ -7,7 +7,8 @@ import { logoutUser } from '@/app/actions/auth';
 
 const menuItems = [
     { icon: LayoutDashboard, label: 'Dashboard', href: '/admin' },
-    { icon: Package, label: 'Productos', href: '/admin/products' },
+    { icon: Package, label: 'Productos ELIT', href: '/admin/products' },
+    { icon: Package, label: 'Productos MOBE', href: '/admin/mobe/products' },
     { icon: Package, label: 'Categorías', href: '/admin/categories' },
     { icon: ShoppingCart, label: 'Pedidos', href: '/admin/orders' },
     { icon: Truck, label: 'Envíos', href: '/admin/shipments' },
