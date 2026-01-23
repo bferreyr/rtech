@@ -221,8 +221,18 @@ export async function bulkUploadProducts(formData: FormData) {
     const worksheet = workbook.Sheets[sheetName];
     const data = XLSX.utils.sheet_to_json(worksheet) as any[];
 
-    // Cache to minimize DB queries during loop
-    const categoryCache = new Map<string, string>(); // slug -> id
+    // Helper to fix common encoding issues (Double UTF-8 or Latin1 viewed as UTF-8)
+    const fixEncoding = (str: string | null | undefined): string => {
+        if (!str) return '';
+        try {
+            // Common fix for "PerifÃ©ricos" -> "Periféricos"
+            // If the string contains common UTF-8 double-encoding artifacts, decode it.
+            // This happens when Latin1 bytes are read as UTF-8 chars.
+            return decodeURIComponent(escape(str));
+        } catch (e) {
+            return str;
+        }
+    };
 
     const resolveCategory = async (name: string, parentId: string | null = null) => {
         // ... (keep existing category logic)
@@ -240,7 +250,7 @@ export async function bulkUploadProducts(formData: FormData) {
                 // @ts-ignore
                 category = await prisma.category.create({
                     data: {
-                        name: name.trim(),
+                        name: fixEncoding(name.trim()),
                         slug,
                         // @ts-ignore
                         parentId
@@ -302,11 +312,11 @@ export async function bulkUploadProducts(formData: FormData) {
             codigoProducto: row.codigo_producto ? String(row.codigo_producto) : null,
 
             // Basic Information
-            name: String(row.nombre || row.name || ''),
-            description: String(row.description || ''),
-            categoria: row.categoria ? String(row.categoria) : null,
-            subCategoria: row.sub_categoria ? String(row.sub_categoria) : null,
-            marca: row.marca ? String(row.marca) : null,
+            name: fixEncoding(String(row.nombre || row.name || '')),
+            description: fixEncoding(String(row.description || '')),
+            categoria: row.categoria ? fixEncoding(String(row.categoria)) : null,
+            subCategoria: row.sub_categoria ? fixEncoding(String(row.sub_categoria)) : null,
+            marca: row.marca ? fixEncoding(String(row.marca)) : null,
 
             categoryId: categoryId || null, // Link to resolved Category (Parent or Sub)
 
