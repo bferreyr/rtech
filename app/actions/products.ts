@@ -234,6 +234,9 @@ export async function bulkUploadProducts(formData: FormData) {
         }
     };
 
+    // Cache to minimize DB queries during loop
+    const categoryCache = new Map<string, string>(); // slug -> id
+
     const resolveCategory = async (name: string, parentId: string | null = null) => {
         // ... (keep existing category logic)
         const slug = name.toLowerCase()
