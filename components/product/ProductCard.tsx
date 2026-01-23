@@ -21,7 +21,7 @@ export function ProductCard({ product }: ProductCardProps) {
     return (
         <div className="group h-full">
             <div className={`relative h-full flex flex-col backdrop-blur-xl border rounded-2xl overflow-hidden transition-all duration-500 hover:-translate-y-1 ${isGamer
-                ? 'bg-gradient-to-br from-purple-900/20 to-blue-900/10 border-indigo-500/30 hover:border-indigo-400 hover:shadow-2xl hover:shadow-indigo-500/20 ring-1 ring-white/5'
+                ? 'bg-[radial-gradient(ellipse_at_top,_var(--tw-gradient-stops))] from-[#1a1a2e] to-[#0f0f1a] border-indigo-500/50 hover:border-indigo-400 shadow-lg shadow-indigo-900/20 hover:shadow-indigo-500/40 ring-1 ring-white/10'
                 : 'bg-gradient-to-br from-white/[0.08] to-white/[0.03] border-white/10 hover:border-white/20 hover:shadow-2xl hover:shadow-[hsl(var(--accent-primary))]/10'
                 }`}>
                 {/* Image Container */}
@@ -57,12 +57,9 @@ export function ProductCard({ product }: ProductCardProps) {
                         {/* Gamer Badge */}
                         {isGamer && (
                             <div className="absolute top-4 left-4 z-10">
-                                <div className="px-2.5 py-1 rounded bg-[hsl(var(--bg-secondary))]/80 backdrop-blur-md border border-indigo-500/30 flex items-center gap-1.5 shadow-lg shadow-black/20">
-                                    <span className="relative flex h-2 w-2">
-                                        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-indigo-400 opacity-75"></span>
-                                        <span className="relative inline-flex rounded-full h-2 w-2 bg-indigo-500"></span>
-                                    </span>
-                                    <span className="text-[10px] font-black uppercase tracking-widest text-indigo-300">Gamer</span>
+                                <div className="px-3 py-1 rounded-md bg-indigo-600 shadow-lg shadow-indigo-500/50 flex items-center gap-2 border border-indigo-400/50">
+                                    <Zap size={10} className="text-white fill-current animate-pulse" />
+                                    <span className="text-[10px] font-black uppercase tracking-[0.2em] text-white">Gamer Edition</span>
                                 </div>
                             </div>
                         )}
