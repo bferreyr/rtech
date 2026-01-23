@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import { PCBuilder } from "@/components/pc-builder/PCBuilder";
 import { Sparkles } from "lucide-react";
 import { getRandomContent, BUILDER_TITLES, BUILDER_SUBTITLES } from "@/lib/marketing-content";
+import { getExchangeRate, getGlobalMarkup } from "@/app/actions/settings";
 
 export const dynamic = 'force-dynamic';
 
@@ -20,6 +21,13 @@ async function getPCBuilderData() {
     const allSourceSlugs = Object.values(BUILDER_MAPPING).flat();
 
     try {
+        // Fetch global settings for runtime markup application
+        const [rateData, globalMarkup] = await Promise.all([
+            getExchangeRate(),
+            getGlobalMarkup()
+        ]);
+        const exchangeRate = rateData.rate;
+
         // Fetch specific categories needed
         // @ts-ignore
         const categories = await prisma.category.findMany({
@@ -33,19 +41,38 @@ async function getPCBuilderData() {
             }
         });
 
-        const mapProduct = (p: any) => ({
-            ...p,
-            price: Number(p.price),
-            precio: p.precio ? Number(p.precio) : null,
-            impuestoInterno: p.impuestoInterno ? Number(p.impuestoInterno) : null,
-            iva: p.iva ? Number(p.iva) : null,
-            markup: p.markup ? Number(p.markup) : null,
-            cotizacion: p.cotizacion ? Number(p.cotizacion) : null,
-            pvpUsd: p.pvpUsd ? Number(p.pvpUsd) : null,
-            pvpArs: p.pvpArs ? Number(p.pvpArs) : null,
-            peso: p.peso ? Number(p.peso) : null,
-            weight: p.weight ? Number(p.weight) : null,
-        });
+        const mapProduct = (p: any) => {
+            // Runtime Price Calculation (same logic as main products)
+            // 1. Identify Base Cost (prefer 'pvpUsd', then 'precio', fallback to 'price')
+            const baseCost = p.pvpUsd ? Number(p.pvpUsd) : (p.precio ? Number(p.precio) : Number(p.price));
+
+            // 2. Apply Global Markup
+            const markupMultiplier = 1 + (globalMarkup / 100);
+            const finalPvpUsd = baseCost * markupMultiplier;
+
+            // 3. Calculate ARS
+            const finalPvpArs = finalPvpUsd * exchangeRate;
+
+            return {
+                ...p,
+                // OVERRIDE price with calculated markup price for Frontend Display
+                price: Number(finalPvpUsd.toFixed(2)),
+
+                // Keep original cost accessible if needed
+                precio: Number(baseCost),
+
+                impuestoInterno: p.impuestoInterno ? Number(p.impuestoInterno) : null,
+                iva: p.iva ? Number(p.iva) : null,
+                markup: globalMarkup, // Show the markup being applied
+                cotizacion: exchangeRate,
+
+                pvpUsd: Number(finalPvpUsd.toFixed(2)),
+                pvpArs: Number(finalPvpArs.toFixed(2)),
+
+                peso: p.peso ? Number(p.peso) : null,
+                weight: p.weight ? Number(p.weight) : null,
+            };
+        };
 
         // Construct the result objects expected by the frontend, aggregating products
         return Object.entries(BUILDER_MAPPING).map(([stepSlug, sourceSlugs]) => {
