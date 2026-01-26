@@ -23,7 +23,7 @@ export function AdminSidebar() {
     return (
         <aside className="w-64 bg-[color:var(--bg-secondary)] border-r border-[color:var(--border-color)] flex flex-col h-screen sticky top-0">
             <div className="p-6 border-b border-[color:var(--border-color)]">
-                <h2 className="text-xl font-bold tracking-tight">RTECH Admin</h2>
+                <h2 className="text-xl font-bold tracking-tight">RINCÓN TECH Admin</h2>
             </div>
 
             <nav className="flex-1 p-4 space-y-2">

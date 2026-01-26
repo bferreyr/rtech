@@ -8,8 +8,8 @@ import "./globals.css";
 export const metadata: Metadata = {
     metadataBase: new URL('https://rtech-store.com'), // Reemplazar con dominio real en prod
     title: {
-        default: "RTECH | Hardware Premium para Profesionales",
-        template: "%s | RTECH"
+        default: "RINCÓN TECH | Hardware Premium para Profesionales",
+        template: "%s | RINCÓN TECH"
     },
     description: "Tienda especializada en componentes de PC de alto rendimiento, periféricos gaming y workstations. Envíos a todo el país.",
     keywords: ["hardware", "gaming", "pc gamer", "nvidia", "componentes", "tecnología"],
@@ -17,7 +17,7 @@ export const metadata: Metadata = {
         type: 'website',
         locale: 'es_ES',
         url: 'https://rtech-store.com',
-        siteName: 'RTECH Store',
+        siteName: 'RINCÓN TECH Store',
     },
     robots: {
         index: true,

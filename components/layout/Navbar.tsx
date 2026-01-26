@@ -29,7 +29,7 @@ export function Navbar() {
                     <div className="flex items-center justify-between h-16">
                         {/* Logo */}
                         <Link href="/" className="flex items-center space-x-2 group">
-                            <span className="text-2xl font-black tracking-tighter gradient-text">RTECH</span>
+                            <span className="text-2xl font-black tracking-tighter gradient-text">RINCÓN TECH</span>
                         </Link>
 
                         {/* Navigation Links - Centered */}

@@ -16,7 +16,7 @@ export function Footer() {
                     {/* Brand Section */}
                     <div className="space-y-4">
                         <Link href="/" className="inline-block">
-                            <span className="text-3xl font-black tracking-tighter gradient-text">RTECH</span>
+                            <span className="text-3xl font-black tracking-tighter gradient-text">RINCÓN TECH</span>
                         </Link>
                         <p className="text-[hsl(var(--text-secondary))] text-sm leading-relaxed">
                             Hardware premium para profesionales que no aceptan compromisos.
@@ -136,7 +136,7 @@ export function Footer() {
                             <li className="flex items-start gap-3 text-sm">
                                 <MapPin size={16} className="text-[hsl(var(--accent-primary))] mt-0.5 flex-shrink-0" />
                                 <span className="text-[hsl(var(--text-secondary))]">
-                                    Buenos Aires, Argentina
+                                    San José del Rincón, Santa Fe, Argentina
                                 </span>
                             </li>
                         </ul>
@@ -164,7 +164,7 @@ export function Footer() {
                 <div className="pt-8 border-t border-white/10">
                     <div className="flex flex-col md:flex-row justify-between items-center gap-4">
                         <p className="text-sm text-[hsl(var(--text-secondary))]">
-                            © {currentYear} RTECH. Todos los derechos reservados.
+                            © {currentYear} RINCÓN TECH. Todos los derechos reservados.
                         </p>
                         <div className="flex items-center gap-6">
                             <Link href="/privacy" className="text-sm text-[hsl(var(--text-secondary))] hover:text-[hsl(var(--accent-primary))] transition-colors">
