@@ -73,6 +73,25 @@ export default function ThreeDPrintingPage() {
                 </div>
             </div>
 
+            {/* Partner Highlight */}
+            <div className="container mx-auto px-4 mb-24">
+                <div className="glass-card p-1 bg-gradient-to-br from-[hsl(var(--accent-primary))] via-purple-500 to-[hsl(var(--accent-secondary))] rounded-2xl">
+                    <div className="bg-[hsl(var(--bg-secondary))] rounded-xl p-8 md:p-12 text-center relative overflow-hidden">
+                        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-transparent via-white/50 to-transparent opacity-50"></div>
+
+                        <p className="text-[hsl(var(--accent-primary))] font-bold tracking-widest uppercase text-sm mb-4">
+                            Alianza Exclusiva
+                        </p>
+                        <h2 className="text-4xl md:text-6xl font-black mb-6 text-white tracking-tighter">
+                            3D BAUHAUS
+                        </h2>
+                        <p className="text-[hsl(var(--text-secondary))] text-lg max-w-2xl mx-auto">
+                            Toda nuestra división de impresión 3D es operada por <strong>3D BAUHAUS</strong>, garantizando la máxima calidad técnica y atención al detalle en cada pieza.
+                        </p>
+                    </div>
+                </div>
+            </div>
+
             {/* How It Works */}
             <div id="como-funciona" className="py-24 border-t border-white/5 bg-[hsl(var(--bg-secondary))]/30">
                 <div className="container mx-auto px-4">
