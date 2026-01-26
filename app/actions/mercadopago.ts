@@ -188,6 +188,12 @@ export async function createMercadoPagoPreference(data: CheckoutData) {
             errorMessage = String(error);
         }
 
+        // Catch specific Mercado Pago Policy Error (Self-Payment)
+        if (errorMessage.includes("PA_UNAUTHORIZED_RESULT_FROM_POLICIES") ||
+            JSON.stringify(error).includes("PA_UNAUTHORIZED_RESULT_FROM_POLICIES")) {
+            errorMessage = "No puedes realizar compras con la misma cuenta de Mercado Pago que administra el sitio (Auto-compra no permitida). Por favor, intenta usar un email y tarjeta diferentes.";
+        }
+
         return {
             success: false,
             error: errorMessage
