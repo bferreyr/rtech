@@ -40,6 +40,9 @@ export function Navbar() {
                             <Link href="/3d-printing" className="text-sm font-medium text-[hsl(var(--text-secondary))] hover:text-[hsl(var(--accent-primary))] transition-colors">
                                 Impresiones 3D
                             </Link>
+                            <Link href="/electricista" className="text-sm font-medium text-[hsl(var(--text-secondary))] hover:text-[#f59e0b] transition-colors">
+                                Electricidad
+                            </Link>
                             <Link href="/pc-builder" className="text-sm font-medium text-[hsl(var(--accent-primary))] bg-[hsl(var(--accent-primary))]/10 px-3 py-1.5 rounded-lg border border-[hsl(var(--accent-primary))]/20 hover:bg-[hsl(var(--accent-primary))]/20 transition-all">
                                 Armado de PC
                             </Link>
