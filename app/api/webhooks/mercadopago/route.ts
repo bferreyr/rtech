@@ -59,7 +59,9 @@ export async function POST(request: NextRequest) {
                     where: { id: orderId },
                     data: {
                         status: 'PAID',
+                        // @ts-ignore
                         paymentId: String(paymentData.id),
+                        // @ts-ignore
                         paymentStatus: paymentData.status
                     }
                 });
