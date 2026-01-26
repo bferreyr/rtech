@@ -120,6 +120,7 @@ export async function POST(request: NextRequest) {
                         where: { id: orderId },
                         data: {
                             status: 'CANCELLED',
+                            // @ts-ignore
                             paymentStatus: paymentData.status
                         }
                     });
