@@ -1,35 +1,72 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
+import { MercadoPagoConfig, Payment } from 'mercadopago';
+import { getMercadoPagoSettings } from "@/app/actions/settings";
 
 export async function POST(request: NextRequest) {
     try {
         const body = await request.json();
+        const searchParams = request.nextUrl.searchParams;
+        const queryId = searchParams.get('data.id') || searchParams.get('id') || body?.data?.id || body?.id;
+        const topic = searchParams.get('type') || searchParams.get('topic') || body?.type;
 
-        console.log('MercadoPago Webhook received:', body);
+        console.log('MercadoPago Webhook received:', { queryId, topic, body });
 
-        // Verificar que sea una notificación de pago
-        if (body.type === 'payment') {
-            const paymentId = body.data.id;
+        if (!queryId || !topic) {
+            return NextResponse.json({ message: 'Missing data' }, { status: 400 });
+        }
 
-            // Aquí deberías verificar el pago con la API de MercadoPago
-            // Por seguridad, NUNCA confíes solo en el webhook sin verificar
+        // Solo procesar pagos
+        if (topic === 'payment') {
+            const dbToken = await getMercadoPagoSettings();
+            const accessToken = dbToken || process.env.MERCADOPAGO_ACCESS_TOKEN;
 
-            // Ejemplo básico (en producción, verifica el pago con MP API):
-            const externalReference = body.external_reference;
+            if (!accessToken) {
+                console.error('Mercado Pago Access Token not found');
+                return NextResponse.json({ error: 'Configuration error' }, { status: 500 });
+            }
 
-            if (externalReference) {
-                // Actualizar orden a PAID
+            const client = new MercadoPagoConfig({ accessToken });
+            const payment = new Payment(client);
+
+            // Fetch payment details securely from Mercado Pago
+            const paymentData = await payment.get({ id: queryId });
+
+            console.log('Payment status:', paymentData.status);
+            console.log('External Reference (Order ID):', paymentData.external_reference);
+
+            if (paymentData.status === 'approved') {
+                const orderId = paymentData.external_reference;
+
+                if (!orderId) {
+                    console.error('No external_reference found in payment');
+                    return NextResponse.json({ error: 'Invalid payment data' }, { status: 400 });
+                }
+
+                // Check if order is already paid to avoid duplicate processing
+                const existingOrder = await prisma.order.findUnique({
+                    where: { id: orderId }
+                });
+
+                if (existingOrder && existingOrder.status === 'PAID') {
+                    console.log('Order already processed:', orderId);
+                    return NextResponse.json({ message: 'Already processed' });
+                }
+
+                // Update Order to PAID
                 await prisma.order.update({
-                    where: { id: externalReference },
+                    where: { id: orderId },
                     data: {
-                        status: 'PAID'
+                        status: 'PAID',
+                        paymentId: String(paymentData.id),
+                        paymentStatus: paymentData.status
                     }
                 });
 
-                // Actualizar stock de productos y otorgar puntos
+                // Update Stock and Points
                 const order = await prisma.order.findUnique({
-                    where: { id: externalReference },
+                    where: { id: orderId },
                     include: { items: true, user: true }
                 });
 
@@ -46,7 +83,7 @@ export async function POST(request: NextRequest) {
                         });
                     }
 
-                    // Award Points: 1 point for every $100 spent
+                    // Award Points: 1 point for every $100 spent (can be adjusted)
                     const pointsToEarn = Math.floor(Number(order.total) / 100);
 
                     if (pointsToEarn > 0) {
@@ -74,6 +111,17 @@ export async function POST(request: NextRequest) {
                 revalidatePath('/admin');
                 revalidatePath('/admin/users');
                 revalidatePath('/profile');
+            } else if (paymentData.status === 'rejected' || paymentData.status === 'cancelled') {
+                const orderId = paymentData.external_reference;
+                if (orderId) {
+                    await prisma.order.update({
+                        where: { id: orderId },
+                        data: {
+                            status: 'CANCELLED',
+                            paymentStatus: paymentData.status
+                        }
+                    });
+                }
             }
         }
 
