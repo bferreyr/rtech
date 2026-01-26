@@ -117,3 +117,37 @@ export async function updateGlobalMarkup(markup: number) {
         return { success: false, error: "Failed to update markup" };
     }
 }
+
+const MERCADOPAGO_TOKEN_KEY = "MERCADOPAGO_ACCESS_TOKEN";
+
+export async function getMercadoPagoSettings() {
+    try {
+        const setting = await prisma.setting.findUnique({
+            where: { key: MERCADOPAGO_TOKEN_KEY }
+        });
+        return setting ? setting.value : "";
+    } catch (error) {
+        console.error("Error getting Mercado Pago settings:", error);
+        return "";
+    }
+}
+
+export async function updateMercadoPagoSettings(token: string) {
+    try {
+        await prisma.setting.upsert({
+            where: { key: MERCADOPAGO_TOKEN_KEY },
+            update: { value: token },
+            create: {
+                key: MERCADOPAGO_TOKEN_KEY,
+                value: token,
+                description: "Mercado Pago Access Token",
+            },
+        });
+
+        revalidatePath("/admin/settings");
+        return { success: true };
+    } catch (error) {
+        console.error("Error updating Mercado Pago settings:", error);
+        return { success: false, error: "Failed to update Mercado Pago settings" };
+    }
+}

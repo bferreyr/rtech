@@ -1,12 +1,13 @@
 'use client';
 
 import { useState, useTransition, useEffect } from "react";
-import { getExchangeRate, updateExchangeRate, getGlobalMarkup, updateGlobalMarkup } from "@/app/actions/settings";
-import { DollarSign, RefreshCw, Save, Loader2, Info, TrendingUp } from "lucide-react";
+import { getExchangeRate, updateExchangeRate, getGlobalMarkup, updateGlobalMarkup, getMercadoPagoSettings, updateMercadoPagoSettings } from "@/app/actions/settings";
+import { DollarSign, RefreshCw, Save, Loader2, Info, TrendingUp, CreditCard } from "lucide-react";
 
 export default function AdminSettingsPage() {
     const [rate, setRate] = useState<number>(1000);
     const [markup, setMarkup] = useState<number>(30);
+    const [mpToken, setMpToken] = useState<string>("");
     const [autoUpdate, setAutoUpdate] = useState<boolean>(true);
     const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
     const [isPending, startTransition] = useTransition();
@@ -14,14 +15,16 @@ export default function AdminSettingsPage() {
 
     useEffect(() => {
         async function loadSettings() {
-            const [rateData, markupData] = await Promise.all([
+            const [rateData, markupData, mpTokenData] = await Promise.all([
                 getExchangeRate(),
-                getGlobalMarkup()
+                getGlobalMarkup(),
+                getMercadoPagoSettings()
             ]);
             setRate(rateData.rate);
             setAutoUpdate(rateData.isAutoUpdate);
             setLastUpdated(rateData.lastUpdated);
             setMarkup(markupData);
+            setMpToken(mpTokenData);
         }
         loadSettings();
     }, []);
@@ -30,18 +33,19 @@ export default function AdminSettingsPage() {
         e.preventDefault();
         setStatus(null);
         startTransition(async () => {
-            const [rateResult, markupResult] = await Promise.all([
+            const [rateResult, markupResult, mpResult] = await Promise.all([
                 updateExchangeRate(rate, autoUpdate),
-                updateGlobalMarkup(markup)
+                updateGlobalMarkup(markup),
+                updateMercadoPagoSettings(mpToken)
             ]);
 
-            if (rateResult.success && markupResult.success) {
+            if (rateResult.success && markupResult.success && mpResult.success) {
                 setStatus({ message: "Configuración guardada correctamente", type: 'success' });
                 // Reload settings to get updated lastUpdated time
                 const data = await getExchangeRate();
                 setLastUpdated(data.lastUpdated);
             } else {
-                setStatus({ message: rateResult.error || markupResult.error || "Error al guardar", type: 'error' });
+                setStatus({ message: rateResult.error || markupResult.error || mpResult.error || "Error al guardar", type: 'error' });
             }
         });
     };
@@ -163,6 +167,38 @@ export default function AdminSettingsPage() {
                             </h3>
                             <p className="text-xs text-[hsl(var(--text-secondary))] leading-relaxed">
                                 Este valor se usará automáticamente al importar nuevos productos desde Excel. Para productos ya existentes, deberás volver a importar el Excel o actualizarlos manualmente si deseas aplicar el nuevo margen.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Mercado Pago Card */}
+                <div className="glass-card p-8">
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
+                            <CreditCard className="w-5 h-5 text-white" />
+                        </div>
+                        <div>
+                            <h2 className="text-xl font-bold">Mercado Pago</h2>
+                            <p className="text-xs text-[hsl(var(--text-secondary))]">Configuración de pasarela de pagos.</p>
+                        </div>
+                    </div>
+
+                    <div className="space-y-4">
+                        <div>
+                            <label className="block text-sm font-medium mb-2 text-[hsl(var(--text-secondary))]">
+                                Access Token (Producción)
+                            </label>
+                            <input
+                                type="text"
+                                value={mpToken}
+                                onChange={(e) => setMpToken(e.target.value)}
+                                placeholder="APP_USR-..."
+                                disabled={isPending}
+                                className="w-full px-4 py-3 rounded-xl bg-[hsl(var(--bg-primary))] border border-[hsl(var(--border-color))] focus:border-[hsl(var(--accent-primary))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--accent-primary))]/20 transition-all disabled:opacity-50 font-mono text-sm"
+                            />
+                            <p className="mt-2 text-xs text-[hsl(var(--text-tertiary))]">
+                                Copia tu Access Token desde el panel de desarrolladores de Mercado Pago. Si se deja vacío, se intentará usar la variable de entorno del servidor.
                             </p>
                         </div>
                     </div>

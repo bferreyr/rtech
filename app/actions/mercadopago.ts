@@ -2,13 +2,7 @@
 
 import { MercadoPagoConfig, Preference } from 'mercadopago';
 import { prisma } from "@/lib/prisma";
-import { getExchangeRate } from "@/app/actions/settings";
-
-// Inicializar MercadoPago con Access Token
-const client = new MercadoPagoConfig({
-    accessToken: process.env.MERCADOPAGO_ACCESS_TOKEN || '',
-    options: { timeout: 5000 }
-});
+import { getExchangeRate, getMercadoPagoSettings } from "@/app/actions/settings";
 
 interface CheckoutData {
     email: string;
@@ -35,10 +29,19 @@ interface CheckoutData {
 
 export async function createMercadoPagoPreference(data: CheckoutData) {
     try {
+        // Obtener token (DB o ENV fallback)
+        const dbToken = await getMercadoPagoSettings();
+        const accessToken = dbToken || process.env.MERCADOPAGO_ACCESS_TOKEN;
+
         // Validar que existan las credenciales
-        if (!process.env.MERCADOPAGO_ACCESS_TOKEN) {
-            throw new Error('MERCADOPAGO_ACCESS_TOKEN no configurado');
+        if (!accessToken) {
+            throw new Error('Mercado Pago Access Token no configurado en Admin Panel');
         }
+
+        const client = new MercadoPagoConfig({
+            accessToken: accessToken,
+            options: { timeout: 5000 }
+        });
 
         // Find or create user
         let user = await prisma.user.findUnique({
