@@ -167,11 +167,30 @@ export async function createMercadoPagoPreference(data: CheckoutData) {
             orderId: order.id,
             initPoint: preferenceData.init_point // URL para redireccionar
         };
-    } catch (error) {
+    } catch (error: any) {
         console.error('Error creating MercadoPago preference:', error);
+
+        let errorMessage = 'Error al crear preferencia de pago';
+        if (error instanceof Error) {
+            errorMessage = error.message;
+            // @ts-ignore
+            if (error.cause) {
+                // @ts-ignore
+                errorMessage += ` | Cause: ${JSON.stringify(error.cause)}`;
+            }
+        } else if (typeof error === 'object') {
+            try {
+                errorMessage = JSON.stringify(error);
+            } catch (e) {
+                errorMessage = String(error);
+            }
+        } else {
+            errorMessage = String(error);
+        }
+
         return {
             success: false,
-            error: error instanceof Error ? error.message : 'Error al crear preferencia de pago'
+            error: errorMessage
         };
     }
 }
