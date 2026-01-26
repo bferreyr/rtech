@@ -101,6 +101,9 @@ export async function getProducts(options?: {
         ];
     }
 
+    // Filter out of stock products
+    where.stock = { gt: 0 };
+
     let orderBy: any = { createdAt: 'desc' };
     if (sortBy === 'price_asc') orderBy = { price: 'asc' };
     if (sortBy === 'price_desc') orderBy = { price: 'desc' };
