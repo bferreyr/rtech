@@ -3,7 +3,7 @@
 import { Suspense, useRef } from 'react';
 import { Canvas, useLoader, useFrame } from '@react-three/fiber';
 import { OrbitControls, Stage, useProgress, Html } from '@react-three/drei';
-import { STLLoader } from 'three/examples/jsm/loaders/STLLoader';
+import { STLLoader } from 'three-stdlib';
 import * as THREE from 'three';
 
 function Loader() {

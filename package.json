@@ -25,6 +25,7 @@
     "recharts": "^3.6.0",
     "tailwind-merge": "^2.6.0",
     "three": "^0.182.0",
+    "three-stdlib": "^2.36.1",
     "uuid": "^13.0.0",
     "xlsx": "^0.18.5"
   },
