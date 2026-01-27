@@ -311,9 +311,14 @@ export default function ProfilePage() {
             {/* 3D Printing Jobs Section */}
             {printingJobs.length > 0 && (
                 <div className="space-y-6">
-                    <div className="flex items-center gap-3">
-                        <Box className="text-[hsl(var(--accent-primary))]" />
-                        <h2 className="text-2xl font-bold tracking-tight">Mis Impresiones 3D</h2>
+                    <div className="flex items-center justify-between">
+                        <div className="flex items-center gap-3">
+                            <Box className="text-[hsl(var(--accent-primary))]" />
+                            <h2 className="text-2xl font-bold tracking-tight">Mis Impresiones 3D</h2>
+                        </div>
+                        <p className="text-xs text-[hsl(var(--text-tertiary))] hidden md:block">
+                            <span className="font-bold">Tip:</span> Click + Drag para rotar • Scroll para zoom
+                        </p>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
