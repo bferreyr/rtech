@@ -54,11 +54,11 @@ export function StoreFront({ initialProducts, categories, pagination }: StoreFro
             {/* Filter Bar - Solid Background as requested */}
             <div className="sticky top-20 z-30 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 p-4 bg-[#09090b] border border-white/10 rounded-2xl shadow-2xl">
 
-                {/* Categories Navigation */}
-                <div className="flex flex-nowrap lg:flex-wrap items-center gap-2 w-full lg:w-auto overflow-x-auto pb-2 lg:pb-0 scrollbar-hide mask-fade-right">
+                {/* Categories Navigation - Static with wrapping */}
+                <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
                     <button
                         onClick={() => updateParams({ category: null })}
-                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap flex-shrink-0 ${!activeCategory
+                        className={`px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${!activeCategory
                             ? 'bg-[hsl(var(--accent-primary))] text-white shadow-lg shadow-[hsl(var(--accent-primary))]/20'
                             : 'bg-white/5 hover:bg-white/10 text-[hsl(var(--text-secondary))]'
                             }`}
@@ -67,7 +67,7 @@ export function StoreFront({ initialProducts, categories, pagination }: StoreFro
                     </button>
 
                     {categories.map((cat) => (
-                        <div key={cat.id} className="relative group flex-shrink-0">
+                        <div key={cat.id} className="relative group">
                             <button
                                 onClick={() => updateParams({ category: cat.id })}
                                 className={`flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${isCategoryActive(cat)
@@ -78,6 +78,7 @@ export function StoreFront({ initialProducts, categories, pagination }: StoreFro
                                 {cat.name}
                                 {cat.children && cat.children.length > 0 && (
                                     <ChevronDown size={14} className="opacity-70 group-hover:translate-y-0.5 transition-transform" />
+                                )}
                                 )}
                             </button>
 
