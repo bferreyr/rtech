@@ -79,7 +79,6 @@ export function StoreFront({ initialProducts, categories, pagination }: StoreFro
                                 {cat.children && cat.children.length > 0 && (
                                     <ChevronDown size={14} className="opacity-70 group-hover:translate-y-0.5 transition-transform" />
                                 )}
-                                )}
                             </button>
 
                             {/* Dropdown Menu */}
