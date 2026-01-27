@@ -1,16 +1,19 @@
-'use client'
+'use client';
 
 import { useEffect, useState, useTransition } from "react"
 import { useSession } from "next-auth/react"
-import { prisma } from "@/lib/prisma"
 import { notFound, redirect } from "next/navigation"
-import { ShoppingBag, Package, MapPin, Calendar, ArrowRight, User as UserIcon, Coins, History as HistoryIcon, X, Loader2, AlertCircle, Box } from "lucide-react"
+import { ShoppingBag, Package, MapPin, Calendar, ArrowRight, User as UserIcon, Coins, History as HistoryIcon, X, Loader2, AlertCircle, Box, Clock, CheckCircle } from "lucide-react"
 import Link from "next/link"
+import { ModelViewer } from "@/components/3d/ModelViewer"
+import { formatCurrency } from "@/lib/utils"
+
 
 export default function ProfilePage() {
     const { data: session } = useSession()
     const [isPending, startTransition] = useTransition()
     const [orders, setOrders] = useState<any[]>([])
+    const [printingJobs, setPrintingJobs] = useState<any[]>([])
     const [dbUser, setDbUser] = useState<any>(null)
     const [loading, setLoading] = useState(true)
 
@@ -51,6 +54,7 @@ export default function ProfilePage() {
                 const response = await fetch('/api/profile/data')
                 const data = await response.json()
                 setOrders(data.orders || [])
+                setPrintingJobs(data.printingJobs || [])
                 setDbUser(data.user)
                 setProfileForm({
                     name: data.user?.name || '',
@@ -198,6 +202,55 @@ export default function ProfilePage() {
                 </div>
             )}
 
+            {/* 3D Printing Jobs Section */}
+            {printingJobs.length > 0 && (
+                <div className="space-y-6">
+                    <div className="flex items-center gap-3">
+                        <Box className="text-[hsl(var(--accent-primary))]" />
+                        <h2 className="text-2xl font-bold tracking-tight">Mis Impresiones 3D</h2>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-2 gap-6">
+                        {printingJobs.map((job: any) => (
+                            <div key={job.id} className="glass-card p-6 flex flex-col gap-4">
+                                <div className="flex items-start justify-between">
+                                    <div>
+                                        <h3 className="font-bold text-lg">{job.title}</h3>
+                                        <p className="text-sm text-[hsl(var(--text-secondary))]">{job.description}</p>
+                                    </div>
+                                    <span className={`inline-flex items-center gap-1 px-2.5 py-1 rounded-full text-xs font-medium border ${job.status === 'COMPLETED' ? 'bg-green-500/10 text-green-400 border-green-500/20' :
+                                        job.status === 'IN_PROGRESS' ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' :
+                                            'bg-yellow-500/10 text-yellow-400 border-yellow-500/20'
+                                        }`}>
+                                        {job.status === 'COMPLETED' ? <CheckCircle className="w-3 h-3" /> :
+                                            job.status === 'IN_PROGRESS' ? <Clock className="w-3 h-3" /> :
+                                                <Clock className="w-3 h-3" />}
+                                        {job.status}
+                                    </span>
+                                </div>
+
+                                {/* 3D Viewer Integration */}
+                                <div className="rounded-xl overflow-hidden bg-black/50 border border-white/5">
+                                    <ModelViewer url={job.fileUrl} className="h-[300px]" />
+                                </div>
+
+                                <div className="flex items-center justify-between pt-4 border-t border-white/5 text-sm">
+                                    <div className="flex items-center gap-2 text-[hsl(var(--text-secondary))]">
+                                        <Box className="w-4 h-4" />
+                                        <span className="font-mono text-xs">{job.fileName}</span>
+                                    </div>
+                                    {job.price && (
+                                        <div className="font-bold text-lg text-[hsl(var(--accent-primary))]">
+                                            {formatCurrency(Number(job.price))}
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+            )}
+
             {/* Orders Section */}
             <div className="space-y-6">
                 <div className="flex items-center gap-3">
@@ -325,12 +378,7 @@ export default function ProfilePage() {
                     <button onClick={() => setIsEditProfileModalOpen(true)} className="text-xs font-bold uppercase tracking-widest hover:text-[hsl(var(--accent-primary))] transition-colors">Editar Perfil</button>
                 </div>
 
-                <div className="glass-card p-8 space-y-4 border-white/5 hover:border-[hsl(var(--accent-primary))]/30 transition-all">
-                    <Box className="text-[hsl(var(--accent-primary))]" />
-                    <h4 className="text-xl font-bold">Modelos 3D</h4>
-                    <p className="text-sm text-[hsl(var(--text-secondary))]">Visualizá tus diseños e impresiones 3D personalizadas.</p>
-                    <Link href="/profile/3d-models" className="text-xs font-bold uppercase tracking-widest hover:text-[hsl(var(--accent-primary))] transition-colors">Ver Modelos</Link>
-                </div>
+
             </div>
 
             {/* Success Notification */}
