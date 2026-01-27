@@ -172,107 +172,107 @@ export function Navbar() {
                         </div>
                     </div>
                 </div>
+            </nav>
 
-                {/* Mobile Menu Overlay */}
-                {isMobileMenuOpen && (
-                    <div className="fixed inset-0 z-[100] md:hidden">
-                        <div className="absolute inset-0 bg-black" onClick={() => setIsMobileMenuOpen(false)} />
-                        <div className="absolute top-0 left-0 bottom-0 w-[85%] max-w-[320px] bg-[#0d0d0d] border-r-2 border-[hsl(var(--accent-primary))]/40 p-6 shadow-2xl animate-in slide-in-from-left duration-300 flex flex-col overflow-y-auto">
-                            <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/20">
-                                <span className="text-xl font-black tracking-tighter gradient-text">MENU</span>
-                                <button
-                                    onClick={() => setIsMobileMenuOpen(false)}
-                                    className="p-2 hover:bg-white/5 rounded-full"
-                                >
-                                    <LogOut size={20} className="rotate-180" />
-                                </button>
+            {/* Mobile Menu Overlay - OUTSIDE NAV */}
+            {isMobileMenuOpen && (
+                <div className="fixed inset-0 z-[100] md:hidden">
+                    <div className="absolute inset-0 bg-black" onClick={() => setIsMobileMenuOpen(false)} />
+                    <div className="absolute top-0 left-0 bottom-0 w-[85%] max-w-[320px] bg-[#0d0d0d] border-r-2 border-[hsl(var(--accent-primary))]/40 p-6 shadow-2xl animate-in slide-in-from-left duration-300 flex flex-col overflow-y-auto">
+                        <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/20">
+                            <span className="text-xl font-black tracking-tighter gradient-text">MENÚ</span>
+                            <button
+                                onClick={() => setIsMobileMenuOpen(false)}
+                                className="p-2 hover:bg-white/10 rounded-full transition-colors"
+                            >
+                                <LogOut size={20} className="rotate-180 text-white" />
+                            </button>
+                        </div>
+
+                        <div className="space-y-6 flex-1">
+                            {/* Navigation */}
+                            <div className="space-y-4">
+                                <p className="text-xs font-bold text-[hsl(var(--text-tertiary))] uppercase tracking-wider">Navegación</p>
+                                <nav className="flex flex-col space-y-2">
+                                    <Link href="/products" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 rounded-xl bg-white/10 hover:bg-white/15 font-medium transition-colors">
+                                        Productos
+                                    </Link>
+                                    <Link href="/3d-printing" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 rounded-xl bg-white/10 hover:bg-white/15 font-medium transition-colors">
+                                        Impresiones 3D
+                                    </Link>
+                                    <Link href="/electricista" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 rounded-xl bg-white/10 hover:bg-white/15 font-medium text-[#f59e0b] transition-colors">
+                                        Electricidad
+                                    </Link>
+                                    <Link href="/pc-builder" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 rounded-xl bg-[hsl(var(--accent-primary))]/20 border border-[hsl(var(--accent-primary))]/40 font-medium text-[hsl(var(--accent-primary))] hover:bg-[hsl(var(--accent-primary))]/30 transition-colors">
+                                        Armado de PC
+                                    </Link>
+                                    <Link href="/about" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 rounded-xl bg-white/10 hover:bg-white/15 font-medium transition-colors">
+                                        Nosotros
+                                    </Link>
+                                </nav>
                             </div>
 
-                            <div className="space-y-6">
-                                {/* Navigation */}
-                                <div className="space-y-4">
-                                    <p className="text-xs font-bold text-[hsl(var(--text-tertiary))] uppercase tracking-wider">Navegación</p>
-                                    <nav className="flex flex-col space-y-2">
-                                        <Link href="/products" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 rounded-xl bg-white/5 font-medium">
-                                            Productos
-                                        </Link>
-                                        <Link href="/3d-printing" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 rounded-xl bg-white/5 font-medium">
-                                            Impresiones 3D
-                                        </Link>
-                                        <Link href="/electricista" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 rounded-xl bg-white/5 font-medium text-[#f59e0b]">
-                                            Electricidad
-                                        </Link>
-                                        <Link href="/pc-builder" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 rounded-xl bg-[hsl(var(--accent-primary))]/10 border border-[hsl(var(--accent-primary))]/20 font-medium text-[hsl(var(--accent-primary))]">
-                                            Armado de PC
-                                        </Link>
-                                        <Link href="/about" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 rounded-xl bg-white/5 font-medium">
-                                            Nosotros
-                                        </Link>
-                                    </nav>
-                                </div>
+                            {/* User Section */}
+                            <div className="pt-6 border-t border-white/20 space-y-4">
+                                <p className="text-xs font-bold text-[hsl(var(--text-tertiary))] uppercase tracking-wider">Cuenta</p>
 
-                                {/* User Section */}
-                                <div className="pt-6 border-t border-white/10 space-y-4">
-                                    <p className="text-xs font-bold text-[hsl(var(--text-tertiary))] uppercase tracking-wider">Cuenta</p>
-
-                                    {session ? (
-                                        <div className="space-y-3">
-                                            <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/5">
-                                                <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[hsl(var(--accent-primary))] to-[hsl(var(--accent-secondary))] flex items-center justify-center text-[10px] font-bold text-white">
-                                                    {session.user?.name?.charAt(0) || session.user?.email?.charAt(0)}
-                                                </div>
-                                                <div className="overflow-hidden">
-                                                    <p className="text-sm font-bold truncate">{session.user?.name}</p>
-                                                    <p className="text-xs text-[hsl(var(--text-secondary))] truncate">{session.user?.email}</p>
-                                                </div>
+                                {session ? (
+                                    <div className="space-y-3">
+                                        <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/10">
+                                            <div className="w-8 h-8 rounded-full bg-gradient-to-br from-[hsl(var(--accent-primary))] to-[hsl(var(--accent-secondary))] flex items-center justify-center text-[10px] font-bold text-white">
+                                                {session.user?.name?.charAt(0) || session.user?.email?.charAt(0)}
                                             </div>
-
-                                            <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-gradient-to-r from-[hsl(var(--accent-secondary))]/10 to-transparent border border-[hsl(var(--accent-secondary))]/20">
-                                                <Coins size={16} className="text-[hsl(var(--accent-secondary))]" />
-                                                <div className="flex-1">
-                                                    <p className="text-xs text-[hsl(var(--text-tertiary))] uppercase font-bold">Mis Puntos</p>
-                                                    <p className="text-sm font-black text-[hsl(var(--accent-secondary))]">
-                                                        {livePoints !== null ? livePoints : ((session.user as any).points || 0)}
-                                                    </p>
-                                                </div>
+                                            <div className="overflow-hidden">
+                                                <p className="text-sm font-bold truncate">{session.user?.name}</p>
+                                                <p className="text-xs text-[hsl(var(--text-secondary))] truncate">{session.user?.email}</p>
                                             </div>
-
-                                            <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5">
-                                                <History size={18} />
-                                                Mis Pedidos
-                                            </Link>
-
-                                            {(session.user as any).role === 'ADMIN' && (
-                                                <Link href="/admin" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl hover:bg-white/5">
-                                                    <LayoutDashboard size={18} />
-                                                    Panel Admin
-                                                </Link>
-                                            )}
-
-                                            <button
-                                                onClick={() => { signOut(); setIsMobileMenuOpen(false); }}
-                                                className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-red-500/10 text-red-500 hover:bg-red-500/20"
-                                            >
-                                                <LogOut size={18} />
-                                                Cerrar Sesión
-                                            </button>
                                         </div>
-                                    ) : (
-                                        <div className="grid grid-cols-2 gap-3">
-                                            <Link href="/login" onClick={() => setIsMobileMenuOpen(false)} className="text-center px-4 py-3 rounded-xl bg-white/5 font-bold">
-                                                Ingresar
-                                            </Link>
-                                            <Link href="/register" onClick={() => setIsMobileMenuOpen(false)} className="text-center px-4 py-3 rounded-xl bg-[hsl(var(--accent-primary))] text-white font-bold">
-                                                Registrarse
-                                            </Link>
+
+                                        <div className="flex items-center gap-3 px-4 py-3 rounded-xl bg-gradient-to-r from-[hsl(var(--accent-secondary))]/20 to-transparent border border-[hsl(var(--accent-secondary))]/30">
+                                            <Coins size={16} className="text-[hsl(var(--accent-secondary))]" />
+                                            <div className="flex-1">
+                                                <p className="text-xs text-[hsl(var(--text-tertiary))] uppercase font-bold">Mis Puntos</p>
+                                                <p className="text-sm font-black text-[hsl(var(--accent-secondary))]">
+                                                    {livePoints !== null ? livePoints : ((session.user as any).points || 0)}
+                                                </p>
+                                            </div>
                                         </div>
-                                    )}
-                                </div>
+
+                                        <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/10 hover:bg-white/15 transition-colors">
+                                            <History size={18} />
+                                            Mis Pedidos
+                                        </Link>
+
+                                        {(session.user as any).role === 'ADMIN' && (
+                                            <Link href="/admin" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/10 hover:bg-white/15 transition-colors">
+                                                <LayoutDashboard size={18} />
+                                                Panel Admin
+                                            </Link>
+                                        )}
+
+                                        <button
+                                            onClick={() => { signOut(); setIsMobileMenuOpen(false); }}
+                                            className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-red-500/20 text-red-400 hover:bg-red-500/30 border border-red-500/30 transition-colors"
+                                        >
+                                            <LogOut size={18} />
+                                            Cerrar Sesión
+                                        </button>
+                                    </div>
+                                ) : (
+                                    <div className="grid grid-cols-2 gap-3">
+                                        <Link href="/login" onClick={() => setIsMobileMenuOpen(false)} className="text-center px-4 py-3 rounded-xl bg-white/10 hover:bg-white/15 font-bold transition-colors">
+                                            Ingresar
+                                        </Link>
+                                        <Link href="/register" onClick={() => setIsMobileMenuOpen(false)} className="text-center px-4 py-3 rounded-xl bg-[hsl(var(--accent-primary))] hover:bg-[hsl(var(--accent-primary))]/90 text-white font-bold transition-colors">
+                                            Registrarse
+                                        </Link>
+                                    </div>
+                                )}
                             </div>
                         </div>
                     </div>
-                )}
-            </nav>
+                </div>
+            )}
 
             <SearchOverlay
                 isOpen={isSearchOpen}
