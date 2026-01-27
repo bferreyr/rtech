@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { ProductCard } from '@/components/product/ProductCard';
 import { ChevronDown, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import { useCurrency } from '@/context/CurrencyContext';
+import { useState, useEffect } from 'react';
 
 interface StoreFrontProps {
     initialProducts: any[];
@@ -20,6 +21,16 @@ export function StoreFront({ initialProducts, categories, pagination }: StoreFro
     const router = useRouter();
     const searchParams = useSearchParams();
     const { formatUSD } = useCurrency();
+    const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
+
+    // Prevent scrolling when mobile menu is open
+    useEffect(() => {
+        if (isCategoryMenuOpen) {
+            document.body.style.overflow = 'hidden';
+        } else {
+            document.body.style.overflow = 'unset';
+        }
+    }, [isCategoryMenuOpen]);
 
     const activeCategory = searchParams.get('category');
     const sortBy = searchParams.get('sort') || 'newest';
@@ -51,11 +62,20 @@ export function StoreFront({ initialProducts, categories, pagination }: StoreFro
 
     return (
         <div className="flex flex-col gap-8">
-            {/* Filter Bar - Solid Background as requested */}
-            <div className="sticky top-20 z-30 flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 p-4 bg-[#09090b] border border-white/10 rounded-2xl shadow-2xl">
+            {/* Filter Bar - Non-sticky */}
+            <div className="relative flex flex-col lg:flex-row items-start lg:items-center justify-between gap-4 p-4 bg-[#09090b] border border-white/10 rounded-2xl shadow-2xl">
 
-                {/* Categories Navigation - Static with wrapping */}
-                <div className="flex flex-wrap items-center gap-2 w-full lg:w-auto">
+                {/* Mobile Hamburger Button */}
+                <button
+                    onClick={() => setIsCategoryMenuOpen(true)}
+                    className="lg:hidden flex items-center gap-2 px-4 py-2 rounded-lg bg-[hsl(var(--accent-primary))] text-white font-medium w-full justify-center"
+                >
+                    <ChevronDown size={18} />
+                    Categorías
+                </button>
+
+                {/* Categories Navigation - Hidden on mobile, visible on desktop */}
+                <div className="hidden lg:flex flex-wrap items-center gap-2 w-full lg:w-auto">
                     <button
                         onClick={() => updateParams({ category: null })}
                         className={`px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${!activeCategory
@@ -105,6 +125,79 @@ export function StoreFront({ initialProducts, categories, pagination }: StoreFro
                         </div>
                     ))}
                 </div>
+
+                {/* Mobile Category Drawer */}
+                {isCategoryMenuOpen && (
+                    <div className="fixed inset-0 z-[100] lg:hidden">
+                        <div className="absolute inset-0 bg-black" onClick={() => setIsCategoryMenuOpen(false)} />
+                        <div className="absolute top-0 left-0 bottom-0 w-[85%] max-w-[320px] bg-[#0d0d0d] border-r-2 border-[hsl(var(--accent-primary))]/40 p-6 shadow-2xl animate-in slide-in-from-left duration-300 flex flex-col overflow-y-auto">
+                            <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/20">
+                                <span className="text-xl font-black tracking-tighter gradient-text">CATEGORÍAS</span>
+                                <button
+                                    onClick={() => setIsCategoryMenuOpen(false)}
+                                    className="p-2 hover:bg-white/10 rounded-full transition-colors"
+                                >
+                                    <X size={20} className="text-white" />
+                                </button>
+                            </div>
+
+                            <div className="space-y-2 flex-1">
+                                <button
+                                    onClick={() => {
+                                        updateParams({ category: null });
+                                        setIsCategoryMenuOpen(false);
+                                    }}
+                                    className={`w-full text-left px-4 py-3 rounded-xl font-medium transition-all ${!activeCategory
+                                        ? 'bg-[hsl(var(--accent-primary))] text-white'
+                                        : 'bg-white/10 text-[hsl(var(--text-secondary))] hover:bg-white/15 hover:text-white'
+                                        }`}
+                                >
+                                    Todos
+                                </button>
+
+                                {categories.map((cat) => (
+                                    <div key={cat.id} className="space-y-1">
+                                        <button
+                                            onClick={() => {
+                                                updateParams({ category: cat.id });
+                                                setIsCategoryMenuOpen(false);
+                                            }}
+                                            className={`w-full flex items-center justify-between px-4 py-3 rounded-xl font-medium transition-all ${isCategoryActive(cat)
+                                                ? 'bg-[hsl(var(--accent-primary))]/20 text-[hsl(var(--accent-primary))] border border-[hsl(var(--accent-primary))]/40'
+                                                : 'text-[hsl(var(--text-secondary))] hover:bg-white/10 hover:text-white'
+                                                }`}
+                                        >
+                                            {cat.name}
+                                            {cat.children && cat.children.length > 0 && (
+                                                <ChevronDown size={16} className={`transition-transform ${isCategoryActive(cat) ? 'rotate-180' : ''}`} />
+                                            )}
+                                        </button>
+
+                                        {cat.children && cat.children.length > 0 && (
+                                            <div className="pl-4 space-y-1 mt-1 border-l border-white/10 ml-4">
+                                                {cat.children.map((child: any) => (
+                                                    <button
+                                                        key={child.id}
+                                                        onClick={() => {
+                                                            updateParams({ category: child.id });
+                                                            setIsCategoryMenuOpen(false);
+                                                        }}
+                                                        className={`w-full text-left px-4 py-2 rounded-lg text-sm transition-all ${activeCategory === child.id
+                                                            ? 'text-[hsl(var(--accent-primary))] font-bold'
+                                                            : 'text-[hsl(var(--text-tertiary))] hover:text-white'
+                                                            }`}
+                                                    >
+                                                        {child.name}
+                                                    </button>
+                                                ))}
+                                            </div>
+                                        )}
+                                    </div>
+                                ))}
+                            </div>
+                        </div>
+                    </div>
+                )}
 
                 {/* Sort Controls */}
                 <div className="flex items-center gap-4 w-full lg:w-auto pb-2 lg:pb-0">

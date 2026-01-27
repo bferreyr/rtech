@@ -176,9 +176,9 @@ export function Navbar() {
                 {/* Mobile Menu Overlay */}
                 {isMobileMenuOpen && (
                     <div className="fixed inset-0 z-[100] md:hidden">
-                        <div className="absolute inset-0 bg-black/80 backdrop-blur-sm" onClick={() => setIsMobileMenuOpen(false)} />
-                        <div className="absolute top-0 left-0 bottom-0 w-[80%] max-w-[300px] bg-[hsl(var(--bg-primary))] border-r border-white/10 p-6 shadow-2xl animate-in slide-in-from-left duration-300">
-                            <div className="flex items-center justify-between mb-8">
+                        <div className="absolute inset-0 bg-black" onClick={() => setIsMobileMenuOpen(false)} />
+                        <div className="absolute top-0 left-0 bottom-0 w-[85%] max-w-[320px] bg-[#0d0d0d] border-r-2 border-[hsl(var(--accent-primary))]/40 p-6 shadow-2xl animate-in slide-in-from-left duration-300 flex flex-col overflow-y-auto">
+                            <div className="flex items-center justify-between mb-8 pb-4 border-b border-white/20">
                                 <span className="text-xl font-black tracking-tighter gradient-text">MENU</span>
                                 <button
                                     onClick={() => setIsMobileMenuOpen(false)}
