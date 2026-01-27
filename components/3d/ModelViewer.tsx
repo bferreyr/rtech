@@ -51,7 +51,7 @@ export function ModelViewer({ url, className = "" }: { url: string, className?: 
                 <OrbitControls autoRotate autoRotateSpeed={0.5} makeDefault />
             </Canvas>
 
-            <div className="absolute bottom-4 right-4 text-[10px] text-white/30 pointer-events-none">
+            <div className="absolute top-4 right-4 text-[10px] text-white/30 pointer-events-none text-right">
                 <p>Click + Drag para rotar</p>
                 <p>Scroll para zoom</p>
             </div>
