@@ -20,6 +20,7 @@ model User {
   updatedAt    DateTime       @updatedAt
   orders       Order[]
   pointHistory PointHistory[]
+  printingJobs PrintingJob[]
 }
 
 model PointHistory {
@@ -168,4 +169,26 @@ enum ShipmentStatus {
   DELIVERED
   FAILED
   CANCELLED
+}
+
+// 3D Printing Jobs
+model PrintingJob {
+  id          String            @id @default(cuid())
+  userId      String
+  user        User              @relation(fields: [userId], references: [id])
+  title       String
+  description String?
+  fileUrl     String // Path to the 3D model file
+  fileName    String // Original filename
+  status      PrintingJobStatus @default(PENDING)
+  price       Decimal?
+  createdAt   DateTime          @default(now())
+  updatedAt   DateTime          @updatedAt
+}
+
+enum PrintingJobStatus {
+  PENDING
+  IN_PROGRESS
+  COMPLETED
+  DELIVERED
 }

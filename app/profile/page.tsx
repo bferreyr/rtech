@@ -4,7 +4,7 @@ import { useEffect, useState, useTransition } from "react"
 import { useSession } from "next-auth/react"
 import { prisma } from "@/lib/prisma"
 import { notFound, redirect } from "next/navigation"
-import { ShoppingBag, Package, MapPin, Calendar, ArrowRight, User as UserIcon, Coins, History as HistoryIcon, X, Loader2, AlertCircle } from "lucide-react"
+import { ShoppingBag, Package, MapPin, Calendar, ArrowRight, User as UserIcon, Coins, History as HistoryIcon, X, Loader2, AlertCircle, Box } from "lucide-react"
 import Link from "next/link"
 
 export default function ProfilePage() {
@@ -323,6 +323,13 @@ export default function ProfilePage() {
                     <h4 className="text-xl font-bold">Mi Cuenta</h4>
                     <p className="text-sm text-[hsl(var(--text-secondary))]">Actualizá tus datos personales y dirección de envío.</p>
                     <button onClick={() => setIsEditProfileModalOpen(true)} className="text-xs font-bold uppercase tracking-widest hover:text-[hsl(var(--accent-primary))] transition-colors">Editar Perfil</button>
+                </div>
+
+                <div className="glass-card p-8 space-y-4 border-white/5 hover:border-[hsl(var(--accent-primary))]/30 transition-all">
+                    <Box className="text-[hsl(var(--accent-primary))]" />
+                    <h4 className="text-xl font-bold">Modelos 3D</h4>
+                    <p className="text-sm text-[hsl(var(--text-secondary))]">Visualizá tus diseños e impresiones 3D personalizadas.</p>
+                    <Link href="/profile/3d-models" className="text-xs font-bold uppercase tracking-widest hover:text-[hsl(var(--accent-primary))] transition-colors">Ver Modelos</Link>
                 </div>
             </div>
 

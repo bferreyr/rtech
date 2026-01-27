@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Package, ShoppingCart, Users, LogOut, Settings, Truck } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingCart, Users, LogOut, Settings, Truck, Box } from 'lucide-react';
 import { logoutUser } from '@/app/actions/auth';
 
 const menuItems = [
@@ -14,6 +14,7 @@ const menuItems = [
     { icon: Truck, label: 'Envíos', href: '/admin/shipments' },
     { icon: Users, label: 'Usuarios', href: '/admin/users' },
     { icon: Settings, label: 'Configuración', href: '/admin/settings' },
+    { icon: Box, label: 'Impresiones 3D', href: '/admin/3d-printing' },
     // { icon: Users, label: 'Clientes', href: '/admin/customers' },
 ];
 
