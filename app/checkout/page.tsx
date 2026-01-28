@@ -1,6 +1,7 @@
 
 
 import { useState, useTransition, useMemo } from "react";
+import { useCart } from "@/context/CartContext";
 import { ShoppingBag, CreditCard, User, Mail, ArrowRight, Loader2, MapPin, Coins } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
