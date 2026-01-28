@@ -39,26 +39,32 @@ async function getModoToken() {
         throw new Error("MODO Credentials not configured");
     }
 
-    const response = await fetch(`${MODO_API_URL}/auth/token`, {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-            client_id: settings.clientId,
-            client_secret: settings.clientSecret,
-            grant_type: "client_credentials",
-        }),
-    });
+    try {
+        console.log("Attempting to authenticate with MODO at:", `${MODO_API_URL}/auth/token`);
+        const response = await fetch(`${MODO_API_URL}/auth/token`, {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                client_id: settings.clientId,
+                client_secret: settings.clientSecret,
+                grant_type: "client_credentials",
+            }),
+        });
 
-    if (!response.ok) {
-        const error = await response.text();
-        console.error("MODO Auth Error:", error);
-        throw new Error("Failed to authenticate with MODO");
+        if (!response.ok) {
+            const error = await response.text();
+            console.error("MODO Auth Error Response:", { status: response.status, statusText: response.statusText, body: error });
+            throw new Error(`Failed to authenticate with MODO: ${response.status} ${response.statusText} - ${error}`);
+        }
+
+        const data = await response.json();
+        return data.access_token;
+    } catch (error: any) {
+        console.error("MODO Auth Network/System Error:", error);
+        throw new Error(`MODO Connection Error: ${error.message}${error.cause ? ` (Cause: ${error.cause})` : ''}`);
     }
-
-    const data = await response.json();
-    return data.access_token;
 }
 
 /**
