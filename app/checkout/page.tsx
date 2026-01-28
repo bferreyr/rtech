@@ -1,78 +1,11 @@
-'use client';
-
-import { useCart } from "@/context/CartContext";
-import { createModoPreference } from "@/app/actions/modo";
-// ... (imports)
-
-// ... inside component ...
-try {
-    const result = await createModoPreference({
-        email: formData.email,
-        name: `${formData.firstName} ${formData.lastName}`,
-        total: calculatedTotal,
-        items: cart.map(item => ({
-            productId: item.id,
-            quantity: item.quantity,
-            price: item.price,
-            title: item.name
-        })),
-        shippingAddress: {
-            address: formData.address,
-            city: formData.city,
-            province: formData.province,
-            zip: formData.zip
-        },
-        shippingOption: selectedShipping ? {
-            name: selectedShipping.name,
-            cost: selectedShipping.price
-        } : undefined,
-        pointsToRedeem: redeemPoints ? (session?.user as any)?.points : 0
-    });
 
 
-    if (result.success && result.initPoint) {
-        clearCart();
-        // Redirect to MODO
-        window.location.href = result.initPoint;
-    } else {
-        setError(result.error || "Error al iniciar el pago");
-        setIsProcessing(false);
-    }
-} catch (err) {
-    console.error(err);
-    setError("Ocurrió un error inesperado");
-    setIsProcessing(false);
-}
-// ...
-
-// ... inside JSX ...
-                                    <button
-                                        onClick={handlePayment}
-                                        disabled={isProcessing || !formData.email || !formData.address}
-                                        className="w-full py-4 bg-[hsl(var(--accent-primary))] hover:bg-[hsl(var(--accent-primary))]/90 text-white font-bold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
-                                    >
-                                        {isProcessing ? (
-                                            <>
-                                                <Loader2 className="w-5 h-5 animate-spin" />
-                                                Redirigiendo a MODO...
-                                            </>
-                                        ) : (
-                                            <>
-                                                Pagar con MODO
-                                            </>
-                                        )}
-                                    </button>
-                                    
-                                    <div className="flex items-center justify-center gap-2 mt-4 opacity-50">
-                                        <p className="text-xs text-center">Pagos seguros procesados por</p>
-                                        <img src="https://brand.modo.com.ar/brand/logo-modo-black.svg" alt="MODO" className="h-4 invert" />
-                                    </div>
-// ...
 import { useState, useTransition, useMemo } from "react";
 import { ShoppingBag, CreditCard, User, Mail, ArrowRight, Loader2, MapPin, Coins } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 import { ShippingCalculator } from "@/components/checkout/ShippingCalculator";
+import { createModoPreference } from "@/app/actions/modo";
 import { useCurrency } from "@/context/CurrencyContext";
 import { useSession } from "next-auth/react";
 
@@ -112,7 +45,7 @@ export default function CheckoutPage() {
         }
 
         startTransition(async () => {
-            const result = await createMercadoPagoPreference({
+            const result = await createModoPreference({
                 email,
                 name,
                 items: items.map(item => ({
@@ -121,7 +54,7 @@ export default function CheckoutPage() {
                     price: Number(item.price),
                     title: item.name
                 })),
-                total: finalTotal, // Use finalTotal including shipping
+                total: finalTotal,
                 shippingAddress,
                 shippingOption,
                 pointsToRedeem
@@ -332,15 +265,14 @@ export default function CheckoutPage() {
                                     <h2 className="text-2xl font-bold">Método de Pago</h2>
                                 </div>
 
-                                <div className="flex items-center gap-4 p-4 rounded-lg bg-blue-500/10 border border-blue-500/20">
-                                    <svg className="w-12 h-12" viewBox="0 0 200 200" fill="none">
-                                        <rect width="200" height="200" rx="20" fill="#009EE3" />
-                                        <path d="M70 80h60v40H70z" fill="white" />
-                                    </svg>
+                                <div className="flex items-center gap-4 p-4 rounded-lg bg-white/5 border border-white/10">
+                                    <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center p-2">
+                                        <img src="https://brand.modo.com.ar/brand/logo-modo-black.svg" alt="MODO" className="w-full h-auto" />
+                                    </div>
                                     <div>
-                                        <p className="font-semibold">MercadoPago</p>
+                                        <p className="font-semibold">MODO</p>
                                         <p className="text-sm text-[hsl(var(--text-secondary))]">
-                                            Pago seguro con tarjeta, efectivo o transferencia
+                                            Pagá con todas las billeteras y bancos
                                         </p>
                                     </div>
                                 </div>
@@ -360,15 +292,18 @@ export default function CheckoutPage() {
                                 {isPending ? (
                                     <>
                                         <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                                        Redirigiendo a MercadoPago...
+                                        Redirigiendo a MODO...
                                     </>
                                 ) : (
                                     <>
-                                        Pagar con MercadoPago
-                                        <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+                                        Pagar con MODO
                                     </>
                                 )}
                             </button>
+                            <div className="flex items-center justify-center gap-2 mt-4 opacity-50">
+                                <p className="text-xs text-center">Pagos seguros procesados por</p>
+                                <img src="https://brand.modo.com.ar/brand/logo-modo-black.svg" alt="MODO" className="h-4 invert" />
+                            </div>
                         </form>
                     </div>
 
