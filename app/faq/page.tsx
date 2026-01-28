@@ -23,7 +23,7 @@ const faqCategories = [
             },
             {
                 q: '¿Qué métodos de pago aceptan?',
-                a: 'Aceptamos pagos a través de MercadoPago, que incluye tarjetas de crédito, débito, transferencias bancarias y efectivo en puntos de pago. Todos los pagos son procesados de forma segura.'
+                a: 'Aceptamos pagos a través de MODO, que te permite pagar con tus billeteras virtuales y aplicaciones bancarias. Todos los pagos son procesados de forma segura.'
             }
         ]
     },
@@ -84,7 +84,7 @@ const faqCategories = [
             },
             {
                 q: '¿Puedo pagar en cuotas?',
-                a: 'Sí, a través de MercadoPago podés financiar tu compra en cuotas con tarjeta de crédito. Las opciones de financiación disponibles se muestran durante el proceso de pago.'
+                a: 'Sí, a través de MODO podés acceder a las promociones y cuotas que ofrezca tu banco o billetera virtual. Las opciones disponibles dependerán de tu medio de pago seleccionado.'
             },
             {
                 q: '¿Qué hago si mi pago fue rechazado?',
