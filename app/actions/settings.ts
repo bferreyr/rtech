@@ -118,36 +118,70 @@ export async function updateGlobalMarkup(markup: number) {
     }
 }
 
-const MERCADOPAGO_TOKEN_KEY = "MERCADOPAGO_ACCESS_TOKEN";
+const MODO_CLIENT_ID_KEY = "MODO_CLIENT_ID";
+const MODO_CLIENT_SECRET_KEY = "MODO_CLIENT_SECRET";
+const MODO_STORE_ID_KEY = "MODO_STORE_ID";
 
-export async function getMercadoPagoSettings() {
+export interface ModoSettings {
+    clientId: string;
+    clientSecret: string;
+    storeId: string;
+}
+
+export async function getModoSettings(): Promise<ModoSettings> {
     try {
-        const setting = await prisma.setting.findUnique({
-            where: { key: MERCADOPAGO_TOKEN_KEY }
-        });
-        return setting ? setting.value : "";
+        const [clientId, clientSecret, storeId] = await Promise.all([
+            prisma.setting.findUnique({ where: { key: MODO_CLIENT_ID_KEY } }),
+            prisma.setting.findUnique({ where: { key: MODO_CLIENT_SECRET_KEY } }),
+            prisma.setting.findUnique({ where: { key: MODO_STORE_ID_KEY } }),
+        ]);
+        return {
+            clientId: clientId?.value || "",
+            clientSecret: clientSecret?.value || "",
+            storeId: storeId?.value || "",
+        };
     } catch (error) {
-        console.error("Error getting Mercado Pago settings:", error);
-        return "";
+        console.error("Error getting MODO settings:", error);
+        return { clientId: "", clientSecret: "", storeId: "" };
     }
 }
 
-export async function updateMercadoPagoSettings(token: string) {
+export async function updateModoSettings(settings: ModoSettings) {
     try {
-        await prisma.setting.upsert({
-            where: { key: MERCADOPAGO_TOKEN_KEY },
-            update: { value: token },
-            create: {
-                key: MERCADOPAGO_TOKEN_KEY,
-                value: token,
-                description: "Mercado Pago Access Token",
-            },
-        });
+        await prisma.$transaction([
+            prisma.setting.upsert({
+                where: { key: MODO_CLIENT_ID_KEY },
+                update: { value: settings.clientId },
+                create: {
+                    key: MODO_CLIENT_ID_KEY,
+                    value: settings.clientId,
+                    description: "MODO Client ID",
+                },
+            }),
+            prisma.setting.upsert({
+                where: { key: MODO_CLIENT_SECRET_KEY },
+                update: { value: settings.clientSecret },
+                create: {
+                    key: MODO_CLIENT_SECRET_KEY,
+                    value: settings.clientSecret,
+                    description: "MODO Client Secret",
+                },
+            }),
+            prisma.setting.upsert({
+                where: { key: MODO_STORE_ID_KEY },
+                update: { value: settings.storeId },
+                create: {
+                    key: MODO_STORE_ID_KEY,
+                    value: settings.storeId,
+                    description: "MODO Store ID",
+                },
+            }),
+        ]);
 
         revalidatePath("/admin/settings");
         return { success: true };
     } catch (error) {
-        console.error("Error updating Mercado Pago settings:", error);
-        return { success: false, error: "Failed to update Mercado Pago settings" };
+        console.error("Error updating MODO settings:", error);
+        return { success: false, error: "Failed to update MODO settings" };
     }
 }

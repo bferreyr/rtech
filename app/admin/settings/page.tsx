@@ -1,13 +1,20 @@
 'use client';
 
 import { useState, useTransition, useEffect } from "react";
-import { getExchangeRate, updateExchangeRate, getGlobalMarkup, updateGlobalMarkup, getMercadoPagoSettings, updateMercadoPagoSettings } from "@/app/actions/settings";
-import { DollarSign, RefreshCw, Save, Loader2, Info, TrendingUp, CreditCard } from "lucide-react";
+import { getExchangeRate, updateExchangeRate, getGlobalMarkup, updateGlobalMarkup, getModoSettings, updateModoSettings, type ModoSettings } from "@/app/actions/settings";
+import { DollarSign, RefreshCw, Save, Loader2, Info, TrendingUp, CreditCard, Wallet } from "lucide-react";
 
 export default function AdminSettingsPage() {
     const [rate, setRate] = useState<number>(1000);
     const [markup, setMarkup] = useState<number>(30);
-    const [mpToken, setMpToken] = useState<string>("");
+
+    // MODO State
+    const [modoSettings, setModoSettings] = useState<ModoSettings>({
+        clientId: "",
+        clientSecret: "",
+        storeId: ""
+    });
+
     const [autoUpdate, setAutoUpdate] = useState<boolean>(true);
     const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
     const [isPending, startTransition] = useTransition();
@@ -15,16 +22,16 @@ export default function AdminSettingsPage() {
 
     useEffect(() => {
         async function loadSettings() {
-            const [rateData, markupData, mpTokenData] = await Promise.all([
+            const [rateData, markupData, modoData] = await Promise.all([
                 getExchangeRate(),
                 getGlobalMarkup(),
-                getMercadoPagoSettings()
+                getModoSettings()
             ]);
             setRate(rateData.rate);
             setAutoUpdate(rateData.isAutoUpdate);
             setLastUpdated(rateData.lastUpdated);
             setMarkup(markupData);
-            setMpToken(mpTokenData);
+            setModoSettings(modoData);
         }
         loadSettings();
     }, []);
@@ -33,19 +40,19 @@ export default function AdminSettingsPage() {
         e.preventDefault();
         setStatus(null);
         startTransition(async () => {
-            const [rateResult, markupResult, mpResult] = await Promise.all([
+            const [rateResult, markupResult, modoResult] = await Promise.all([
                 updateExchangeRate(rate, autoUpdate),
                 updateGlobalMarkup(markup),
-                updateMercadoPagoSettings(mpToken)
+                updateModoSettings(modoSettings)
             ]);
 
-            if (rateResult.success && markupResult.success && mpResult.success) {
+            if (rateResult.success && markupResult.success && modoResult.success) {
                 setStatus({ message: "Configuración guardada correctamente", type: 'success' });
                 // Reload settings to get updated lastUpdated time
                 const data = await getExchangeRate();
                 setLastUpdated(data.lastUpdated);
             } else {
-                setStatus({ message: rateResult.error || markupResult.error || mpResult.error || "Error al guardar", type: 'error' });
+                setStatus({ message: rateResult.error || markupResult.error || modoResult.error || "Error al guardar", type: 'error' });
             }
         });
     };
@@ -55,7 +62,7 @@ export default function AdminSettingsPage() {
             <div>
                 <h1 className="text-3xl font-bold mb-2">Configuración</h1>
                 <p className="text-[hsl(var(--text-secondary))]">
-                    Gestiona la cotización del dólar, márgenes de ganancia y otros parámetros globales.
+                    Gestiona la cotización del dólar, márgenes de ganancia y la integración con MODO.
                 </p>
             </div>
 
@@ -118,7 +125,7 @@ export default function AdminSettingsPage() {
                             <p className="text-4xl font-black gradient-text mb-2">${rate.toFixed(2)}</p>
                             <div className="flex items-center gap-1.5 text-xs text-[hsl(var(--text-tertiary))]">
                                 <RefreshCw className={`w-3 h-3 ${isPending ? 'animate-spin' : ''}`} />
-                                Última actualización: {lastUpdated ? lastUpdated.toLocaleString() : 'Cargando...'}
+                                <LastUpdated time={lastUpdated} />
                             </div>
                         </div>
                     </div>
@@ -172,33 +179,61 @@ export default function AdminSettingsPage() {
                     </div>
                 </div>
 
-                {/* Mercado Pago Card */}
+                {/* MODO Payment Integration Card */}
                 <div className="glass-card p-8">
                     <div className="flex items-center gap-3 mb-6">
-                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-500 to-cyan-500 flex items-center justify-center">
-                            <CreditCard className="w-5 h-5 text-white" />
+                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-green-400 to-green-600 flex items-center justify-center">
+                            <Wallet className="w-5 h-5 text-white" />
                         </div>
                         <div>
-                            <h2 className="text-xl font-bold">Mercado Pago</h2>
-                            <p className="text-xs text-[hsl(var(--text-secondary))]">Configuración de pasarela de pagos.</p>
+                            <h2 className="text-xl font-bold">Integración MODO</h2>
+                            <p className="text-xs text-[hsl(var(--text-secondary))]">Configuración de credenciales para Botón de Pago MODO.</p>
                         </div>
                     </div>
 
                     <div className="space-y-4">
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div>
+                                <label className="block text-sm font-medium mb-2 text-[hsl(var(--text-secondary))]">
+                                    Client ID
+                                </label>
+                                <input
+                                    type="text"
+                                    value={modoSettings.clientId}
+                                    onChange={(e) => setModoSettings({ ...modoSettings, clientId: e.target.value })}
+                                    placeholder="Ej: 12345678-..."
+                                    disabled={isPending}
+                                    className="w-full px-4 py-3 rounded-xl bg-[hsl(var(--bg-primary))] border border-[hsl(var(--border-color))] focus:border-[hsl(var(--accent-primary))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--accent-primary))]/20 transition-all disabled:opacity-50 font-mono text-sm"
+                                />
+                            </div>
+                            <div>
+                                <label className="block text-sm font-medium mb-2 text-[hsl(var(--text-secondary))]">
+                                    Store ID
+                                </label>
+                                <input
+                                    type="text"
+                                    value={modoSettings.storeId}
+                                    onChange={(e) => setModoSettings({ ...modoSettings, storeId: e.target.value })}
+                                    placeholder="ID de Tienda en MODO"
+                                    disabled={isPending}
+                                    className="w-full px-4 py-3 rounded-xl bg-[hsl(var(--bg-primary))] border border-[hsl(var(--border-color))] focus:border-[hsl(var(--accent-primary))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--accent-primary))]/20 transition-all disabled:opacity-50 font-mono text-sm"
+                                />
+                            </div>
+                        </div>
                         <div>
                             <label className="block text-sm font-medium mb-2 text-[hsl(var(--text-secondary))]">
-                                Access Token (Producción)
+                                Client Secret
                             </label>
                             <input
-                                type="text"
-                                value={mpToken}
-                                onChange={(e) => setMpToken(e.target.value)}
-                                placeholder="APP_USR-..."
+                                type="password"
+                                value={modoSettings.clientSecret}
+                                onChange={(e) => setModoSettings({ ...modoSettings, clientSecret: e.target.value })}
+                                placeholder="***************************"
                                 disabled={isPending}
                                 className="w-full px-4 py-3 rounded-xl bg-[hsl(var(--bg-primary))] border border-[hsl(var(--border-color))] focus:border-[hsl(var(--accent-primary))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--accent-primary))]/20 transition-all disabled:opacity-50 font-mono text-sm"
                             />
                             <p className="mt-2 text-xs text-[hsl(var(--text-tertiary))]">
-                                Copia tu Access Token desde el panel de desarrolladores de Mercado Pago. Si se deja vacío, se intentará usar la variable de entorno del servidor.
+                                Estas credenciales se encuentran en el portal de desarrolladores de MODO.
                             </p>
                         </div>
                     </div>
@@ -230,4 +265,12 @@ export default function AdminSettingsPage() {
             </form>
         </div>
     );
+}
+
+// Client helper for hydration matching
+function LastUpdated({ time }: { time: Date | null }) {
+    const [mounted, setMounted] = useState(false);
+    useEffect(() => setMounted(true), []);
+    if (!mounted) return 'Cargando...';
+    return time ? time.toLocaleString() : 'Cargando...';
 }

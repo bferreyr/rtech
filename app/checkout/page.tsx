@@ -1,7 +1,73 @@
 'use client';
 
 import { useCart } from "@/context/CartContext";
-import { createMercadoPagoPreference } from "@/app/actions/mercadopago";
+import { createModoPreference } from "@/app/actions/modo";
+// ... (imports)
+
+// ... inside component ...
+try {
+    const result = await createModoPreference({
+        email: formData.email,
+        name: `${formData.firstName} ${formData.lastName}`,
+        total: calculatedTotal,
+        items: cart.map(item => ({
+            productId: item.id,
+            quantity: item.quantity,
+            price: item.price,
+            title: item.name
+        })),
+        shippingAddress: {
+            address: formData.address,
+            city: formData.city,
+            province: formData.province,
+            zip: formData.zip
+        },
+        shippingOption: selectedShipping ? {
+            name: selectedShipping.name,
+            cost: selectedShipping.price
+        } : undefined,
+        pointsToRedeem: redeemPoints ? (session?.user as any)?.points : 0
+    });
+
+
+    if (result.success && result.initPoint) {
+        clearCart();
+        // Redirect to MODO
+        window.location.href = result.initPoint;
+    } else {
+        setError(result.error || "Error al iniciar el pago");
+        setIsProcessing(false);
+    }
+} catch (err) {
+    console.error(err);
+    setError("Ocurrió un error inesperado");
+    setIsProcessing(false);
+}
+// ...
+
+// ... inside JSX ...
+                                    <button
+                                        onClick={handlePayment}
+                                        disabled={isProcessing || !formData.email || !formData.address}
+                                        className="w-full py-4 bg-[hsl(var(--accent-primary))] hover:bg-[hsl(var(--accent-primary))]/90 text-white font-bold rounded-xl transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
+                                    >
+                                        {isProcessing ? (
+                                            <>
+                                                <Loader2 className="w-5 h-5 animate-spin" />
+                                                Redirigiendo a MODO...
+                                            </>
+                                        ) : (
+                                            <>
+                                                Pagar con MODO
+                                            </>
+                                        )}
+                                    </button>
+                                    
+                                    <div className="flex items-center justify-center gap-2 mt-4 opacity-50">
+                                        <p className="text-xs text-center">Pagos seguros procesados por</p>
+                                        <img src="https://brand.modo.com.ar/brand/logo-modo-black.svg" alt="MODO" className="h-4 invert" />
+                                    </div>
+// ...
 import { useState, useTransition, useMemo } from "react";
 import { ShoppingBag, CreditCard, User, Mail, ArrowRight, Loader2, MapPin, Coins } from "lucide-react";
 import Link from "next/link";
