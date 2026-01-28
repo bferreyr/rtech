@@ -1,4 +1,4 @@
-
+'use client';
 
 import { useState, useTransition, useMemo } from "react";
 import { useCart } from "@/context/CartContext";
