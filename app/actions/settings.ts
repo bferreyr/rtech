@@ -185,3 +185,139 @@ export async function updateModoSettings(settings: ModoSettings) {
         return { success: false, error: "Failed to update MODO settings" };
     }
 }
+
+// ============================================================================
+// OCA Settings
+// ============================================================================
+
+export interface OCASettings {
+    environment: 'testing' | 'production';
+    username: string;
+    password: string;
+    accountNumber: string;
+    cuit: string;
+    operativaPP: string;
+    operativaPS: string;
+    originAddress: string;
+    originNumber: string;
+    originFloor: string;
+    originApartment: string;
+    originZip: string;
+    originCity: string;
+    originProvince: string;
+    originEmail: string;
+    originObservations: string;
+    defaultDimensions: {
+        width: number;
+        height: number;
+        depth: number;
+    };
+    defaultTimeframe: string;
+}
+
+export async function getOCASettings(): Promise<OCASettings> {
+    try {
+        const settings = await prisma.setting.findMany({
+            where: {
+                key: {
+                    startsWith: 'oca_'
+                }
+            }
+        });
+
+        const getValue = (key: string, defaultValue: string = ''): string => {
+            const setting = settings.find(s => s.key === key);
+            return setting?.value || defaultValue;
+        };
+
+        const dimensions = JSON.parse(getValue('oca_default_dimensions', '{"width":10,"height":10,"depth":10}'));
+
+        return {
+            environment: getValue('oca_environment', 'testing') as 'testing' | 'production',
+            username: getValue('oca_username'),
+            password: getValue('oca_password'),
+            accountNumber: getValue('oca_account'),
+            cuit: getValue('oca_cuit'),
+            operativaPP: getValue('oca_operativa_pp'),
+            operativaPS: getValue('oca_operativa_ps'),
+            originAddress: getValue('oca_origin_address'),
+            originNumber: getValue('oca_origin_number'),
+            originFloor: getValue('oca_origin_floor'),
+            originApartment: getValue('oca_origin_apartment'),
+            originZip: getValue('oca_origin_zip'),
+            originCity: getValue('oca_origin_city'),
+            originProvince: getValue('oca_origin_province'),
+            originEmail: getValue('oca_origin_email'),
+            originObservations: getValue('oca_origin_observations'),
+            defaultDimensions: dimensions,
+            defaultTimeframe: getValue('oca_default_timeframe', '1'),
+        };
+    } catch (error) {
+        console.error("Error getting OCA settings:", error);
+        return {
+            environment: 'testing',
+            username: '',
+            password: '',
+            accountNumber: '',
+            cuit: '',
+            operativaPP: '',
+            operativaPS: '',
+            originAddress: '',
+            originNumber: '',
+            originFloor: '',
+            originApartment: '',
+            originZip: '',
+            originCity: '',
+            originProvince: '',
+            originEmail: '',
+            originObservations: '',
+            defaultDimensions: { width: 10, height: 10, depth: 10 },
+            defaultTimeframe: '1',
+        };
+    }
+}
+
+export async function updateOCASettings(settings: OCASettings) {
+    try {
+        const updates = [
+            { key: 'oca_environment', value: settings.environment, desc: 'Ambiente OCA' },
+            { key: 'oca_username', value: settings.username, desc: 'Usuario e-Pak' },
+            { key: 'oca_password', value: settings.password, desc: 'Contraseña e-Pak' },
+            { key: 'oca_account', value: settings.accountNumber, desc: 'Número de cuenta OCA' },
+            { key: 'oca_cuit', value: settings.cuit, desc: 'CUIT del cliente' },
+            { key: 'oca_operativa_pp', value: settings.operativaPP, desc: 'Operativa Puerta a Puerta' },
+            { key: 'oca_operativa_ps', value: settings.operativaPS, desc: 'Operativa Puerta a Sucursal' },
+            { key: 'oca_origin_address', value: settings.originAddress, desc: 'Dirección de origen' },
+            { key: 'oca_origin_number', value: settings.originNumber, desc: 'Número de dirección' },
+            { key: 'oca_origin_floor', value: settings.originFloor, desc: 'Piso' },
+            { key: 'oca_origin_apartment', value: settings.originApartment, desc: 'Departamento' },
+            { key: 'oca_origin_zip', value: settings.originZip, desc: 'Código postal de origen' },
+            { key: 'oca_origin_city', value: settings.originCity, desc: 'Ciudad de origen' },
+            { key: 'oca_origin_province', value: settings.originProvince, desc: 'Provincia de origen' },
+            { key: 'oca_origin_email', value: settings.originEmail, desc: 'Email de contacto' },
+            { key: 'oca_origin_observations', value: settings.originObservations, desc: 'Observaciones' },
+            { key: 'oca_default_dimensions', value: JSON.stringify(settings.defaultDimensions), desc: 'Dimensiones por defecto' },
+            { key: 'oca_default_timeframe', value: settings.defaultTimeframe, desc: 'Franja horaria por defecto' },
+        ];
+
+        await prisma.$transaction(
+            updates.map(({ key, value, desc }) =>
+                prisma.setting.upsert({
+                    where: { key },
+                    update: { value },
+                    create: { key, value, description: desc },
+                })
+            )
+        );
+
+        // Clear OCA service cache
+        const { ocaService } = await import('@/lib/oca');
+        ocaService.clearCache();
+
+        revalidatePath("/admin/settings");
+        return { success: true };
+    } catch (error) {
+        console.error("Error updating OCA settings:", error);
+        return { success: false, error: "Failed to update OCA settings" };
+    }
+}

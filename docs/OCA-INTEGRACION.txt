@@ -1,0 +1,538 @@
+Desarrollo de soluciones logísticas e-PAK
+Te presentamos las herramientas tecnológicas para potenciar tu negocio y mejorar tus operaciones logísticas. En este espacio vas a tener disponible documentación con las respuestas de los métodos, son en formato XML. Para obtener el WSDL (contrato) de cada uno de los Web Services basta con agregar “?wsdl” al final de la URL de los mismos, de la siguiente manera: http://webservice.oca.com.ar/ePak_tracking/Oep_TrackEPak.asmx?wsdl
+
+
+Seleccionar método
+Pasos básicos de gestión de envíos
+A esta sección incorporar el siguiente detalle:
+
+Crear usuario e-Pak
+Para utilizar algunas de las consultas y métodos de nuestros web services se debe contar con un usuario de la aplicación e-Pak (https://www5.oca.com.ar/ocaepak)
+Cotizar envío
+Opcional. Permite conocer el valor de un envío antes de crearlo.
+Obtener sucursales
+Opcional. Esta consulta es necesaria para conocer las sucursales habilitadas para ser seleccionadas como punto de origen o destino del envío a crear.
+Obtener centros de costo
+Opcional. Esta consulta retorna un valor de Centro de Costo que representa un identificador de la dirección de rendición de las devoluciones al remitente.
+Crear envío
+Obtener etiquetas
+Cotizar envío
+Descripción
+El método retorna el costo del envío y los tiempos de entrega.
+
+URL
+http://webservice.oca.com.ar/ePak_tracking/Oep_TrackEPak.asmx/Tarifar_Envio_Corporativo
+
+Método
+GET/ POST / SOAP / SOAP 1.2
+
+Parámetros
+Cuit
+Descripción: CUIT registrado en OCA. Debe incluir los guiones
+Tipo: STRING
+Opcional: No
+Formato: ##-########-#
+Operativa
+Descripción: Tipo de servicio a cotizar
+Tipo: INT
+Opcional: No
+PesoTotal
+Descripción: Peso Total del envío expresado en kilogramos
+Tipo: DECIMAL
+Opcional: No
+Ejemplo: 0.5
+VolumenTotal
+Descripción: Volumen Total del envío expresado en metros cúbicos
+Tipo: DECIMAL
+Opcional: No
+Ejemplo: 0.5
+CodigoPostalOrigen
+Descripción: Código Postal de origen
+Tipo: INT
+Opcional: No
+CodigoPostalDestino
+Descripción: Código Postal de destino
+Tipo: INT
+Opcional: No
+CantidadPaquetes
+Descripción: Cantidad de Paquetes que componen el envío
+Tipo: INT
+Opcional: No
+ValorDeclarado
+Descripción: Valor monetario del envío
+Tipo: INT
+Opcional: No
+Ejemplo: 150
+Obtener sucursales
+Descripción
+El método retorna todas las Sucursales (Centros de Imposición y Agentes Oficiales) que atienden un Código Postal dado. Se retorna, para cada una de ellas, los servicios que brindan, pudiendo ser estos: Admisión de Paquetes y/o Entrega de Paquetes.
+
+ACLARACIÓN: Sólo las Sucursales que posean el servicio de Admisión de Paquetes pueden ser elegibles como punto de despacho de los envíos (origen). Sólo las Sucursales que posean el servicio de Entrega de Paquetes pueden ser elegibles como punto de retiro de los envíos (destino).
+
+URL
+http://webservice.oca.com.ar/epak_tracking/Oep_TrackEPak.asmx/GetCentrosImposicionConServiciosByCP
+
+Método
+GET/ POST / SOAP / SOAP 1.2
+
+Parámetros
+CodigoPostal
+Descripción: Código Postal
+Tipo: INT
+Opcional: No
+Obtener centros de costo
+Descripción
+El método retorna los Centros de Costo asignados a la Operativa indicada
+
+URL
+http://webservice.oca.com.ar/oep_tracking/Oep_Track.asmx/GetCentroCostoPorOperativa
+
+Método
+GET/ POST / SOAP / SOAP 1.2
+
+Parámetros
+CUIT
+Descripción: CUIT del cliente
+Tipo: STRING
+Opcional: No
+Ejemplo: 32-23521458-1 [con guiones]
+Operativa
+Descripción: Nro. de Operativa
+Tipo: INT
+Opcional: No
+Crear envío
+Descripción
+El método recibe la información necesaria para la creación de una Orden de Retiro/Admisión.
+
+URL
+http://webservice.oca.com.ar/ePak_tracking/Oep_TrackEPak.asmx/IngresoORMultiplesRetiros
+Métodos
+GET / POST / SOAP / SOAP 1.2
+
+Parámetros
+usr
+Descripción: Usuario de e-Pak
+Tipo: STRING
+Opcional: No
+psw
+Descripción: Password de acceso a e-Pak
+Tipo: STRING
+Opcional: No
+XML_Datos
+Descripción: XML con los datos de Retiro, Entrega y características de los paquetes.
+Tipo: SRING
+Opcional: No
+ConfirmarRetiro
+Descripción: Valores posibles True o False. Si se envía False, el envío quedará alojado en el Carrito de Envíos de e-Pak a la espera de la confirmación del mismo. Si se envía True, la confirmación será instantánea.
+Tipo: BOOLEAN
+Opcional: No
+ArchivoCliente
+Descripción: De uso interno, no completar
+ArchivoProceso
+Descripción: De uso interno, no completar
+Ejemplo
+            <?xml version="1.0" encoding="iso-8859-1" standalone="yes"?> 
+
+              <ROWS> 
+
+                <cabecera ver="2.0" nrocuenta="111757/001" /> 
+
+                <origenes> 
+
+                  <origen calle="La Rioja" nro="300" piso="" depto="" cp="1215" 
+
+                    localidad="CAPITAL FEDERAL" provincia="CAPITAL FEDERAL" contacto="" 
+
+                    email="test@oca.com.ar" solicitante="" observaciones="" centrocosto="0" 
+
+                    idfranjahoraria="1" idcentroimposicionorigen="0" fecha="20151015"> 
+
+                    <envios> 
+
+                      <envio idoperativa="252014" nroremito="Envio1" > 
+
+                        <destinatario apellido="Fernandez" nombre="Martin" calle="BALCARCE" nro="50" 
+
+                          piso="" depto="" localidad="CAPITAL FEDERAL" provincia="CAPITAL FEDERAL" 
+
+                          cp="1214" telefono="49569622" email="test@oca.com.ar" idci="0" 
+
+                          celular="1121877788" observaciones="Prueba" /> 
+
+                        <paquetes> 
+
+                          <paquete alto="10" ancho="10" largo="10" peso="1" valor="10" cant="1" /> 
+
+                        </paquetes> 
+
+                      </envio> 
+
+                    </envios> 
+
+                  </origen> 
+
+                </origenes> 
+
+              </ROWS> 
+            
+Estructura XML
+Cabecera	ver	nrocuenta
+ver	3	"2.0" (Dato fijo)
+nrocuenta	10	Obligatorio, corresponde al Nro. de cuenta habilitado en OCA.
+Origen		
+calle	30	Obligatorio
+nro	5	Obligatorio
+piso	2	Opcional
+depto	4	Opcional
+cp	4	Obligatorio
+localidad	30	Obligatorio
+provincia	30	Obligatorio
+contacto	30	Opcional
+email	100	Obligatorio sólo para Orden de Retiro
+solicitante	30	Opcional
+observaciones	100	Obligatorio sólo para Orden de Retiro
+centrocosto	10	Obligatorio, corresponde al número de centro de costo habilitado en OCA para las sucursales del cliente habilitados en la operativa. Este dato se extrae desde el método “GetCentroCostoPorOperativa”
+idfranjahoraria	1	Obligatorio. Valores Posibles:
+VALOR	DESCRIPCION
+1	De 8 a 17
+2	De 8 a 12
+3	De 14 a 17
+idcentroimposicionorigen	3	Obligatorio sólo para Admisión en Sucursal. Corresponde al ID Centro Imposicion OCA que va admitir el envío. La lista de Centros de Imposiciones está disponible en el método “GetCentrosImposicionConServiciosByCP”.
+fecha	10	Obligatorio. Corresponde a la fecha de Admisión o Retiro según Operativa. Formato “AAAAMMDD”
+Envíos		
+idoperativa	6	Obligatorio, corresponde a la operativa del cliente
+nroremito	30	Obligatorio, corresponde al remito del cliente
+Destinatario		
+apellido	30	Obligatorio
+nombre	30	Obligatorio
+calle	30	Obligatorio
+nro	5	Obligatorio
+piso	6	Opcional
+depto	4	Opcional
+localidad	30	Obligatorio
+provincia	30	Obligatorio
+cp	4	Obligatorio
+télefono	30	Opcional
+email	100	Opcional
+idci	3	Obligatorio sólo para entrega en Sucursal. Corresponde al ID Centro Imposicion OCA. La lista de Centros de Imposiciones está disponible en el método “GetCentrosImposicionConServiciosByCP”.
+celular	15	No es un dato obligatorio, pero de existir y para operativas puerta a sucursal, sistema envía un SMS cuando está en la sucursal destino.
+observaciones	100	Opcional
+Paquetes		
+alto	9.2	Obligatorio, decimales separado por punto. Expresado en centímetros.
+ancho	9.2	Obligatorio, decimales separado por punto. Expresado en centímetros.
+largo	9.2	Obligatorio, decimales separado por punto. Expresado en centímetros.
+peso	9.2	Obligatorio, decimales separado por punto. Expresado en kilogramos.
+valor	9.2	Obligatorio sólo para operativas con Seguro OCA, para el resto debe ingresar en 0 (cero)
+cant	10	"1" (Dato fijo)
+Crear envío e-Pak Salud
+Descripción
+El método recibe la información necesaria para la creación de una Orden de Retiro de e-Pak Salud.
+
+URL
+http://webservice.oca.com.ar/ePak_tracking/Oep_TrackEPak.asmx/IngresoORMultiplesRetiros
+Métodos
+GET / POST / SOAP / SOAP 1.2
+
+Parámetros
+usr
+Descripción: Usuario de e-Pak
+Tipo: STRING
+Opcional: No
+psw
+Descripción: Password de acceso a e-Pak
+Tipo: STRING
+Opcional: No
+XML_Datos
+Descripción: XML con los datos de Retiro, Entrega y características de los paquetes.
+Tipo: SRING
+Opcional: No
+ConfirmarRetiro
+Descripción: Valores posibles True o False. Si se envía False, el envío quedará alojado en el Carrito de Envíos de e-Pak a la espera de la confirmación del mismo. Si se envía True, la confirmación será instantánea.
+Tipo: BOOLEAN
+Opcional: No
+ArchivoCliente
+Descripción: De uso interno, no completar
+ArchivoProceso
+Descripción: De uso interno, no completar
+Ejemplo
+            <?xml version="1.0" encoding="iso-8859-1" standalone="yes"?> 
+
+              <ROWS> 
+
+                <cabecera ver="2.0" nrocuenta="111757/001" /> 
+
+                <origenes> 
+
+                  <origen calle="La Rioja" nro="300" piso="" depto="" cp="1215" 
+
+                    localidad="CAPITAL FEDERAL" provincia="CAPITAL FEDERAL" contacto="" 
+
+                    email="test@oca.com.ar" solicitante="" observaciones="" centrocosto="0" 
+
+                    idfranjahoraria="1" idcentroimposicionorigen="0" fecha="20151015"> 
+
+                    <envios> 
+
+                      <envio idoperativa="252014" nroremito="Envio1" cantidadremitos="2" > 
+
+                        <destinatario apellido="Fernandez" nombre="Martin" calle="BALCARCE" nro="50" 
+
+                          piso="" depto="" localidad="CAPITAL FEDERAL" provincia="CAPITAL FEDERAL" 
+
+                          cp="1214" telefono="49569622" email="test@oca.com.ar" idci="0" 
+
+                          celular="1121877788" observaciones="Prueba" /> 
+
+                        <paquetes> 
+
+                          <paquete alto="10" ancho="10" largo="10" peso="1" valor="10" cant="1" /> 
+
+                        </paquetes> 
+
+                      </envio> 
+
+                    </envios> 
+
+                  </origen> 
+
+                </origenes> 
+
+              </ROWS> 
+            
+Estructura XML
+Cabecera	ver	nrocuenta
+ver	3	"2.0" (Dato fijo)
+nrocuenta	10	Obligatorio, corresponde al Nro. de cuenta habilitado en OCA.
+Origen		
+calle	30	Obligatorio
+nro	5	Obligatorio
+piso	2	Opcional
+depto	4	Opcional
+cp	4	Obligatorio
+localidad	30	Obligatorio
+provincia	30	Obligatorio
+contacto	30	Opcional
+email	100	Obligatorio sólo para Orden de Retiro
+solicitante	30	Opcional
+observaciones	100	Obligatorio sólo para Orden de Retiro
+centrocosto	10	Obligatorio, corresponde al número de centro de costo habilitado en OCA para las sucursales del cliente habilitados en la operativa. Este dato se extrae desde el método “GetCentroCostoPorOperativa”
+idfranjahoraria	1	Obligatorio. Valores Posibles:
+VALOR	DESCRIPCION
+1	De 8 a 17
+2	De 8 a 12
+3	De 14 a 17
+idcentroimposicionorigen	3	Obligatorio sólo para Admisión en Sucursal. Corresponde al ID Centro Imposicion OCA que va admitir el envío. La lista de Centros de Imposiciones está disponible en el método “GetCentrosImposicionConServiciosByCP”.
+fecha	10	Obligatorio. Corresponde a la fecha de Admisión o Retiro según Operativa. Formato “AAAAMMDD”
+Envíos		
+idoperativa	6	Obligatorio, corresponde a la operativa del cliente
+nroremito	30	Obligatorio, corresponde al remito del cliente
+cantidadremitos	3	Obligatorio, corresponde la cantidad de remitos que acompañaran al envío
+Destinatario		
+apellido	30	Obligatorio
+nombre	30	Obligatorio
+calle	30	Obligatorio
+nro	5	Obligatorio
+piso	6	Opcional
+depto	4	Opcional
+localidad	30	Obligatorio
+provincia	30	Obligatorio
+cp	4	Obligatorio
+télefono	30	Opcional
+email	100	Opcional
+idci	3	Obligatorio sólo para entrega en Sucursal. Corresponde al ID Centro Imposicion OCA. La lista de Centros de Imposiciones está disponible en el método “GetCentrosImposicionConServiciosByCP”.
+celular	15	No es un dato obligatorio, pero de existir y para operativas puerta a sucursal, sistema envía un SMS cuando está en la sucursal destino.
+observaciones	100	Opcional
+Paquetes		
+alto	9.2	Obligatorio, decimales separado por punto. Expresado en centímetros.
+ancho	9.2	Obligatorio, decimales separado por punto. Expresado en centímetros.
+largo	9.2	Obligatorio, decimales separado por punto. Expresado en centímetros.
+peso	9.2	Obligatorio, decimales separado por punto. Expresado en kilogramos.
+valor	9.2	Obligatorio sólo para operativas con Seguro OCA, para el resto debe ingresar en 0 (cero)
+cant	10	"1" (Dato fijo)
+Obtener etiquetas
+Etiquetas HTML
+Descripción
+El método retorna un HTML que representa una etiqueta con los datos del envío. Si se indica el Nro. de Orden de Retiro/Admisión y no se indica el Nro. de Envío, devuelve todas las etiquetas asociadas a la Orden indicada. Caso contrario, devuelve sólo la etiqueta del envío indicado.
+
+URL
+Tamaño A4: http://webservice.oca.com.ar/epak_tracking/Oep_Trackepak.asmx/GetHtmlDeEtiquetasPorOrdenOrNumeroEnvio
+Tamaño etiquetas 10x15cm: http://webservice.oca.com.ar/epak_tracking/Oep_Trackepak.asmx/GetHtmlDeEtiquetasPorOrdenOrNumeroEnvioParaEtiquetadora
+Método
+GET / POST / SOAP / SOAP 1.2
+
+Parámetros
+idOrdenRetiro
+Descripción: Nro. de Orden de Retiro/Admisión
+Tipo: INT
+Opcional: Si. Obligatorio si no se indica numeroEnvio.
+nroEnvio
+Descripción: Número de Envío [19 dígitos]
+Tipo: STRING
+Opcional: Si. Obligatorio si no se indica ordenRetiro.
+Etiquetas PDF
+Descripción
+El método retorna el binario en Base64 de un PDF que representa una etiqueta con los datos del envío. Si se indica el Nro. de Orden de Retiro/Admisión y no se indica el Nro. de Envío, devuelve todas las etiquetas asociadas a la Orden indicada. Caso contrario, devuelve sólo la etiqueta del envío indicado.
+
+URL
+Tamaño A4: http://webservice.oca.com.ar/epak_tracking/Oep_Trackepak.asmx/GetPdfDeEtiquetasPorOrdenOrNumeroEnvio
+Tamaño etiquetas 10 x 15 cm: http://webservice.oca.com.ar/epak_tracking/Oep_Trackepak.asmx/GetPdfDeEtiquetasPorOrdenOrNumeroEnvioParaEtiquetadora
+Método
+GET / POST / SOAP / SOAP 1.2
+
+Parámetros
+idOrdenRetiro
+Descripción: Nro. de Orden de Retiro/Admisión
+Tipo: INT
+Opcional: Si
+nroEnvio
+Descripción: Nro. de Envío [19 dígitos]
+Tipo: STRING
+Opcional: Si
+logisticaInversa
+Descripción: Permite indicar si el envío es de Logística Inversa
+Tipo: STRING
+Opcional: Si
+Valores Posibles:
+true
+false
+Etiquetas ZPL
+Descripción
+Este  método permite obtener las etiquetas de los envíos en formato ZPL para la impresión en etiquetadoras tipo Zebra. Tamaño de etiquetas: 10 x 15 cm.
+
+URL
+http://webservice.oca.com.ar/epak_tracking/Oep_Trackepak.asmx/ObtenerEtiquetasZPL
+Método
+GET / POST / SOAP / SOAP 1.2
+
+Parámetros
+ordenRetiro
+Descripción: Nro. de Orden de Retiro/Admisión
+Tipo: INT
+Opcional: Si
+numeroEnvio
+Descripción: Nro. de Envío [19 dígitos]
+Tipo: STRING
+Opcional: Si
+numeroBulto
+Descripción: Nro. de Bulto
+Tipo: INT
+Opcional: Si
+EJEMPLO DE ETIQUETA
+ejemplo_etiqueta
+Anular envío
+Descripción
+El método permite anular una Orden de Retiro/Admisión.
+
+URL
+http://webservice.oca.com.ar/ePak_tracking/Oep_TrackEPak.asmx/AnularOrdenGenerada
+
+Método
+GET/ POST / SOAP / SOAP 1.2
+
+Parámetros
+usr
+Descripción: Usuario de e-Pak
+Tipo: STRING
+Opcional: No
+psw
+Descripción: Password de acceso a e-Pak
+Tipo: STRING
+Opcional: No
+idOrdenRetiro
+Descripción: XML con los datos de Retiro, Entrega y características de los paquetes.
+Tipo: STRING
+Opcional: No
+MENSAJES DE RESPUESTA POSIBLES
+#		
+100	Anulación exitosa
+110	Usuario inválido
+120	La Orden no fue generada por el usuario indicado
+130	La Orden no puede ser anulada porque se encuentra en un estado incorrecto
+Obtener último estado de un envío
+Descripción
+El método retorna el último estado alcanzado por un envío (además de otros datos del mismo).Se puede consultar por un envío en particular o por una Orden de Retiro. En este último caso la consulta devolverá esta información para todos los envíos asociados a la misma.
+
+URL
+http://webservice.oca.com.ar/ePak_tracking/Oep_TrackEPak.asmx/GetEnvioEstadoActual
+
+Método
+GET/ POST / SOAP / SOAP 1.2
+
+Parámetros
+numeroEnvio
+Descripción: Nro. de Envío
+Tipo: STRING
+Opcional: No
+ordenRetiro
+Descripción: Nro. de Orden de Retiro
+Tipo: INT
+Opcional: Si
+Obtener historial completo de un envío
+Descripción
+El método retorna el tracking del envío indicado, o sea, el historial de estados. Si se indica el Nro. de Pieza no es necesario indicar Nro. de Documento del Cliente ni Nro. de Envío. Caso contrario, estos dos últimos son obligatorios.
+
+URL
+http://webservice.oca.com.ar/ePak_tracking/Oep_TrackEPak.asmx/Tracking_Pieza
+
+Método
+GET/ POST / SOAP / SOAP 1.2
+
+Parámetros
+NroDocumentoCliente
+Descripción: Nro. de Documento interno del cliente
+Tipo: STRING
+Opcional: Si
+CUIT
+Descripción: CUIT del cliente [con guiones]
+Tipo: STRING
+Opcional: Si
+Ejemplo: 32-25445889-2
+Pieza
+Descripción: Nro. de Envío [19 dígitos]
+Tipo: STRING
+Opcional: Si
+Obtener listado de envíos creados
+Descripción
+El método retorna todos los envíos generados para un determinado rango de tiempo.
+
+URL
+http://webservice.oca.com.ar/ePak_tracking/Oep_TrackEPak.asmx/List_Envios
+
+Método
+GET/ POST / SOAP / SOAP 1.2
+
+Parámetros
+CUIT
+Descripción: CUIT del cliente [con guiones]
+Tipo: STRING
+Opcional: Si
+Ejemplo: 32-25445889-2
+FechaDesde
+Descripción: Fecha desde la cual se quiere obtener información. En formato DD-MM-AAAA
+Tipo: STRING
+Opcional: Si
+Ejemplo: 15-02-2015
+FechaHasta
+Descripción: Fecha hasta la cual se quiere obtener información. En formato DD-MM-AAAA
+Tipo: STRING
+Opcional: Si
+Ejemplo: 25-02-2015
+Datos para pruebas
+URLS
+http://webservice.oca.com.ar/ePak_Tracking_TEST/
+http://webservice.oca.com.ar/OEP_Tracking_TEST/
+USUARIOS
+test@oca.com.ar
+CLAVE
+123456
+NRO. DE CUENTA
+111757/001
+OPERATIVAS
+Puerta a Puerta: 64665
+Puerta a Sucursal: 62342
+Sucursal a Puerta: 94584
+Sucursal a Sucursal: 78254
+Logística Inversa Puerta a Puerta: 260708
+Logística Inversa Sucursal a Puerta: 260709
+CUIT
+30-53625919-4

@@ -21,8 +21,12 @@ interface CheckoutData {
         zip: string;
     };
     shippingOption?: {
-        name: string;
+        type?: 'puerta-puerta' | 'puerta-sucursal';
         cost: number;
+        service?: string;
+        estimatedDelivery?: string;
+        branchId?: string;
+        branchName?: string;
     };
     pointsToRedeem?: number;
 }
@@ -147,7 +151,7 @@ export async function createModoPreference(data: CheckoutData) {
                 shippingAddress: data.shippingAddress ? `${data.shippingAddress.address}, ${data.shippingAddress.city}, ${data.shippingAddress.province} (${data.shippingAddress.zip})` : null,
                 shippingZip: data.shippingAddress?.zip,
                 shippingCost: data.shippingOption?.cost,
-                shippingMethod: data.shippingOption?.name,
+                shippingMethod: data.shippingOption ? JSON.stringify(data.shippingOption) : null,
                 items: {
                     create: data.items.map(item => ({
                         productId: item.productId,

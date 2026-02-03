@@ -121,16 +121,24 @@ model Shipment {
   id                String         @id @default(cuid())
   orderId           String         @unique
   trackingNumber    String?        @unique
-  carrier           String         @default("Correo Argentino")
+  carrier           String         @default("OCA")
   service           String
   cost              Decimal
   status            ShipmentStatus @default(PENDING)
   labelUrl          String?
   estimatedDelivery DateTime?
-  metadata          String?
-  createdAt         DateTime       @default(now())
-  updatedAt         DateTime       @updatedAt
-  order             Order          @relation(fields: [orderId], references: [id])
+
+  // Campos específicos de OCA
+  ocaOrderId    String? // ID de Orden de Retiro OCA
+  ocaOperativa  String? // Código de operativa (463196, 463197)
+  ocaBranchId   String? // ID de sucursal OCA (para Puerta a Sucursal)
+  ocaBranchName String? // Nombre de sucursal OCA
+  ocaRemito     String? // Número de remito interno
+
+  metadata  String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  order     Order    @relation(fields: [orderId], references: [id])
 }
 
 model Setting {

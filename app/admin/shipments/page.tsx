@@ -44,7 +44,7 @@ export default async function ShipmentsPage() {
                 <div>
                     <h1 className="text-3xl font-bold mb-2">Envíos</h1>
                     <p className="text-[hsl(var(--text-secondary))]">
-                        Gestiona todos los envíos de Correo Argentino
+                        Gestiona todos los envíos de OCA e-Pak
                     </p>
                 </div>
             </div>
@@ -122,6 +122,9 @@ export default async function ShipmentsPage() {
                                     Cliente
                                 </th>
                                 <th className="text-left p-4 text-sm font-semibold text-[hsl(var(--text-secondary))]">
+                                    Carrier
+                                </th>
+                                <th className="text-left p-4 text-sm font-semibold text-[hsl(var(--text-secondary))]">
                                     Servicio
                                 </th>
                                 <th className="text-left p-4 text-sm font-semibold text-[hsl(var(--text-secondary))]">
@@ -170,7 +173,20 @@ export default async function ShipmentsPage() {
                                             </div>
                                         </td>
                                         <td className="p-4">
+                                            <span className={`text-xs px-2 py-1 rounded-full ${shipment.carrier === 'OCA'
+                                                ? 'bg-orange-500/20 text-orange-400'
+                                                : 'bg-blue-500/20 text-blue-400'
+                                                }`}>
+                                                {shipment.carrier}
+                                            </span>
+                                        </td>
+                                        <td className="p-4">
                                             <span className="text-sm">{shipment.service}</span>
+                                            {shipment.ocaBranchName && (
+                                                <p className="text-xs text-[hsl(var(--text-tertiary))] mt-1">
+                                                    Sucursal: {shipment.ocaBranchName}
+                                                </p>
+                                            )}
                                         </td>
                                         <td className="p-4">
                                             <div className="flex items-center gap-2">
@@ -184,12 +200,26 @@ export default async function ShipmentsPage() {
                                             {new Date(shipment.createdAt).toLocaleDateString('es-AR')}
                                         </td>
                                         <td className="p-4">
-                                            <Link
-                                                href={`/admin/shipments/${shipment.id}`}
-                                                className="text-sm text-[hsl(var(--accent-primary))] hover:underline"
-                                            >
-                                                Ver Detalles
-                                            </Link>
+                                            <div className="flex items-center gap-2">
+                                                <Link
+                                                    href={`/admin/shipments/${shipment.id}`}
+                                                    className="text-sm text-[hsl(var(--accent-primary))] hover:underline"
+                                                >
+                                                    Ver Detalles
+                                                </Link>
+                                                {shipment.carrier === 'OCA' && shipment.ocaOrderId && (
+                                                    <>
+                                                        <span className="text-[hsl(var(--text-tertiary))]">•</span>
+                                                        <a
+                                                            href={`/api/oca/label/${shipment.id}`}
+                                                            className="text-sm text-green-400 hover:underline"
+                                                            title="Descargar etiqueta"
+                                                        >
+                                                            Etiqueta
+                                                        </a>
+                                                    </>
+                                                )}
+                                            </div>
                                         </td>
                                     </tr>
                                 ))

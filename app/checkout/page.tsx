@@ -5,7 +5,7 @@ import { useCart } from "@/context/CartContext";
 import { ShoppingBag, CreditCard, User, Mail, ArrowRight, Loader2, MapPin, Coins } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { ShippingCalculator } from "@/components/checkout/ShippingCalculator";
+import { OCAShippingCalculator } from "@/components/checkout/OCAShippingCalculator";
 import { createModoPreference } from "@/app/actions/modo";
 import { useCurrency } from "@/context/CurrencyContext";
 import { useSession } from "next-auth/react";
@@ -25,9 +25,17 @@ export default function CheckoutPage() {
         zip: ''
     });
 
-    // Calculate total weight from cart items (default 1kg per item if no weight)
+    // Calculate total weight from cart items (use product weight or default 1kg)
     const totalWeight = useMemo(() => {
-        return items.reduce((sum, item) => sum + (1 * item.quantity), 0); // Default 1kg per product
+        return items.reduce((sum, item) => {
+            const weight = item.weight ? Number(item.weight) : 1;
+            return sum + (weight * item.quantity);
+        }, 0);
+    }, [items]);
+
+    // Calculate total value for insurance
+    const totalValue = useMemo(() => {
+        return items.reduce((sum, item) => sum + (Number(item.price) * item.quantity), 0);
     }, [items]);
 
     const finalTotal = cartTotal + (shippingOption?.cost || 0);
@@ -42,6 +50,11 @@ export default function CheckoutPage() {
 
         if (items.length === 0) {
             setError('Tu carrito está vacío');
+            return;
+        }
+
+        if (!shippingOption) {
+            setError('Por favor seleccioná un método de envío');
             return;
         }
 
@@ -203,13 +216,14 @@ export default function CheckoutPage() {
                                 </div>
                             </div>
 
-                            {/* Shipping Calculator */}
-                            <ShippingCalculator
+                            {/* OCA Shipping Calculator */}
+                            <OCAShippingCalculator
                                 totalWeight={totalWeight}
+                                totalValue={totalValue}
+                                destinationZip={shippingAddress.zip}
                                 selectedOption={shippingOption}
                                 onSelectShipping={(option) => {
                                     setShippingOption(option);
-                                    setShippingAddress({ ...shippingAddress, zip: '' });
                                 }}
                             />
 
