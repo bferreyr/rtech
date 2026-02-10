@@ -1,5 +1,4 @@
 import { prisma } from '@/lib/prisma';
-import { getOCATracking } from '@/app/actions/oca';
 import { Package, Truck, MapPin, Calendar, DollarSign, Building2, FileText, Hash } from 'lucide-react';
 import Link from 'next/link';
 import { notFound } from 'next/navigation';
@@ -29,16 +28,7 @@ export default async function ShipmentDetailPage({ params }: { params: Promise<{
         notFound();
     }
 
-    // Get OCA tracking info if available
-    let trackingData = null;
-    if (shipment.trackingNumber && shipment.carrier === 'OCA') {
-        const result = await getOCATracking(shipment.trackingNumber);
-        if (result.success) {
-            trackingData = result.tracking;
-        }
-    }
 
-    const isOCA = shipment.carrier === 'OCA';
 
     return (
         <div className="space-y-6">
@@ -53,8 +43,8 @@ export default async function ShipmentDetailPage({ params }: { params: Promise<{
                             Tracking: <code className="text-sm bg-white/5 px-2 py-1 rounded">{shipment.trackingNumber || 'Pendiente'}</code>
                         </p>
                         <span className={`text-xs px-2 py-1 rounded-full ${shipment.carrier === 'OCA'
-                                ? 'bg-orange-500/20 text-orange-400'
-                                : 'bg-blue-500/20 text-blue-400'
+                            ? 'bg-orange-500/20 text-orange-400'
+                            : 'bg-blue-500/20 text-blue-400'
                             }`}>
                             {shipment.carrier}
                         </span>
@@ -104,92 +94,9 @@ export default async function ShipmentDetailPage({ params }: { params: Promise<{
                         </div>
                     </div>
 
-                    {/* OCA Specific Info */}
-                    {isOCA && (
-                        <div className="glass-card p-6">
-                            <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
-                                <Package className="w-5 h-5 text-orange-400" />
-                                Información OCA
-                            </h2>
-                            <div className="grid grid-cols-2 gap-4">
-                                {shipment.ocaOrderId && (
-                                    <div>
-                                        <p className="text-sm text-[hsl(var(--text-secondary))] mb-1">ID Orden OCA</p>
-                                        <code className="text-sm bg-white/5 px-2 py-1 rounded">{shipment.ocaOrderId}</code>
-                                    </div>
-                                )}
-                                {shipment.ocaOperativa && (
-                                    <div>
-                                        <p className="text-sm text-[hsl(var(--text-secondary))] mb-1">Operativa</p>
-                                        <p className="font-medium">{shipment.ocaOperativa}</p>
-                                    </div>
-                                )}
-                                {shipment.ocaRemito && (
-                                    <div>
-                                        <p className="text-sm text-[hsl(var(--text-secondary))] mb-1">Remito</p>
-                                        <code className="text-sm bg-white/5 px-2 py-1 rounded">{shipment.ocaRemito}</code>
-                                    </div>
-                                )}
-                                {shipment.ocaBranchName && (
-                                    <div className="col-span-2">
-                                        <p className="text-sm text-[hsl(var(--text-secondary))] mb-1">Sucursal de Entrega</p>
-                                        <div className="flex items-center gap-2 mt-1">
-                                            <Building2 className="w-4 h-4 text-[hsl(var(--accent-secondary))]" />
-                                            <p className="font-medium">{shipment.ocaBranchName}</p>
-                                            {shipment.ocaBranchId && (
-                                                <code className="text-xs bg-white/5 px-2 py-0.5 rounded">ID: {shipment.ocaBranchId}</code>
-                                            )}
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        </div>
-                    )}
 
-                    {/* Tracking History */}
-                    {trackingData && (
-                        <div className="glass-card p-6">
-                            <h2 className="text-xl font-bold mb-4">Historial de Seguimiento</h2>
-                            <div className="space-y-1 mb-4">
-                                <p className="text-sm text-[hsl(var(--text-secondary))]">
-                                    Estado actual: <span className="font-medium text-[hsl(var(--text-primary))]">{trackingData.status}</span>
-                                </p>
-                                {trackingData.location && (
-                                    <p className="text-sm text-[hsl(var(--text-secondary))]">
-                                        Ubicación: <span className="font-medium text-[hsl(var(--text-primary))]">{trackingData.location}</span>
-                                    </p>
-                                )}
-                                {trackingData.estimatedDelivery && (
-                                    <p className="text-sm text-[hsl(var(--text-secondary))]">
-                                        Entrega estimada: <span className="font-medium text-[hsl(var(--text-primary))]">{trackingData.estimatedDelivery}</span>
-                                    </p>
-                                )}
-                            </div>
 
-                            {trackingData.events && trackingData.events.length > 0 && (
-                                <div className="space-y-4 mt-6">
-                                    <h3 className="font-semibold text-sm text-[hsl(var(--text-secondary))]">Eventos</h3>
-                                    {trackingData.events.map((event: any, index: number) => (
-                                        <div key={index} className="flex gap-4">
-                                            <div className="flex flex-col items-center">
-                                                <div className="w-3 h-3 rounded-full bg-[hsl(var(--accent-primary))]" />
-                                                {index < trackingData.events.length - 1 && (
-                                                    <div className="w-0.5 flex-1 bg-white/10 mt-2" style={{ minHeight: '40px' }} />
-                                                )}
-                                            </div>
-                                            <div className="flex-1 pb-4">
-                                                <p className="font-medium">{event.description || event.status}</p>
-                                                <p className="text-sm text-[hsl(var(--text-secondary))]">
-                                                    {event.location && `${event.location} • `}
-                                                    {event.timestamp ? new Date(event.timestamp).toLocaleString('es-AR') : event.date}
-                                                </p>
-                                            </div>
-                                        </div>
-                                    ))}
-                                </div>
-                            )}
-                        </div>
-                    )}
+
 
                     {/* Order Items */}
                     <div className="glass-card p-6">
@@ -227,7 +134,6 @@ export default async function ShipmentDetailPage({ params }: { params: Promise<{
                         trackingNumber={shipment.trackingNumber}
                         carrier={shipment.carrier}
                         status={shipment.status}
-                        ocaOrderId={shipment.ocaOrderId}
                     />
 
                     {/* Order Info */}

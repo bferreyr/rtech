@@ -23,7 +23,7 @@ const faqCategories = [
             },
             {
                 q: '¿Qué métodos de pago aceptan?',
-                a: 'Aceptamos pagos a través de MODO, que te permite pagar con tus billeteras virtuales y aplicaciones bancarias. Todos los pagos son procesados de forma segura.'
+                a: 'Actualmente estamos configurando nuestros métodos de pago. Por favor, contacta con soporte para procesar tu compra.'
             }
         ]
     },
@@ -84,7 +84,7 @@ const faqCategories = [
             },
             {
                 q: '¿Puedo pagar en cuotas?',
-                a: 'Sí, a través de MODO podés acceder a las promociones y cuotas que ofrezca tu banco o billetera virtual. Las opciones disponibles dependerán de tu medio de pago seleccionado.'
+                a: 'Las opciones de pago en cuotas estar\u00e1n disponibles pr\u00f3ximamente. Contactanos para conocer las opciones actuales.'
             },
             {
                 q: '¿Qué hago si mi pago fue rechazado?',

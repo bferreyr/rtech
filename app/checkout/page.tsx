@@ -2,11 +2,10 @@
 
 import { useState, useTransition, useMemo } from "react";
 import { useCart } from "@/context/CartContext";
-import { ShoppingBag, CreditCard, User, Mail, ArrowRight, Loader2, MapPin, Coins } from "lucide-react";
+import { ShoppingBag, CreditCard, User, Mail, ArrowRight, Loader2, MapPin, Coins, Truck } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
-import { OCAShippingCalculator } from "@/components/checkout/OCAShippingCalculator";
-import { createModoPreference } from "@/app/actions/modo";
+
 import { useCurrency } from "@/context/CurrencyContext";
 import { useSession } from "next-auth/react";
 
@@ -59,27 +58,9 @@ export default function CheckoutPage() {
         }
 
         startTransition(async () => {
-            const result = await createModoPreference({
-                email,
-                name,
-                items: items.map(item => ({
-                    productId: item.id,
-                    quantity: item.quantity,
-                    price: Number(item.price),
-                    title: item.name
-                })),
-                total: finalTotal,
-                shippingAddress,
-                shippingOption,
-                pointsToRedeem
-            });
-
-            if (result.success && result.initPoint) {
-                clearCart();
-                window.location.href = result.initPoint;
-            } else {
-                setError(result.error || 'Error al procesar el pago');
-            }
+            // TODO: Implement alternative payment method
+            // For now, just show an error
+            setError('El procesamiento de pagos está temporalmente deshabilitado. Por favor, contacta con soporte.');
         });
     };
 
@@ -216,16 +197,21 @@ export default function CheckoutPage() {
                                 </div>
                             </div>
 
-                            {/* OCA Shipping Calculator */}
-                            <OCAShippingCalculator
-                                totalWeight={totalWeight}
-                                totalValue={totalValue}
-                                destinationZip={shippingAddress.zip}
-                                selectedOption={shippingOption}
-                                onSelectShipping={(option) => {
-                                    setShippingOption(option);
-                                }}
-                            />
+                            {/* Shipping Options - Placeholder */}
+                            <div className="glass-card p-8">
+                                <div className="flex items-center gap-3 mb-6">
+                                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-400 to-purple-600 flex items-center justify-center">
+                                        <Truck className="w-5 h-5 text-white" />
+                                    </div>
+                                    <h2 className="text-2xl font-bold">Opciones de Envío</h2>
+                                </div>
+
+                                <div className="p-6 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                                    <p className="text-sm text-yellow-200">
+                                        Las opciones de envío están temporalmente deshabilitadas. Por favor, contacta con soporte para coordinar la entrega.
+                                    </p>
+                                </div>
+                            </div>
 
                             {/* Loyalty Points */}
                             {/* @ts-ignore */}
@@ -271,7 +257,7 @@ export default function CheckoutPage() {
                                 </div>
                             )}
 
-                            {/* Payment Method */}
+                            {/* Payment Method - Placeholder */}
                             <div className="glass-card p-8">
                                 <div className="flex items-center gap-3 mb-6">
                                     <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-[hsl(var(--accent-primary))] to-[hsl(var(--accent-secondary))] flex items-center justify-center">
@@ -280,16 +266,10 @@ export default function CheckoutPage() {
                                     <h2 className="text-2xl font-bold">Método de Pago</h2>
                                 </div>
 
-                                <div className="flex items-center gap-4 p-4 rounded-lg bg-white/5 border border-white/10">
-                                    <div className="w-12 h-12 bg-white rounded-lg flex items-center justify-center p-2">
-                                        <img src="https://brand.modo.com.ar/brand/logo-modo-black.svg" alt="MODO" className="w-full h-auto" />
-                                    </div>
-                                    <div>
-                                        <p className="font-semibold">MODO</p>
-                                        <p className="text-sm text-[hsl(var(--text-secondary))]">
-                                            Pagá con todas las billeteras y bancos
-                                        </p>
-                                    </div>
+                                <div className="p-6 rounded-lg bg-yellow-500/10 border border-yellow-500/20">
+                                    <p className="text-sm text-yellow-200">
+                                        El procesamiento de pagos está temporalmente deshabilitado. Por favor, contacta con soporte para completar tu compra.
+                                    </p>
                                 </div>
                             </div>
 
@@ -301,24 +281,14 @@ export default function CheckoutPage() {
 
                             <button
                                 type="submit"
-                                disabled={isPending}
+                                disabled={true}
                                 className="btn btn-primary w-full text-lg py-4 group disabled:opacity-50 disabled:cursor-not-allowed"
                             >
-                                {isPending ? (
-                                    <>
-                                        <Loader2 className="w-5 h-5 mr-2 animate-spin" />
-                                        Redirigiendo a MODO...
-                                    </>
-                                ) : (
-                                    <>
-                                        Pagar con MODO
-                                    </>
-                                )}
+                                Procesamiento de Pagos Deshabilitado
                             </button>
-                            <div className="flex items-center justify-center gap-2 mt-4 opacity-50">
-                                <p className="text-xs text-center">Pagos seguros procesados por</p>
-                                <img src="https://brand.modo.com.ar/brand/logo-modo-black.svg" alt="MODO" className="h-4 invert" />
-                            </div>
+                            <p className="text-xs text-center text-[hsl(var(--text-tertiary))] mt-4">
+                                Por favor, contacta con soporte para completar tu compra.
+                            </p>
                         </form>
                     </div>
 
