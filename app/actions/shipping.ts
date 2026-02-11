@@ -1,11 +1,11 @@
 'use server';
 
-import { correoArgentinoService } from '@/lib/correo-argentino';
+import { getCorreoArgentinoService } from '@/lib/correo-argentino';
 import { prisma } from '@/lib/prisma';
 
 export async function calculateShipping(destinationZip: string, weight: number, dimensions?: { width: number; height: number; depth: number }) {
     try {
-        const quotes = await correoArgentinoService.quoteShipment({
+        const quotes = await getCorreoArgentinoService().quoteShipment({
             destinationZip,
             weight,
             dimensions
@@ -54,7 +54,7 @@ export async function createShipmentForOrder(orderId: string, shippingData: {
         }
 
         // Create shipment
-        const shipmentData = await correoArgentinoService.createShipment({
+        const shipmentData = await getCorreoArgentinoService().createShipment({
             orderId,
             service: shippingData.serviceCode || shippingData.service,
             destinationAddress: shippingData.destinationAddress,
@@ -110,7 +110,7 @@ export async function createShipmentForOrder(orderId: string, shippingData: {
 
 export async function getShipmentTracking(trackingNumber: string) {
     try {
-        const trackingData = await correoArgentinoService.getTracking(trackingNumber);
+        const trackingData = await getCorreoArgentinoService().getTracking(trackingNumber);
         return { success: true, tracking: trackingData };
     } catch (error: any) {
         console.error('Get tracking error:', error);

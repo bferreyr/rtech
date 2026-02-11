@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { correoArgentinoService } from '@/lib/correo-argentino';
+import { getCorreoArgentinoService } from '@/lib/correo-argentino';
 import { prisma } from '@/lib/prisma';
 
 export async function POST(request: NextRequest) {
@@ -53,7 +53,7 @@ export async function POST(request: NextRequest) {
         }
 
         // Create shipment with Correo Argentino
-        const shipmentData = await correoArgentinoService.createShipment({
+        const shipmentData = await getCorreoArgentinoService().createShipment({
             orderId,
             service: serviceCode || service,
             destinationAddress,

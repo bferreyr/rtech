@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { correoArgentinoService } from '@/lib/correo-argentino';
+import { getCorreoArgentinoService } from '@/lib/correo-argentino';
 import { prisma } from '@/lib/prisma';
 
 export async function GET(
@@ -36,7 +36,7 @@ export async function GET(
         }
 
         // Get label from Correo Argentino
-        const labelBuffer = await correoArgentinoService.getLabel(shipment.trackingNumber);
+        const labelBuffer = await getCorreoArgentinoService().getLabel(shipment.trackingNumber);
 
         // Return PDF - Convert Buffer to Uint8Array for NextResponse compatibility
         return new NextResponse(new Uint8Array(labelBuffer), {

@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { correoArgentinoService } from '@/lib/correo-argentino';
+import { getCorreoArgentinoService } from '@/lib/correo-argentino';
 import { prisma } from '@/lib/prisma';
 
 export async function GET(
@@ -17,7 +17,7 @@ export async function GET(
         }
 
         // Get tracking info from Correo Argentino
-        const trackingData = await correoArgentinoService.getTracking(trackingNumber);
+        const trackingData = await getCorreoArgentinoService().getTracking(trackingNumber);
 
         // Update shipment status in database if exists
         const shipment = await prisma.shipment.findUnique({

@@ -316,8 +316,15 @@ class CorreoArgentinoService {
     }
 }
 
-// Export singleton instance
-export const correoArgentinoService = new CorreoArgentinoService();
+// Export factory function instead of singleton to avoid build-time initialization
+let serviceInstance: CorreoArgentinoService | null = null;
+
+export function getCorreoArgentinoService(): CorreoArgentinoService {
+    if (!serviceInstance) {
+        serviceInstance = new CorreoArgentinoService();
+    }
+    return serviceInstance;
+}
 
 // Export types
 export type {

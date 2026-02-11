@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { correoArgentinoService } from '@/lib/correo-argentino';
+import { getCorreoArgentinoService } from '@/lib/correo-argentino';
 
 export async function POST(request: NextRequest) {
     try {
@@ -21,7 +21,7 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        const quotes = await correoArgentinoService.quoteShipment({
+        const quotes = await getCorreoArgentinoService().quoteShipment({
             destinationZip,
             weight: parseFloat(weight),
             dimensions: dimensions ? {
