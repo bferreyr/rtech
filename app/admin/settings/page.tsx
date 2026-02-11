@@ -95,19 +95,31 @@ export default function AdminSettingsPage() {
                                 )}
                             </div>
 
-                            <div className="flex items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/10 opacity-70">
-                                <div className="relative inline-flex items-center cursor-not-allowed">
+                            <div className="flex items-center gap-3 p-4 rounded-xl bg-white/5 border border-white/10">
+                                <button
+                                    type="button"
+                                    onClick={() => setAutoUpdate(!autoUpdate)}
+                                    className="relative inline-flex items-center cursor-pointer"
+                                    disabled={isPending}
+                                >
                                     <input
                                         type="checkbox"
-                                        checked={true}
+                                        checked={autoUpdate}
                                         readOnly
                                         className="sr-only peer"
                                     />
-                                    <div className="w-11 h-6 bg-[hsl(var(--accent-primary))] rounded-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all after:translate-x-full"></div>
-                                </div>
+                                    <div className={`w-11 h-6 rounded-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all ${autoUpdate
+                                            ? 'bg-[hsl(var(--accent-primary))] after:translate-x-full'
+                                            : 'bg-gray-600 after:translate-x-0'
+                                        }`}></div>
+                                </button>
                                 <div className="flex flex-col">
-                                    <span className="text-sm font-bold">Actualización automática activada</span>
-                                    <span className="text-[10px] text-[hsl(var(--text-tertiary))]">Servicio de DolarApi siempre activo</span>
+                                    <span className="text-sm font-bold">
+                                        {autoUpdate ? 'Actualización automática activada' : 'Actualización manual'}
+                                    </span>
+                                    <span className="text-[10px] text-[hsl(var(--text-tertiary))]">
+                                        {autoUpdate ? 'Obtiene cotización desde DolarApi' : 'Ingresá el valor manualmente'}
+                                    </span>
                                 </div>
                             </div>
                         </div>

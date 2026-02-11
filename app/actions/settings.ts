@@ -9,13 +9,13 @@ const AUTO_UPDATE_KEY = "AUTO_UPDATE_RATE";
 
 export async function getExchangeRate() {
     try {
-        const [rateSetting] = await Promise.all([
+        const [rateSetting, autoUpdateSetting] = await Promise.all([
             prisma.setting.findUnique({ where: { key: EXCHANGE_RATE_KEY } }),
-            // AUTO_UPDATE is now always true conceptually, but we can still read it if we want
+            prisma.setting.findUnique({ where: { key: AUTO_UPDATE_KEY } }),
         ]);
 
-        // Forced to true as per user request
-        const isAutoUpdate = true;
+        // Read auto-update setting from database, default to true if not set
+        const isAutoUpdate = autoUpdateSetting ? autoUpdateSetting.value === 'true' : true;
         let rate = rateSetting ? parseFloat(rateSetting.value) : 1000;
 
         if (isAutoUpdate) {
@@ -48,8 +48,6 @@ export async function getExchangeRate() {
 
 export async function updateExchangeRate(rate: number, autoUpdate: boolean) {
     try {
-        const forcedAutoUpdate = true;
-
         await prisma.$transaction([
             prisma.setting.upsert({
                 where: { key: EXCHANGE_RATE_KEY },
@@ -62,10 +60,10 @@ export async function updateExchangeRate(rate: number, autoUpdate: boolean) {
             }),
             prisma.setting.upsert({
                 where: { key: AUTO_UPDATE_KEY },
-                update: { value: forcedAutoUpdate.toString() },
+                update: { value: autoUpdate.toString() },
                 create: {
                     key: AUTO_UPDATE_KEY,
-                    value: forcedAutoUpdate.toString(),
+                    value: autoUpdate.toString(),
                     description: "Whether to auto-update rate from DolarApi",
                 },
             }),
