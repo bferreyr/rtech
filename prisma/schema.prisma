@@ -94,25 +94,25 @@ model Order {
   userId            String
   
   // Información de contacto
-  customerName      String      // Nombre y apellido
-  customerEmail     String      // Email
-  customerPhone     String      // Teléfono
+  customerName      String?     // Nombre y apellido
+  customerEmail     String?     // Email
+  customerPhone     String?     // Teléfono
   
   // Dirección de envío
-  shippingAddress   String      // Dirección y altura
-  shippingProvince  String      // Provincia
-  shippingCity      String      // Ciudad
-  shippingZip       String      // Código postal
+  shippingAddress   String?     // Dirección y altura
+  shippingProvince  String?     // Provincia
+  shippingCity      String?     // Ciudad
+  shippingZip       String?     // Código postal
   shippingDetails   String?     // Descripción (casa, depto, piso, número)
   
   // Envío
-  shippingCost      Decimal
-  shippingMethod    String      @default("Correo Argentino")
+  shippingCost      Decimal?
+  shippingMethod    String?     @default("Correo Argentino")
   
   // Pago
-  paymentMethod     String      // "mercadopago" o "transferencia"
+  paymentMethod     String?     // "mercadopago" o "transferencia"
   paymentReceiptUrl String?     // URL del comprobante de pago
-  paymentStatus     String      @default("PENDING")
+  paymentStatus     String?     @default("PENDING")
   
   status            OrderStatus @default(PENDING)
   total             Decimal
