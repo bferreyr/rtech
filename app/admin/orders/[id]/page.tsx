@@ -103,7 +103,7 @@ export default async function OrderDetailPage({ params }: Props) {
                             </div>
                             <div className="bg-[color:var(--bg-tertiary)] rounded-lg p-4">
                                 <a
-                                    href={order.paymentReceiptUrl}
+                                    href={`/api/receipts/${order.paymentReceiptUrl.split('/').pop()}`}
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="flex items-center gap-3 hover:text-[color:var(--accent-primary)] transition-colors"
@@ -112,7 +112,7 @@ export default async function OrderDetailPage({ params }: Props) {
                                         <FileText className="w-12 h-12 text-[color:var(--text-secondary)]" />
                                     ) : (
                                         <Image
-                                            src={order.paymentReceiptUrl}
+                                            src={`/api/receipts/${order.paymentReceiptUrl.split('/').pop()}`}
                                             alt="Comprobante"
                                             width={200}
                                             height={200}
