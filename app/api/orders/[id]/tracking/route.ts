@@ -9,7 +9,7 @@ export async function PATCH(
     try {
         const session = await auth();
 
-        if (!session || !session.user || session.user.role !== 'ADMIN') {
+        if (!session || !session.user || (session.user as any).role !== 'ADMIN') {
             return NextResponse.json(
                 { error: 'No autorizado' },
                 { status: 401 }
