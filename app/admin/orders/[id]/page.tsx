@@ -116,6 +116,7 @@ export default async function OrderDetailPage({ params }: Props) {
                                             width={200}
                                             height={200}
                                             className="rounded"
+                                            unoptimized
                                         />
                                     )}
                                     <div>
@@ -203,8 +204,8 @@ export default async function OrderDetailPage({ params }: Props) {
                             <div className="flex justify-between text-sm">
                                 <span className="text-[color:var(--text-secondary)]">Estado</span>
                                 <span className={`font-medium ${order.paymentStatus === 'PAID' ? 'text-green-400' :
-                                        order.paymentStatus === 'PENDING' ? 'text-yellow-400' :
-                                            'text-red-400'
+                                    order.paymentStatus === 'PENDING' ? 'text-yellow-400' :
+                                        'text-red-400'
                                     }`}>
                                     {order.paymentStatus}
                                 </span>
