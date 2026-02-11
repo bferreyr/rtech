@@ -278,6 +278,32 @@ export default function ProfilePage() {
                                         trackingUrl={order.trackingUrl}
                                     />
 
+                                    {/* Tracking Link */}
+                                    {order.trackingUrl && (
+                                        <div className="bg-gradient-to-r from-blue-500/10 to-purple-500/10 border border-blue-500/20 rounded-xl p-6">
+                                            <div className="flex items-start gap-4">
+                                                <div className="w-12 h-12 rounded-full bg-blue-500/20 flex items-center justify-center flex-shrink-0">
+                                                    <Truck className="w-6 h-6 text-blue-400" />
+                                                </div>
+                                                <div className="flex-1">
+                                                    <h4 className="font-bold text-blue-400 mb-2">Seguimiento de Envío</h4>
+                                                    <p className="text-sm text-[hsl(var(--text-secondary))] mb-3">
+                                                        Seguí tu envío al detalle desde este link
+                                                    </p>
+                                                    <a
+                                                        href={order.trackingUrl}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="inline-flex items-center gap-2 px-4 py-2 bg-blue-500 hover:bg-blue-600 text-white rounded-lg font-medium transition-colors"
+                                                    >
+                                                        <Truck className="w-4 h-4" />
+                                                        Ver seguimiento en Correo Argentino
+                                                    </a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )}
+
                                     {/* Shipping Info */}
                                     {order.shipment && (
                                         <div className="bg-white/5 rounded-2xl p-6 space-y-4 border border-white/5 relative overflow-hidden">
