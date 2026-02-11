@@ -1,6 +1,6 @@
 import { prisma } from "@/lib/prisma";
 import Link from "next/link";
-import { Eye } from "lucide-react";
+import { Eye, Phone, CreditCard } from "lucide-react";
 import { OrderStatusSelector } from "./_components/OrderStatusSelector";
 
 export const dynamic = 'force-dynamic';
@@ -24,7 +24,9 @@ export default async function AdminOrdersPage() {
                         <tr>
                             <th className="h-12 px-4 font-medium align-middle">ID Pedido</th>
                             <th className="h-12 px-4 font-medium align-middle">Cliente</th>
+                            <th className="h-12 px-4 font-medium align-middle">Teléfono</th>
                             <th className="h-12 px-4 font-medium align-middle">Fecha</th>
+                            <th className="h-12 px-4 font-medium align-middle">Pago</th>
                             <th className="h-12 px-4 font-medium align-middle">Total</th>
                             <th className="h-12 px-4 font-medium align-middle text-center">Estado</th>
                             <th className="h-12 px-4 font-medium align-middle text-right">Detalle</th>
@@ -33,7 +35,7 @@ export default async function AdminOrdersPage() {
                     <tbody>
                         {orders.length === 0 ? (
                             <tr>
-                                <td colSpan={6} className="p-8 text-center text-[color:var(--text-secondary)]">
+                                <td colSpan={8} className="p-8 text-center text-[color:var(--text-secondary)]">
                                     No hay pedidos registrados aún.
                                 </td>
                             </tr>
@@ -43,12 +45,24 @@ export default async function AdminOrdersPage() {
                                     <td className="p-4 font-mono text-xs">{order.id.slice(0, 8)}...</td>
                                     <td className="p-4">
                                         <div className="flex flex-col">
-                                            <span className="font-medium">{order.user?.name || 'Invitado'}</span>
-                                            <span className="text-xs text-[color:var(--text-secondary)]">{order.user?.email}</span>
+                                            <span className="font-medium">{order.customerName}</span>
+                                            <span className="text-xs text-[color:var(--text-secondary)]">{order.customerEmail}</span>
+                                        </div>
+                                    </td>
+                                    <td className="p-4">
+                                        <div className="flex items-center gap-1 text-xs">
+                                            <Phone size={12} className="text-[color:var(--text-secondary)]" />
+                                            <span>{order.customerPhone}</span>
                                         </div>
                                     </td>
                                     <td className="p-4 text-[color:var(--text-secondary)]">
-                                        {new Date(order.createdAt).toLocaleDateString()}
+                                        {new Date(order.createdAt).toLocaleDateString('es-AR')}
+                                    </td>
+                                    <td className="p-4">
+                                        <div className="flex items-center gap-1">
+                                            <CreditCard size={14} className="text-[color:var(--text-secondary)]" />
+                                            <span className="text-xs capitalize">{order.paymentMethod}</span>
+                                        </div>
                                     </td>
                                     <td className="p-4 font-bold">
                                         ${Number(order.total).toFixed(2)}
