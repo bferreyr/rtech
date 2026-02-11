@@ -7,6 +7,8 @@ import { ShoppingBag, Package, MapPin, Calendar, ArrowRight, User as UserIcon, C
 import Link from "next/link"
 import { ModelViewer } from "@/components/3d/ModelViewer"
 import { formatCurrency } from "@/lib/utils"
+import { OrderTimeline } from "@/components/orders/OrderTimeline"
+import { OrderStatus } from "@prisma/client"
 
 
 export default function ProfilePage() {
@@ -269,6 +271,12 @@ export default function ProfilePage() {
                                             </div>
                                         ))}
                                     </div>
+
+                                    {/* Order Timeline */}
+                                    <OrderTimeline
+                                        currentStatus={order.status as OrderStatus}
+                                        trackingUrl={order.trackingUrl}
+                                    />
 
                                     {/* Shipping Info */}
                                     {order.shipment && (
