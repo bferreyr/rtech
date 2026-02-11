@@ -24,7 +24,9 @@ export async function POST(request: NextRequest) {
             shippingCity,
             shippingZip,
             shippingDetails,
+            shippingType,
             shippingCost,
+            isFreeShipping,
             paymentMethod,
             paymentReceiptUrl,
             items,
@@ -63,7 +65,7 @@ export async function POST(request: NextRequest) {
         // Create order
         const order = await prisma.order.create({
             data: {
-                userId: (session.user as any).id,
+                userId: session.user.id,
                 customerName,
                 customerEmail,
                 customerPhone,
@@ -72,11 +74,13 @@ export async function POST(request: NextRequest) {
                 shippingCity,
                 shippingZip,
                 shippingDetails,
+                shippingType,
                 shippingCost,
+                isFreeShipping,
                 shippingMethod: 'Correo Argentino',
                 paymentMethod,
                 paymentReceiptUrl,
-                paymentStatus: 'PENDING',
+                paymentStatus: paymentMethod === 'mercadopago' ? 'PENDING' : 'PENDING',
                 status: 'PENDING',
                 total,
                 items: {
@@ -88,11 +92,7 @@ export async function POST(request: NextRequest) {
                 },
             },
             include: {
-                items: {
-                    include: {
-                        product: true,
-                    },
-                },
+                items: true,
             },
         });
 

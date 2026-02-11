@@ -3,8 +3,9 @@
 import { useEffect, useState } from 'react';
 import { useParams, useSearchParams } from 'next/navigation';
 import Link from 'next/link';
-import { CheckCircle, Package, Mail, Phone, MapPin, CreditCard, ArrowLeft, Loader2 } from 'lucide-react';
+import { CheckCircle, Package, Mail, Phone, MapPin, CreditCard, ArrowLeft, Loader2, Truck, Building2 } from 'lucide-react';
 import Image from 'next/image';
+import { getShippingTypeLabel, getShippingTypeDescription, SHIPPING_TYPES } from '@/lib/shipping-utils';
 
 interface OrderItem {
     id: string;
@@ -27,8 +28,10 @@ interface Order {
     shippingProvince: string;
     shippingZip: string;
     shippingDetails: string | null;
+    shippingType: string | null;
     shippingMethod: string;
     shippingCost: number;
+    isFreeShipping: boolean;
     paymentMethod: string;
     paymentStatus: string;
     total: number;
@@ -215,15 +218,35 @@ export default function OrderConfirmationPage() {
                                 Dirección de Envío
                             </h3>
                             <div className="text-sm space-y-1">
-                                <p className="font-medium">{order.shippingAddress}</p>
-                                <p>{order.shippingCity}, {order.shippingProvince}</p>
-                                <p>CP: {order.shippingZip}</p>
-                                {order.shippingDetails && (
-                                    <p className="text-[hsl(var(--text-secondary))] italic">{order.shippingDetails}</p>
+                                {order.shippingType === SHIPPING_TYPES.PICKUP ? (
+                                    <div>
+                                        <p className="font-medium text-green-400">Retiro en Tienda</p>
+                                        <p className="text-xs text-[hsl(var(--text-secondary))] mt-2">Dirección de retiro:</p>
+                                        <p className="text-sm">Dirección de la tienda</p>
+                                    </div>
+                                ) : (
+                                    <>
+                                        <p className="font-medium">{order.shippingAddress}</p>
+                                        <p>{order.shippingCity}, {order.shippingProvince}</p>
+                                        <p>CP: {order.shippingZip}</p>
+                                        {order.shippingDetails && (
+                                            <p className="text-[hsl(var(--text-secondary))] italic">{order.shippingDetails}</p>
+                                        )}
+                                    </>
                                 )}
-                                <div className="pt-3 mt-3 border-t border-[hsl(var(--border-color))]">
-                                    <p className="text-xs text-[hsl(var(--text-secondary))]">Método de envío</p>
-                                    <p className="font-medium">{order.shippingMethod}</p>
+                                <div className="pt-3 mt-3 border-t border-[hsl(var(--border-color))] space-y-2">
+                                    <div>
+                                        <p className="text-xs text-[hsl(var(--text-secondary))]">Tipo de envío</p>
+                                        <p className="font-medium">{getShippingTypeLabel(order.shippingType || 'STANDARD')}</p>
+                                        <p className="text-xs text-[hsl(var(--text-secondary))] mt-1">
+                                            {getShippingTypeDescription(order.shippingType || 'STANDARD')}
+                                        </p>
+                                    </div>
+                                    {order.isFreeShipping && order.shippingType !== SHIPPING_TYPES.PICKUP && (
+                                        <div className="p-2 rounded bg-green-500/10 border border-green-500/20">
+                                            <p className="text-xs text-green-400 font-medium">✓ Envío gratis - Santa Fe Capital/Costa</p>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
                         </div>
@@ -242,8 +265,8 @@ export default function OrderConfirmationPage() {
                                 <div className="flex justify-between">
                                     <span className="text-[hsl(var(--text-secondary))]">Estado</span>
                                     <span className={`font-medium ${order.paymentStatus === 'PAID' ? 'text-green-400' :
-                                            order.paymentStatus === 'PENDING' ? 'text-yellow-400' :
-                                                'text-red-400'
+                                        order.paymentStatus === 'PENDING' ? 'text-yellow-400' :
+                                            'text-red-400'
                                         }`}>
                                         {order.paymentStatus === 'PAID' ? 'Pagado' :
                                             order.paymentStatus === 'PENDING' ? 'Pendiente' :

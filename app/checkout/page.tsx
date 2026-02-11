@@ -10,6 +10,7 @@ import { useSession } from "next-auth/react";
 import { LocationSelector } from "@/components/checkout/LocationSelector";
 import { ReceiptUpload } from "@/components/checkout/ReceiptUpload";
 import { useRouter } from "next/navigation";
+import { isFreeShippingZone, SHIPPING_TYPES, getShippingTypeLabel, getShippingTypeDescription } from "@/lib/shipping-utils";
 
 export default function CheckoutPage() {
     const router = useRouter();
@@ -29,11 +30,13 @@ export default function CheckoutPage() {
     const [city, setCity] = useState('');
     const [zip, setZip] = useState('');
     const [details, setDetails] = useState('');
+    const [shippingType, setShippingType] = useState<string>('STANDARD');
     const [paymentMethod, setPaymentMethod] = useState<'mercadopago' | 'transferencia' | ''>('');
     const [receiptFile, setReceiptFile] = useState<File | null>(null);
 
-    // Shipping is free - no cost
-    const shippingCost = 0;
+    // Check if shipping is free based on location or pickup
+    const isFreeShipping = shippingType === SHIPPING_TYPES.PICKUP || isFreeShippingZone(city, province);
+    const shippingCost = 0; // Always 0 - customer pays or it's free
     const finalTotal = cartTotal; // cartTotal is already in USD
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
@@ -87,7 +90,9 @@ export default function CheckoutPage() {
                     shippingCity: city,
                     shippingZip: zip,
                     shippingDetails: details || null,
+                    shippingType,
                     shippingCost,
+                    isFreeShipping,
                     paymentMethod,
                     paymentReceiptUrl: receiptUrl,
                     items: items.map(item => ({
@@ -299,14 +304,93 @@ export default function CheckoutPage() {
                                     <h2 className="text-2xl font-bold">Opciones de Envío</h2>
                                 </div>
 
-                                <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/20">
-                                    <div className="flex items-center gap-3">
-                                        <Truck className="w-5 h-5 text-blue-400" />
-                                        <div>
-                                            <p className="font-medium">Correo Argentino</p>
-                                            <p className="text-sm text-[hsl(var(--text-secondary))]">Envío estándar a todo el país</p>
+                                <div className="space-y-3">
+                                    {/* Standard Shipping */}
+                                    <div
+                                        onClick={() => setShippingType(SHIPPING_TYPES.STANDARD)}
+                                        className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${shippingType === SHIPPING_TYPES.STANDARD
+                                            ? 'border-[hsl(var(--accent-primary))] bg-[hsl(var(--accent-primary))]/10'
+                                            : 'border-[hsl(var(--border-color))] hover:border-[hsl(var(--accent-primary))]/50'
+                                            }`}
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <input
+                                                type="radio"
+                                                name="shippingType"
+                                                value="STANDARD"
+                                                checked={shippingType === SHIPPING_TYPES.STANDARD}
+                                                onChange={() => setShippingType(SHIPPING_TYPES.STANDARD)}
+                                                className="w-4 h-4"
+                                            />
+                                            <div className="flex-1">
+                                                <p className="font-medium">Envío Standard</p>
+                                                <p className="text-sm text-[hsl(var(--text-secondary))]">Corre por cuenta del cliente</p>
+                                            </div>
+                                            <Truck className="w-5 h-5 text-blue-400" />
                                         </div>
                                     </div>
+
+                                    {/* Express Shipping */}
+                                    <div
+                                        onClick={() => setShippingType(SHIPPING_TYPES.EXPRESS)}
+                                        className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${shippingType === SHIPPING_TYPES.EXPRESS
+                                            ? 'border-[hsl(var(--accent-primary))] bg-[hsl(var(--accent-primary))]/10'
+                                            : 'border-[hsl(var(--border-color))] hover:border-[hsl(var(--accent-primary))]/50'
+                                            }`}
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <input
+                                                type="radio"
+                                                name="shippingType"
+                                                value="EXPRESS"
+                                                checked={shippingType === SHIPPING_TYPES.EXPRESS}
+                                                onChange={() => setShippingType(SHIPPING_TYPES.EXPRESS)}
+                                                className="w-4 h-4"
+                                            />
+                                            <div className="flex-1">
+                                                <p className="font-medium">Envío Express</p>
+                                                <p className="text-sm text-[hsl(var(--text-secondary))]">Corre por cuenta del cliente</p>
+                                            </div>
+                                            <Truck className="w-5 h-5 text-purple-400" />
+                                        </div>
+                                    </div>
+
+                                    {/* Store Pickup */}
+                                    <div
+                                        onClick={() => setShippingType(SHIPPING_TYPES.PICKUP)}
+                                        className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${shippingType === SHIPPING_TYPES.PICKUP
+                                            ? 'border-[hsl(var(--accent-primary))] bg-[hsl(var(--accent-primary))]/10'
+                                            : 'border-[hsl(var(--border-color))] hover:border-[hsl(var(--accent-primary))]/50'
+                                            }`}
+                                    >
+                                        <div className="flex items-center gap-3">
+                                            <input
+                                                type="radio"
+                                                name="shippingType"
+                                                value="PICKUP"
+                                                checked={shippingType === SHIPPING_TYPES.PICKUP}
+                                                onChange={() => setShippingType(SHIPPING_TYPES.PICKUP)}
+                                                className="w-4 h-4"
+                                            />
+                                            <div className="flex-1">
+                                                <p className="font-medium">Retiro en Tienda</p>
+                                                <p className="text-sm text-[hsl(var(--text-secondary))]">Retiro gratuito en nuestra dirección</p>
+                                            </div>
+                                            <Building2 className="w-5 h-5 text-green-400" />
+                                        </div>
+                                    </div>
+
+                                    {/* Free Shipping Notice */}
+                                    {isFreeShipping && shippingType !== SHIPPING_TYPES.PICKUP && (
+                                        <div className="p-4 rounded-lg bg-green-500/10 border border-green-500/20">
+                                            <p className="text-sm text-green-400 font-medium">
+                                                ✓ ¡Envío gratis! Tu dirección está en Santa Fe Capital o zona de la costa
+                                            </p>
+                                            <p className="text-xs text-[hsl(var(--text-secondary))] mt-1">
+                                                (Santa Fe Capital, Colastine Norte/Centro/Sur, San José del Rincón, Arroyo Leyes)
+                                            </p>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 

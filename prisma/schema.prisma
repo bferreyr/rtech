@@ -106,8 +106,10 @@ model Order {
   shippingDetails   String?     // Descripción (casa, depto, piso, número)
   
   // Envío
+  shippingType      String?     @default("STANDARD") // STANDARD, EXPRESS, PICKUP
   shippingCost      Decimal?
   shippingMethod    String?     @default("Correo Argentino")
+  isFreeShipping    Boolean     @default(false)
   
   // Pago
   paymentMethod     String?     // "mercadopago" o "transferencia"
