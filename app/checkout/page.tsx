@@ -349,8 +349,8 @@ export default function CheckoutPage() {
                                     <div
                                         onClick={() => setPaymentMethod('transferencia')}
                                         className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${paymentMethod === 'transferencia'
-                                                ? 'border-[hsl(var(--accent-primary))] bg-[hsl(var(--accent-primary))]/10'
-                                                : 'border-[hsl(var(--border-color))] hover:border-[hsl(var(--accent-primary))]/50'
+                                            ? 'border-[hsl(var(--accent-primary))] bg-[hsl(var(--accent-primary))]/10'
+                                            : 'border-[hsl(var(--border-color))] hover:border-[hsl(var(--accent-primary))]/50'
                                             }`}
                                     >
                                         <div className="flex items-center gap-3">
@@ -467,7 +467,7 @@ export default function CheckoutPage() {
                                             <p className="text-xs text-[hsl(var(--text-secondary))]">
                                                 Cantidad: {item.quantity}
                                             </p>
-                                            <p className="text-sm font-bold">{formatARS(toARS(item.price * item.quantity))}</p>
+                                            <p className="text-sm font-bold">{formatARS(item.price * item.quantity)}</p>
                                         </div>
                                     </div>
                                 ))}
@@ -476,7 +476,7 @@ export default function CheckoutPage() {
                             <div className="border-t border-[hsl(var(--border-color))] pt-4 space-y-2">
                                 <div className="flex justify-between text-lg font-bold">
                                     <span>Total</span>
-                                    <span className="gradient-text">{formatARS(finalTotal)}</span>
+                                    <span className="gradient-text">{formatARS(cartTotal)}</span>
                                 </div>
                                 <p className="text-xs text-[hsl(var(--text-secondary))] mt-2">Envío sin cargo por Correo Argentino</p>
                             </div>
