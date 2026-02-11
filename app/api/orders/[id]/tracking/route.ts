@@ -7,7 +7,7 @@ export async function PATCH(
     { params }: { params: Promise<{ id: string }> }
 ) {
     try {
-        const session = await getServerSession(authOptions);
+        const session = await auth();
 
         if (!session || session.user.role !== 'ADMIN') {
             return NextResponse.json(
