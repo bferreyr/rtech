@@ -323,7 +323,7 @@ export default function CheckoutPage() {
                                                 className="w-4 h-4"
                                             />
                                             <div className="flex-1">
-                                                <p className="font-medium">Envío Standard</p>
+                                                <p className="font-medium">Envío Standard <span className="text-xs text-[hsl(var(--text-tertiary))] font-normal">(2 a 5 días hábiles)</span></p>
                                                 <p className="text-sm text-[hsl(var(--text-secondary))]">Corre por cuenta del cliente</p>
                                             </div>
                                             <Truck className="w-5 h-5 text-blue-400" />
@@ -348,7 +348,7 @@ export default function CheckoutPage() {
                                                 className="w-4 h-4"
                                             />
                                             <div className="flex-1">
-                                                <p className="font-medium">Envío Express</p>
+                                                <p className="font-medium">Envío Express <span className="text-xs text-[hsl(var(--text-tertiary))] font-normal">(1 a 3 días hábiles)</span></p>
                                                 <p className="text-sm text-[hsl(var(--text-secondary))]">Corre por cuenta del cliente</p>
                                             </div>
                                             <Truck className="w-5 h-5 text-purple-400" />
@@ -373,7 +373,7 @@ export default function CheckoutPage() {
                                                 className="w-4 h-4"
                                             />
                                             <div className="flex-1">
-                                                <p className="font-medium">Retiro en Tienda</p>
+                                                <p className="font-medium">Retiro en Tienda <span className="text-xs text-[hsl(var(--text-tertiary))] font-normal">(1 día hábil si comprás antes de las 9:00 AM)</span></p>
                                                 <p className="text-sm text-[hsl(var(--text-secondary))]">Retiro gratuito en nuestra dirección</p>
                                             </div>
                                             <Building2 className="w-5 h-5 text-green-400" />
