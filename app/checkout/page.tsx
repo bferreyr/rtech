@@ -32,9 +32,9 @@ export default function CheckoutPage() {
     const [paymentMethod, setPaymentMethod] = useState<'mercadopago' | 'transferencia' | ''>('');
     const [receiptFile, setReceiptFile] = useState<File | null>(null);
 
-    // Fixed shipping cost for Correo Argentino (you can adjust this)
-    const shippingCost = 5000; // ARS 5000
-    const finalTotal = toARS(cartTotal) + shippingCost;
+    // Shipping is free - no cost
+    const shippingCost = 0;
+    const finalTotal = cartTotal; // cartTotal is already in USD
 
     const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
         e.preventDefault();
@@ -300,15 +300,12 @@ export default function CheckoutPage() {
                                 </div>
 
                                 <div className="p-4 rounded-lg bg-blue-500/10 border border-blue-500/20">
-                                    <div className="flex items-center justify-between">
-                                        <div className="flex items-center gap-3">
-                                            <Truck className="w-5 h-5 text-blue-400" />
-                                            <div>
-                                                <p className="font-medium">Correo Argentino</p>
-                                                <p className="text-sm text-[hsl(var(--text-secondary))]">Envío estándar a todo el país</p>
-                                            </div>
+                                    <div className="flex items-center gap-3">
+                                        <Truck className="w-5 h-5 text-blue-400" />
+                                        <div>
+                                            <p className="font-medium">Correo Argentino</p>
+                                            <p className="text-sm text-[hsl(var(--text-secondary))]">Envío estándar a todo el país</p>
                                         </div>
-                                        <p className="font-bold text-lg">{formatARS(shippingCost)}</p>
                                     </div>
                                 </div>
                             </div>
@@ -327,8 +324,8 @@ export default function CheckoutPage() {
                                     <div
                                         onClick={() => setPaymentMethod('mercadopago')}
                                         className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${paymentMethod === 'mercadopago'
-                                                ? 'border-[hsl(var(--accent-primary))] bg-[hsl(var(--accent-primary))]/10'
-                                                : 'border-[hsl(var(--border-color))] hover:border-[hsl(var(--accent-primary))]/50'
+                                            ? 'border-[hsl(var(--accent-primary))] bg-[hsl(var(--accent-primary))]/10'
+                                            : 'border-[hsl(var(--border-color))] hover:border-[hsl(var(--accent-primary))]/50'
                                             }`}
                                     >
                                         <div className="flex items-center gap-3">
@@ -367,20 +364,52 @@ export default function CheckoutPage() {
                                             />
                                             <div className="flex-1">
                                                 <p className="font-medium">Transferencia Bancaria</p>
-                                                <p className="text-sm text-[hsl(var(--text-secondary))]">Subí tu comprobante de pago</p>
+                                                <p className="text-sm text-[hsl(var(--text-secondary))]">Realizá la transferencia y subí el comprobante</p>
                                             </div>
                                             <FileText className="w-6 h-6 text-[hsl(var(--accent-primary))]" />
                                         </div>
                                     </div>
 
-                                    {/* Receipt Upload for Transferencia */}
+                                    {/* Bank Details for Transferencia */}
                                     {paymentMethod === 'transferencia' && (
-                                        <div className="mt-4 p-4 rounded-lg bg-[hsl(var(--bg-tertiary))]">
-                                            <p className="text-sm font-medium mb-3">Subir Comprobante de Pago *</p>
-                                            <ReceiptUpload
-                                                selectedFile={receiptFile}
-                                                onFileSelect={setReceiptFile}
-                                            />
+                                        <div className="space-y-4">
+                                            <div className="p-4 rounded-lg bg-[hsl(var(--bg-tertiary))] border border-[hsl(var(--border-color))]">
+                                                <p className="text-sm font-semibold mb-3 text-[hsl(var(--accent-primary))]">Datos para Transferencia</p>
+                                                <div className="space-y-2 text-sm">
+                                                    <div className="flex justify-between">
+                                                        <span className="text-[hsl(var(--text-secondary))]">Titular:</span>
+                                                        <span className="font-medium">Bartolome Ferreyra</span>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                        <span className="text-[hsl(var(--text-secondary))]">CUIT/CUIL:</span>
+                                                        <span className="font-medium font-mono">20-37260801-4</span>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                        <span className="text-[hsl(var(--text-secondary))]">Banco:</span>
+                                                        <span className="font-medium">Santander</span>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                        <span className="text-[hsl(var(--text-secondary))]">Número Cuenta:</span>
+                                                        <span className="font-medium font-mono">156-249043/2</span>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                        <span className="text-[hsl(var(--text-secondary))]">CBU:</span>
+                                                        <span className="font-medium font-mono text-xs">0720156788000024904322</span>
+                                                    </div>
+                                                    <div className="flex justify-between">
+                                                        <span className="text-[hsl(var(--text-secondary))]">Alias:</span>
+                                                        <span className="font-medium">bartu.ferreyra</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+
+                                            <div className="p-4 rounded-lg bg-[hsl(var(--bg-tertiary))]">
+                                                <p className="text-sm font-medium mb-3">Subir Comprobante de Pago *</p>
+                                                <ReceiptUpload
+                                                    selectedFile={receiptFile}
+                                                    onFileSelect={setReceiptFile}
+                                                />
+                                            </div>
                                         </div>
                                     )}
                                 </div>
@@ -445,18 +474,11 @@ export default function CheckoutPage() {
                             </div>
 
                             <div className="border-t border-[hsl(var(--border-color))] pt-4 space-y-2">
-                                <div className="flex justify-between text-sm">
-                                    <span className="text-[hsl(var(--text-secondary))]">Subtotal</span>
-                                    <span className="font-medium">{formatARS(toARS(cartTotal))}</span>
-                                </div>
-                                <div className="flex justify-between text-sm">
-                                    <span className="text-[hsl(var(--text-secondary))]">Envío</span>
-                                    <span className="font-medium">{formatARS(shippingCost)}</span>
-                                </div>
-                                <div className="flex justify-between text-lg font-bold pt-2 border-t border-[hsl(var(--border-color))]">
+                                <div className="flex justify-between text-lg font-bold">
                                     <span>Total</span>
                                     <span className="gradient-text">{formatARS(finalTotal)}</span>
                                 </div>
+                                <p className="text-xs text-[hsl(var(--text-secondary))] mt-2">Envío sin cargo por Correo Argentino</p>
                             </div>
                         </div>
                     </div>
