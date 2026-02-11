@@ -90,43 +90,41 @@ model Category {
 }
 
 model Order {
-  id     String @id @default(cuid())
-  userId String
-
+  id                String      @id @default(cuid())
+  userId            String
+  
   // Información de contacto
-  customerName  String? // Nombre y apellido
-  customerEmail String? // Email
-  customerPhone String? // Teléfono
-
+  customerName      String?     // Nombre y apellido
+  customerEmail     String?     // Email
+  customerPhone     String?     // Teléfono
+  
   // Dirección de envío
-  shippingAddress  String? // Dirección y altura
-  shippingProvince String? // Provincia
-  shippingCity     String? // Ciudad
-  shippingZip      String? // Código postal
-  shippingDetails  String? // Descripción (casa, depto, piso, número)
-
+  shippingAddress   String?     // Dirección y altura
+  shippingProvince  String?     // Provincia
+  shippingCity      String?     // Ciudad
+  shippingZip       String?     // Código postal
+  shippingDetails   String?     // Descripción (casa, depto, piso, número)
+  
   // Envío
-  shippingType   String?  @default("STANDARD") // STANDARD, EXPRESS, PICKUP
-  shippingCost   Decimal?
-  shippingMethod String?  @default("Correo Argentino")
-  trackingUrl    String? // URL de seguimiento de Correo Argentino
-  isFreeShipping Boolean  @default(false)
-
+  shippingType      String?     @default("STANDARD") // STANDARD, EXPRESS, PICKUP
+  shippingCost      Decimal?
+  shippingMethod    String?     @default("Correo Argentino")
+  trackingUrl       String?     // URL de seguimiento de Correo Argentino
+  isFreeShipping    Boolean     @default(false)
+  
   // Pago
-  paymentMethod     String? // "mercadopago" o "transferencia"
-  paymentReceiptUrl String? // URL del comprobante de pago
-  paymentStatus     String? @default("PENDING")
-
-  status                    OrderStatus @default(PENDING)
-  total                     Decimal
-  whatsappNotificationsSent Json? // Track which WhatsApp notifications were sent
-  createdAt                 DateTime    @default(now())
-  updatedAt                 DateTime    @updatedAt
-
-  user             User              @relation(fields: [userId], references: [id])
-  items            OrderItem[]
-  shipment         Shipment?
-  notificationLogs NotificationLog[]
+  paymentMethod     String?     // "mercadopago" o "transferencia"
+  paymentReceiptUrl String?     // URL del comprobante de pago
+  paymentStatus     String?     @default("PENDING")
+  
+  status            OrderStatus @default(PENDING)
+  total             Decimal
+  createdAt         DateTime    @default(now())
+  updatedAt         DateTime    @updatedAt
+  
+  user              User        @relation(fields: [userId], references: [id])
+  items             OrderItem[]
+  shipment          Shipment?
 }
 
 model OrderItem {
@@ -154,22 +152,6 @@ model Shipment {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
   order     Order    @relation(fields: [orderId], references: [id])
-}
-
-model NotificationLog {
-  id          String   @id @default(cuid())
-  orderId     String
-  type        String // "order_pending", "order_paid", "order_shipped", etc.
-  phoneNumber String
-  status      String // "sent", "failed", "delivered"
-  messageId   String?
-  error       String?
-  sentAt      DateTime @default(now())
-
-  order Order @relation(fields: [orderId], references: [id])
-
-  @@index([orderId])
-  @@index([sentAt])
 }
 
 model Setting {
