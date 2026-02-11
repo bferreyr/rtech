@@ -3,7 +3,7 @@
 import { useEffect, useState, useTransition } from "react"
 import { useSession } from "next-auth/react"
 import { notFound, redirect } from "next/navigation"
-import { ShoppingBag, Package, MapPin, Calendar, ArrowRight, User as UserIcon, Coins, History as HistoryIcon, X, Loader2, AlertCircle, Box, Clock, CheckCircle } from "lucide-react"
+import { ShoppingBag, Package, MapPin, Calendar, ArrowRight, User as UserIcon, Coins, History as HistoryIcon, X, Loader2, AlertCircle, Box, Clock, CheckCircle, Truck } from "lucide-react"
 import Link from "next/link"
 import { ModelViewer } from "@/components/3d/ModelViewer"
 import { formatCurrency } from "@/lib/utils"
