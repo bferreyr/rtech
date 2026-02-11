@@ -391,6 +391,15 @@ export default function CheckoutPage() {
                                             </p>
                                         </div>
                                     )}
+
+                                    {/* General Free Shipping Info */}
+                                    {!isFreeShipping && shippingType !== SHIPPING_TYPES.PICKUP && (
+                                        <div className="p-3 rounded-lg bg-blue-500/5 border border-blue-500/10">
+                                            <p className="text-xs text-[hsl(var(--text-secondary))]">
+                                                💡 Envío gratis en Santa Fe Capital y zona de la costa
+                                            </p>
+                                        </div>
+                                    )}
                                 </div>
                             </div>
 
@@ -562,7 +571,6 @@ export default function CheckoutPage() {
                                     <span>Total</span>
                                     <span className="gradient-text">{formatARS(cartTotal)}</span>
                                 </div>
-                                <p className="text-xs text-[hsl(var(--text-secondary))] mt-2">Envío sin cargo por Correo Argentino</p>
                             </div>
                         </div>
                     </div>
