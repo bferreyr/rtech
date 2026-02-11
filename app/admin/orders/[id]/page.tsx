@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, Package, User, MapPin, Phone, Mail, CreditCard, FileText, Truck } from "lucide-react";
 import { OrderStatusSelector } from "../_components/OrderStatusSelector";
+import { TrackingUrlEditor } from "../_components/TrackingUrlEditor";
 import Image from "next/image";
 
 interface Props {
@@ -189,6 +190,9 @@ export default async function OrderDetailPage({ params }: Props) {
                             </div>
                         </div>
                     </div>
+
+                    {/* Tracking URL Editor */}
+                    <TrackingUrlEditor orderId={order.id} initialUrl={order.trackingUrl} />
 
                     {/* Payment Info */}
                     <div className="bg-[color:var(--bg-secondary)] border border-[color:var(--border-color)] rounded-xl p-6">

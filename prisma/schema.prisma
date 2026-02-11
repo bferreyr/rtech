@@ -109,6 +109,7 @@ model Order {
   shippingType      String?     @default("STANDARD") // STANDARD, EXPRESS, PICKUP
   shippingCost      Decimal?
   shippingMethod    String?     @default("Correo Argentino")
+  trackingUrl       String?     // URL de seguimiento de Correo Argentino
   isFreeShipping    Boolean     @default(false)
   
   // Pago

@@ -6,6 +6,7 @@ import Link from 'next/link';
 import { CheckCircle, Package, Mail, Phone, MapPin, CreditCard, ArrowLeft, Loader2, Truck, Building2 } from 'lucide-react';
 import Image from 'next/image';
 import { getShippingTypeLabel, getShippingTypeDescription, SHIPPING_TYPES } from '@/lib/shipping-utils';
+import { OrderTimeline } from '@/components/orders/OrderTimeline';
 
 interface OrderItem {
     id: string;
@@ -31,9 +32,11 @@ interface Order {
     shippingType: string | null;
     shippingMethod: string;
     shippingCost: number;
+    trackingUrl: string | null;
     isFreeShipping: boolean;
     paymentMethod: string;
     paymentStatus: string;
+    status: string;
     total: number;
     createdAt: string;
     items: OrderItem[];
@@ -121,6 +124,9 @@ export default function OrderConfirmationPage() {
                 <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
                     {/* Order Details */}
                     <div className="lg:col-span-2 space-y-6">
+                        {/* Order Timeline */}
+                        <OrderTimeline currentStatus={order.status as any} trackingUrl={order.trackingUrl} />
+
                         {/* Products */}
                         <div className="glass-card p-6">
                             <h2 className="text-xl font-bold mb-4 flex items-center gap-2">
