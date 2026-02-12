@@ -16,9 +16,7 @@ export default async function ProductsPage(props: {
     const brands = searchParams.brands ? (searchParams.brands as string).split(',') : undefined;
     const priceMin = searchParams.priceMin ? Number(searchParams.priceMin) : undefined;
     const priceMax = searchParams.priceMax ? Number(searchParams.priceMax) : undefined;
-    const inStock = searchParams.inStock !== undefined
-        ? searchParams.inStock === 'true'
-        : true; // Default to true (show only in-stock products)
+    const inStock = searchParams.inStock === 'true' ? true : undefined;
 
     const [{ products, pagination }, categories, availableFilters] = await Promise.all([
         getProducts({

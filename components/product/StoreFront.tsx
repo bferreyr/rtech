@@ -50,7 +50,7 @@ export function StoreFront({ initialProducts, categories, pagination, availableF
         brands: searchParams.get('brands')?.split(',').filter(Boolean) || [],
         priceMin: searchParams.get('priceMin') ? Number(searchParams.get('priceMin')) : undefined,
         priceMax: searchParams.get('priceMax') ? Number(searchParams.get('priceMax')) : undefined,
-        inStock: searchParams.get('inStock') !== null ? searchParams.get('inStock') === 'true' : true, // Default to true
+        inStock: searchParams.get('inStock') === 'true' || undefined,
         category: searchParams.get('category') || undefined,
     };
 
