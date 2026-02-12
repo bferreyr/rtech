@@ -1,6 +1,7 @@
 import { getAllShipments } from '@/app/actions/shipping';
 import { Package, Truck, CheckCircle, XCircle, Clock, Search } from 'lucide-react';
 import Link from 'next/link';
+import { AdminHeader } from '@/components/admin/ui/AdminHeader';
 
 export const dynamic = 'force-dynamic';
 
@@ -40,14 +41,10 @@ export default async function ShipmentsPage() {
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-3xl font-bold mb-2">Envíos</h1>
-                    <p className="text-[hsl(var(--text-secondary))]">
-                        Gestiona todos los envíos de OCA e-Pak
-                    </p>
-                </div>
-            </div>
+            <AdminHeader
+                title="Envíos"
+                description="Gestiona todos los envíos de OCA e-Pak"
+            />
 
             {/* Stats Cards */}
             <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
@@ -110,7 +107,7 @@ export default async function ShipmentsPage() {
             <div className="glass-card overflow-hidden">
                 <div className="overflow-x-auto">
                     <table className="w-full">
-                        <thead className="border-b border-white/10">
+                        <thead className="bg-gradient-to-r from-white/5 to-white/10 border-b border-white/10">
                             <tr>
                                 <th className="text-left p-4 text-sm font-semibold text-[hsl(var(--text-secondary))]">
                                     Tracking
