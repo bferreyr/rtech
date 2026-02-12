@@ -46,14 +46,10 @@ export const checkoutSchema = z.object({
         .optional(),
 
     // Tipo de envío
-    shippingType: z.enum(['STANDARD', 'EXPRESS', 'PICKUP'], {
-        required_error: 'Selecciona un tipo de envío',
-    }),
+    shippingType: z.enum(['STANDARD', 'EXPRESS', 'PICKUP']),
 
     // Pago
-    paymentMethod: z.enum(['mercadopago', 'transferencia'], {
-        required_error: 'Selecciona un método de pago',
-    }),
+    paymentMethod: z.enum(['mercadopago', 'transferencia']),
 });
 
 export type CheckoutFormData = z.infer<typeof checkoutSchema>;
