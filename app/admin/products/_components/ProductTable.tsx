@@ -91,12 +91,12 @@ export function ProductTable({ products, globalMarkup, exchangeRate }: ProductTa
                 </div>
             )}
 
-            <div className="rounded-lg border border-[color:var(--border-color)] bg-[color:var(--bg-secondary)] overflow-hidden flex flex-col">
+            <div className="glass-card overflow-hidden flex flex-col">
                 <div className="overflow-x-auto custom-scrollbar">
                     <table className="w-full text-left text-sm whitespace-nowrap">
-                        <thead className="bg-[color:var(--bg-tertiary)] border-b border-[color:var(--border-color)]">
+                        <thead className="bg-gradient-to-r from-white/5 to-white/10 border-b border-white/10">
                             <tr>
-                                <th className="h-12 px-4 w-12 align-middle sticky left-0 bg-[color:var(--bg-tertiary)] z-20 border-r border-white/5">
+                                <th className="h-12 px-4 w-12 align-middle sticky left-0 bg-gradient-to-r from-white/5 to-white/10 z-20 border-r border-white/5">
                                     <button
                                         onClick={toggleSelectAll}
                                         className="p-1 hover:text-[hsl(var(--accent-primary))] transition-colors"
@@ -110,7 +110,7 @@ export function ProductTable({ products, globalMarkup, exchangeRate }: ProductTa
                                 </th>
                                 <th className="h-12 px-4 font-medium align-middle">SKU / Códigos</th>
                                 <th className="h-12 px-4 font-medium align-middle">Imagen</th>
-                                <th className="h-12 px-4 font-medium align-middle sticky left-[48px] bg-[color:var(--bg-tertiary)] z-10 border-r border-white/5">Nombre</th>
+                                <th className="h-12 px-4 font-medium align-middle sticky left-[48px] bg-gradient-to-r from-white/5 to-white/10 z-10 border-r border-white/5">Nombre</th>
                                 <th className="h-12 px-4 font-medium align-middle">Marca / Cat</th>
                                 <th className="h-12 px-4 font-medium align-middle text-center bg-blue-500/5">Precio Base</th>
                                 <th className="h-12 px-4 font-medium align-middle text-center bg-blue-500/5">Impuestos</th>
@@ -122,12 +122,12 @@ export function ProductTable({ products, globalMarkup, exchangeRate }: ProductTa
                                 <th className="h-12 px-4 font-medium align-middle text-center">Dep. CD</th>
                                 <th className="h-12 px-4 font-medium align-middle">Garantía</th>
                                 <th className="h-12 px-4 font-medium align-middle">Datos Físicos</th>
-                                <th className="h-12 px-4 font-medium align-middle sticky right-0 bg-[color:var(--bg-tertiary)] z-10 border-l border-white/5 text-right">Acciones</th>
+                                <th className="h-12 px-4 font-medium align-middle sticky right-0 bg-gradient-to-r from-white/5 to-white/10 z-10 border-l border-white/5 text-right">Acciones</th>
                             </tr>
                         </thead>
                         <tbody>
                             {products.map((product) => (
-                                <tr key={product.id} className={`border-b border-[color:var(--border-color)] transition-colors ${selectedIds.includes(product.id) ? 'bg-[hsl(var(--accent-primary))]/5' : 'hover:bg-[color:var(--bg-tertiary)]/50'}`}>
+                                <tr key={product.id} className={`border-b border-white/5 transition-all duration-200 ${selectedIds.includes(product.id) ? 'bg-[hsl(var(--accent-primary))]/5' : 'hover:bg-white/5'}`}>
                                     <td className="p-4 sticky left-0 bg-[color:var(--bg-secondary)] z-20 border-r border-white/5">
                                         <button
                                             onClick={() => toggleSelect(product.id)}

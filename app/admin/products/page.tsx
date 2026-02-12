@@ -9,6 +9,7 @@ import { ExportProductsButton } from "./_components/ExportProductsButton";
 import { AdminFilters } from "./_components/AdminFilters";
 import { Pagination } from "@/components/ui/Pagination";
 import { ProductTable } from "./_components/ProductTable";
+import { AdminHeader } from "@/components/admin/ui/AdminHeader";
 
 export const dynamic = 'force-dynamic';
 
@@ -33,19 +34,19 @@ export default async function AdminProductsPage(props: {
 
     return (
         <div className="space-y-6">
-            <div className="flex items-center justify-between">
-                <div>
-                    <h1 className="text-3xl font-bold">Inventario Detallado</h1>
-                    <p className="text-[color:var(--text-secondary)]">Gestiona tus productos ({pagination.total} total).</p>
-                </div>
-                <div className="flex items-center gap-4">
-                    <ExportProductsButton products={products} />
-                    <BulkUploadButton />
-                    <NextLink href="/admin/products/new" className="btn btn-primary">
-                        <Plus size={20} className="mr-2" /> Nuevo
-                    </NextLink>
-                </div>
-            </div>
+            <AdminHeader
+                title="Inventario Detallado"
+                description={`Gestiona tus productos (${pagination.total} total).`}
+                actions={
+                    <>
+                        <ExportProductsButton products={products} />
+                        <BulkUploadButton />
+                        <NextLink href="/admin/products/new" className="btn btn-primary">
+                            <Plus size={20} className="mr-2" /> Nuevo
+                        </NextLink>
+                    </>
+                }
+            />
 
             <AdminFilters categories={categories} />
 
