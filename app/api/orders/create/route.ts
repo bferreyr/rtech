@@ -72,9 +72,8 @@ export async function POST(request: NextRequest) {
                     data: {
                         name: customerName,
                         email: customerEmail.toLowerCase(),
-                        phone: customerPhone,
                         role: 'USER',
-                        // No password - user will need to reset password to login
+                        password: '', // Empty password - user will need to reset password to login
                     }
                 });
             }
