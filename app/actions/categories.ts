@@ -78,31 +78,49 @@ export async function deleteCategory(id: string) {
 
 export async function getProducts(options?: {
     categoryId?: string,
+    brands?: string[], // NEW: Multiple brand filter
     minPrice?: number,
     maxPrice?: number,
+    inStock?: boolean, // NEW: Toggle for stock availability
     sortBy?: 'price_asc' | 'price_desc' | 'newest' | 'name_asc',
     page?: number,
     limit?: number,
     search?: string
 }) {
-    const { categoryId, minPrice, maxPrice, sortBy, page = 1, limit = 12, search } = options || {};
+    const { categoryId, brands, minPrice, maxPrice, inStock, sortBy, page = 1, limit = 12, search } = options || {};
 
     const where: any = {};
+
+    // Category filter
     if (categoryId) where.categoryId = categoryId;
+
+    // Brand filter (multiple selection)
+    if (brands && brands.length > 0) {
+        where.marca = { in: brands };
+    }
+
+    // Price range filter
     if (minPrice !== undefined || maxPrice !== undefined) {
         where.price = {};
         if (minPrice !== undefined) where.price.gte = minPrice;
         if (maxPrice !== undefined) where.price.lte = maxPrice;
     }
+
+    // Search filter (case-insensitive)
     if (search) {
         where.OR = [
-            { name: { contains: search } }, // SQLite is case-sensitive by default with contains unless configured, but for now this is standard
-            { description: { contains: search } }
+            { name: { contains: search, mode: 'insensitive' } },
+            { description: { contains: search, mode: 'insensitive' } },
+            { marca: { contains: search, mode: 'insensitive' } },
+            { sku: { contains: search, mode: 'insensitive' } }
         ];
     }
 
-    // Filter out of stock products
-    where.stock = { gt: 0 };
+    // Stock filter - only filter if explicitly set to true
+    if (inStock === true) {
+        where.stock = { gt: 0 };
+    }
+
 
     let orderBy: any = { createdAt: 'desc' };
     if (sortBy === 'price_asc') orderBy = { price: 'asc' };

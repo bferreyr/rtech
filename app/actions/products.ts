@@ -120,8 +120,10 @@ export async function searchProducts(query: string) {
     const products = await prisma.product.findMany({
         where: {
             OR: [
-                { name: { contains: query } },
-                { description: { contains: query } }
+                { name: { contains: query, mode: 'insensitive' } },
+                { description: { contains: query, mode: 'insensitive' } },
+                { marca: { contains: query, mode: 'insensitive' } },
+                { sku: { contains: query, mode: 'insensitive' } }
             ]
         },
         take: 8,
@@ -137,8 +139,10 @@ export async function getFullSearchResults(query: string) {
     const products = await prisma.product.findMany({
         where: {
             OR: [
-                { name: { contains: query } },
-                { description: { contains: query } }
+                { name: { contains: query, mode: 'insensitive' } },
+                { description: { contains: query, mode: 'insensitive' } },
+                { marca: { contains: query, mode: 'insensitive' } },
+                { sku: { contains: query, mode: 'insensitive' } }
             ]
         },
         orderBy: { name: 'asc' }
@@ -146,6 +150,56 @@ export async function getFullSearchResults(query: string) {
 
     return products.map(serializeProduct);
 }
+
+// New: Get available filters for the current product set
+export async function getAvailableFilters(categoryId?: string) {
+    const where: any = categoryId ? { categoryId } : {};
+
+    const [brands, priceRange, categories] = await Promise.all([
+        // Get unique brands with product count
+        prisma.product.groupBy({
+            by: ['marca'],
+            where: { ...where, marca: { not: null } },
+            _count: { marca: true },
+            orderBy: { _count: { marca: 'desc' } },
+        }),
+
+        // Get price range
+        prisma.product.aggregate({
+            where,
+            _min: { price: true },
+            _max: { price: true },
+        }),
+
+        // Get categories with product count
+        prisma.category.findMany({
+            include: {
+                _count: {
+                    select: { products: true },
+                },
+            },
+            orderBy: { name: 'asc' },
+        }),
+    ]);
+
+    return {
+        brands: brands
+            .filter(b => b.marca)
+            .map(b => ({
+                name: b.marca!,
+                count: b._count.marca,
+            })),
+        priceRange: {
+            min: priceRange._min.price ? Number(priceRange._min.price) : 0,
+            max: priceRange._max.price ? Number(priceRange._max.price) : 1000,
+        },
+        categories: categories.map(c => ({
+            ...c,
+            productCount: c._count.products,
+        })),
+    };
+}
+
 
 function serializeProduct(p: any) {
     return {
