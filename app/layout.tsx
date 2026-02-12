@@ -33,7 +33,9 @@ export const metadata: Metadata = {
 };
 
 import { CurrencyProvider } from "@/context/CurrencyContext";
+import { ComparisonProvider } from "@/context/ComparisonContext";
 import { Providers } from "@/components/Providers";
+import { ProductComparison } from "@/components/product/ProductComparison";
 
 export default function RootLayout({
     children,
@@ -45,12 +47,15 @@ export default function RootLayout({
             <body className="antialiased min-h-screen bg-background text-foreground font-sans">
                 <Providers>
                     <CurrencyProvider>
-                        <CartProvider>
-                            <Navbar />
-                            <CartSidebar />
-                            <main className="pt-16">{children}</main>
-                            <Footer />
-                        </CartProvider>
+                        <ComparisonProvider>
+                            <CartProvider>
+                                <Navbar />
+                                <CartSidebar />
+                                <main className="pt-16">{children}</main>
+                                <Footer />
+                                <ProductComparison />
+                            </CartProvider>
+                        </ComparisonProvider>
                     </CurrencyProvider>
                 </Providers>
             </body>
