@@ -51,6 +51,7 @@ export function StoreFront({ initialProducts, categories, pagination, availableF
         priceMin: searchParams.get('priceMin') ? Number(searchParams.get('priceMin')) : undefined,
         priceMax: searchParams.get('priceMax') ? Number(searchParams.get('priceMax')) : undefined,
         inStock: searchParams.get('inStock') === 'true' || undefined,
+        category: searchParams.get('category') || undefined,
     };
 
     const updateParams = (updates: Record<string, string | null>) => {
@@ -105,6 +106,12 @@ export function StoreFront({ initialProducts, categories, pagination, availableF
             updates.inStock = 'true';
         } else {
             updates.inStock = null;
+        }
+
+        if (filters.category) {
+            updates.category = filters.category;
+        } else {
+            updates.category = null;
         }
 
         updateParams(updates);
@@ -222,57 +229,6 @@ export function StoreFront({ initialProducts, categories, pagination, availableF
                         Categorías
                     </button>
 
-                    {/* Categories Navigation - Hidden on mobile, visible on desktop */}
-                    <div className="hidden lg:flex flex-wrap items-center gap-2 w-full lg:w-auto">
-                        <button
-                            onClick={() => updateParams({ category: null })}
-                            className={`px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${!activeCategory
-                                ? 'bg-[hsl(var(--accent-primary))] text-white shadow-lg shadow-[hsl(var(--accent-primary))]/20'
-                                : 'bg-white/5 hover:bg-white/10 text-[hsl(var(--text-secondary))]'
-                                }`}
-                        >
-                            Todos
-                        </button>
-
-                        {categories.map((cat) => (
-                            <div key={cat.id} className="relative group">
-                                <button
-                                    onClick={() => updateParams({ category: cat.id })}
-                                    className={`flex items-center gap-1 px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${isCategoryActive(cat)
-                                        ? 'bg-[hsl(var(--accent-primary))] text-white shadow-lg shadow-[hsl(var(--accent-primary))]/20'
-                                        : 'bg-white/5 hover:bg-white/10 text-[hsl(var(--text-secondary))] group-hover:bg-white/10'
-                                        }`}
-                                >
-                                    {cat.name}
-                                    {cat.children && cat.children.length > 0 && (
-                                        <ChevronDown size={14} className="opacity-70 group-hover:translate-y-0.5 transition-transform" />
-                                    )}
-                                </button>
-
-                                {/* Dropdown Menu */}
-                                {cat.children && cat.children.length > 0 && (
-                                    <div className="absolute top-full left-0 mt-2 w-48 bg-[#111] border border-white/10 rounded-xl shadow-xl opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all z-50 overflow-hidden transform origin-top group-hover:translate-y-0 translate-y-2">
-                                        <div className="p-1">
-                                            {cat.children.map((child: any) => (
-                                                <button
-                                                    key={child.id}
-                                                    onClick={(e) => {
-                                                        e.stopPropagation();
-                                                        updateParams({ category: child.id });
-                                                    }}
-                                                    className={`text-left w-full px-3 py-2 text-sm rounded-lg transition-colors ${activeCategory === child.id
-                                                        ? 'bg-[hsl(var(--accent-primary))]/10 text-[hsl(var(--accent-primary))]'
-                                                        : 'text-[#a1a1aa] hover:bg-white/5 hover:text-white'}`}
-                                                >
-                                                    {child.name}
-                                                </button>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
-                            </div>
-                        ))}
-                    </div>
 
                     {/* Mobile Category Drawer */}
                     {isCategoryMenuOpen && (

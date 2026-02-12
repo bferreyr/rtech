@@ -31,7 +31,7 @@ interface ActiveFilters {
     priceMin?: number;
     priceMax?: number;
     inStock?: boolean;
-    categoryId?: string;
+    category?: string;
 }
 
 interface FilterSidebarProps {
@@ -110,11 +110,11 @@ export function FilterSidebar({ filters, activeFilters, onFilterChange }: Filter
                     <>
                         <CategoryFilter
                             categories={filters.categories}
-                            selected={activeFilters.categoryId}
-                            onChange={(categoryId) =>
+                            selected={activeFilters.category}
+                            onChange={(category) =>
                                 onFilterChange({
                                     ...activeFilters,
-                                    categoryId: categoryId || undefined
+                                    category: category || undefined
                                 })
                             }
                         />
