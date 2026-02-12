@@ -10,12 +10,14 @@ interface MobileFilterModalProps {
     filters: {
         brands: { name: string; count: number }[];
         priceRange: { min: number; max: number };
+        categories: { id: string; name: string; productCount: number; children?: any[] }[];
     };
     activeFilters: {
         brands?: string[];
         priceMin?: number;
         priceMax?: number;
         inStock?: boolean;
+        categoryId?: string;
     };
     onFilterChange: (filters: any) => void;
 }

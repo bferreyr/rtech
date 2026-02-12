@@ -21,6 +21,7 @@ interface StoreFrontProps {
     availableFilters?: {
         brands: { name: string; count: number }[];
         priceRange: { min: number; max: number };
+        categories: any[];
     };
 }
 

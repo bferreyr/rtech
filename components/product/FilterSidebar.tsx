@@ -2,11 +2,19 @@
 
 import { PriceRangeFilter } from './filters/PriceRangeFilter';
 import { BrandFilter } from './filters/BrandFilter';
+import { CategoryFilter } from './filters/CategoryFilter';
 import { X, SlidersHorizontal } from 'lucide-react';
 
 interface Brand {
     name: string;
     count: number;
+}
+
+interface Category {
+    id: string;
+    name: string;
+    productCount: number;
+    children?: Category[];
 }
 
 interface AvailableFilters {
@@ -15,6 +23,7 @@ interface AvailableFilters {
         min: number;
         max: number;
     };
+    categories: Category[];
 }
 
 interface ActiveFilters {
@@ -22,6 +31,7 @@ interface ActiveFilters {
     priceMin?: number;
     priceMax?: number;
     inStock?: boolean;
+    categoryId?: string;
 }
 
 interface FilterSidebarProps {
@@ -94,6 +104,24 @@ export function FilterSidebar({ filters, activeFilters, onFilterChange }: Filter
                 />
 
                 <div className="border-t border-white/10 my-4" />
+
+                {/* Category Filter */}
+                {filters.categories && filters.categories.length > 0 && (
+                    <>
+                        <CategoryFilter
+                            categories={filters.categories}
+                            selected={activeFilters.categoryId}
+                            onChange={(categoryId) =>
+                                onFilterChange({
+                                    ...activeFilters,
+                                    categoryId: categoryId || undefined
+                                })
+                            }
+                        />
+
+                        <div className="border-t border-white/10 my-4" />
+                    </>
+                )}
 
                 {/* In Stock Toggle */}
                 <div className="space-y-2">
