@@ -1,6 +1,7 @@
 import { StoreFront } from "@/components/product/StoreFront";
 import { BrandsCarousel } from "@/components/ui/BrandsCarousel";
 import { getCategories, getProducts } from "@/app/actions/categories";
+import { getAvailableFilters } from "@/app/actions/products";
 import { Sparkles, ArrowDown } from "lucide-react";
 import { getRandomContent, HERO_TITLES, HERO_SUBTITLES } from "@/lib/marketing-content";
 
@@ -13,14 +14,27 @@ export default async function Home(props: {
     const page = Number(searchParams.page) || 1;
     const categoryId = searchParams.category as string;
     const sortBy = searchParams.sort as any;
+    const search = searchParams.search as string;
+    const brands = searchParams.brands ? (searchParams.brands as string).split(',') : undefined;
+    const priceMin = searchParams.priceMin ? Number(searchParams.priceMin) : undefined;
+    const priceMax = searchParams.priceMax ? Number(searchParams.priceMax) : undefined;
+    const inStock = searchParams.inStock === 'true' ? true : undefined;
 
-    const { products, pagination } = await getProducts({
-        page,
-        limit: 12,
-        categoryId,
-        sortBy
-    });
-    const categories = await getCategories();
+    const [{ products, pagination }, categories, availableFilters] = await Promise.all([
+        getProducts({
+            page,
+            limit: 12,
+            categoryId,
+            sortBy,
+            search,
+            brands,
+            minPrice: priceMin,
+            maxPrice: priceMax,
+            inStock
+        }),
+        getCategories(),
+        getAvailableFilters(categoryId)
+    ]);
 
     const title = getRandomContent(HERO_TITLES);
     const subtitle = getRandomContent(HERO_SUBTITLES);
@@ -72,6 +86,7 @@ export default async function Home(props: {
                     initialProducts={products}
                     categories={categories}
                     pagination={pagination}
+                    availableFilters={availableFilters}
                 />
             </section>
 
