@@ -74,6 +74,15 @@ model Product {
   updatedAt            DateTime    @updatedAt
   items                OrderItem[]
   category             Category?   @relation(fields: [categoryId], references: [id])
+
+  // Indexes for optimized filtering and search
+  @@index([marca])
+  @@index([categoryId])
+  @@index([price])
+  @@index([stock])
+  @@index([name])
+  @@index([marca, categoryId])
+  @@index([price, stock])
 }
 
 model Category {

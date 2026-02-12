@@ -4,6 +4,7 @@ import { useRouter, useSearchParams } from 'next/navigation';
 import { ProductCard } from '@/components/product/ProductCard';
 import { FilterSidebar } from '@/components/product/FilterSidebar';
 import { SearchBar } from '@/components/product/SearchBar';
+import { MobileFilterModal } from '@/components/product/MobileFilterModal';
 import { ChevronDown, X, ChevronLeft, ChevronRight, SlidersHorizontal } from 'lucide-react';
 import { useCurrency } from '@/context/CurrencyContext';
 import { useState, useEffect } from 'react';
@@ -417,6 +418,20 @@ export function StoreFront({ initialProducts, categories, pagination, availableF
                     </div>
                 )}
             </div>
+
+            {/* Mobile Filter Modal */}
+            {availableFilters && (
+                <MobileFilterModal
+                    isOpen={isFilterMenuOpen}
+                    onClose={() => setIsFilterMenuOpen(false)}
+                    filters={availableFilters}
+                    activeFilters={activeFilters}
+                    onFilterChange={(filters) => {
+                        handleFilterChange(filters);
+                        setIsFilterMenuOpen(false);
+                    }}
+                />
+            )}
         </div>
     );
 }
