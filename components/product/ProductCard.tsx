@@ -3,9 +3,8 @@
 import Link from 'next/link';
 import { Product } from '@prisma/client';
 import { AddToCartButton } from '@/components/cart/AddToCartButton';
-import { ShoppingCart, Zap, Gamepad2, GitCompare } from 'lucide-react';
+import { ShoppingCart, Zap, Gamepad2 } from 'lucide-react';
 import { useCurrency } from '@/context/CurrencyContext';
-import { useComparison } from '@/context/ComparisonContext';
 
 // Serialized product type for client components
 type SerializedProduct = Omit<Product, 'price'> & { price: number };
@@ -16,18 +15,8 @@ interface ProductCardProps {
 
 export function ProductCard({ product }: ProductCardProps) {
     const { formatUSD, formatARS } = useCurrency();
-    const { addToComparison, removeFromComparison, isInComparison } = useComparison();
 
     const isGamer = product.gamer;
-    const inComparison = isInComparison(product.id);
-
-    const handleComparisonToggle = () => {
-        if (inComparison) {
-            removeFromComparison(product.id);
-        } else {
-            addToComparison(product as any);
-        }
-    };
 
     return (
         <div className="group h-full">
@@ -107,18 +96,6 @@ export function ProductCard({ product }: ProductCardProps) {
                         </div>
 
                         <AddToCartButton product={product} fullWidth />
-
-                        {/* Comparison Button */}
-                        <button
-                            onClick={handleComparisonToggle}
-                            className={`w-full px-4 py-2.5 rounded-xl font-semibold text-sm transition-all duration-300 flex items-center justify-center gap-2 ${inComparison
-                                    ? 'bg-[hsl(var(--accent-primary))]/20 text-[hsl(var(--accent-primary))] border-2 border-[hsl(var(--accent-primary))]'
-                                    : 'bg-white/5 text-[hsl(var(--text-secondary))] border-2 border-white/10 hover:border-white/20 hover:bg-white/10'
-                                }`}
-                        >
-                            <GitCompare className="w-4 h-4" />
-                            {inComparison ? 'En comparación' : 'Comparar'}
-                        </button>
                     </div>
                 </div>
 
