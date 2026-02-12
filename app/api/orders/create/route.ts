@@ -5,14 +5,6 @@ import { auth } from '@/auth';
 export async function POST(request: NextRequest) {
     try {
         const session = await auth();
-
-        if (!session || !session.user) {
-            return NextResponse.json(
-                { error: 'No autenticado' },
-                { status: 401 }
-            );
-        }
-
         const data = await request.json();
 
         const {
@@ -62,10 +54,38 @@ export async function POST(request: NextRequest) {
             );
         }
 
+        // Get or create user
+        let userId: string;
+
+        if (session?.user?.id) {
+            // User is logged in, use their ID
+            userId = session.user.id as string;
+        } else {
+            // Guest checkout - find or create user by email
+            let user = await prisma.user.findUnique({
+                where: { email: customerEmail.toLowerCase() }
+            });
+
+            if (!user) {
+                // Create new user account for guest
+                user = await prisma.user.create({
+                    data: {
+                        name: customerName,
+                        email: customerEmail.toLowerCase(),
+                        phone: customerPhone,
+                        role: 'USER',
+                        // No password - user will need to reset password to login
+                    }
+                });
+            }
+
+            userId = user.id;
+        }
+
         // Create order
         const order = await prisma.order.create({
             data: {
-                userId: session.user.id as string,
+                userId,
                 customerName,
                 customerEmail,
                 customerPhone,
