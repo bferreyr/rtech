@@ -119,30 +119,8 @@ export function FilterSidebar({ filters, activeFilters, onFilterChange }: Filter
                             }
                         />
 
-                        <div className="border-t border-white/10 my-4" />
                     </>
                 )}
-
-                {/* In Stock Toggle */}
-                <div className="space-y-2">
-                    <h3 className="font-semibold text-[hsl(var(--text-primary))]">Disponibilidad</h3>
-                    <label className="flex items-center gap-2 cursor-pointer hover:bg-white/5 p-2 rounded-lg transition-colors group">
-                        <input
-                            type="checkbox"
-                            checked={activeFilters.inStock || false}
-                            onChange={(e) =>
-                                onFilterChange({
-                                    ...activeFilters,
-                                    inStock: e.target.checked || undefined
-                                })
-                            }
-                            className="w-4 h-4 rounded border-white/20 text-[hsl(var(--accent-primary))] focus:ring-[hsl(var(--accent-primary))] focus:ring-offset-0"
-                        />
-                        <span className="text-sm text-[hsl(var(--text-secondary))] group-hover:text-[hsl(var(--text-primary))] transition-colors">
-                            Solo con stock
-                        </span>
-                    </label>
-                </div>
             </div>
 
             {/* Active Filters Count */}

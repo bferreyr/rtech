@@ -116,10 +116,9 @@ export async function getProducts(options?: {
         ];
     }
 
-    // Stock filter - only filter if explicitly set to true
-    if (inStock === true) {
-        where.stock = { gt: 0 };
-    }
+    // Stock filter - ALWAYS filter out products with no stock
+    // Out-of-stock products should never be shown in the store
+    where.stock = { gt: 0 };
 
 
     let orderBy: any = { createdAt: 'desc' };
