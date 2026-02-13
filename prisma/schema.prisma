@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
   url      = env("DATABASE_URL")
 }
 
@@ -212,7 +212,7 @@ model Review {
   orderId            String?
   rating             Int // 1-5 stars
   title              String
-  comment            String
+  comment            String   @db.Text
   isVerifiedPurchase Boolean  @default(false)
   isApproved         Boolean  @default(true)
   createdAt          DateTime @default(now())
