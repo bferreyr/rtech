@@ -1,11 +1,12 @@
 'use client';
 
 import { useState, useTransition, useEffect } from "react";
-import { getExchangeRate, updateExchangeRate, getGlobalMarkup, updateGlobalMarkup } from "@/app/actions/settings";
+import { getExchangeRate, updateExchangeRate, getGlobalMarkup, updateGlobalMarkup, getExternalDollarRate } from "@/app/actions/settings";
 import { DollarSign, RefreshCw, Save, Loader2, Info, TrendingUp, CreditCard, Wallet, Truck } from "lucide-react";
 
 export default function AdminSettingsPage() {
     const [rate, setRate] = useState<number>(1000);
+    const [apiRate, setApiRate] = useState<number | null>(null);
     const [markup, setMarkup] = useState<number>(30);
 
 
@@ -17,14 +18,16 @@ export default function AdminSettingsPage() {
 
     useEffect(() => {
         async function loadSettings() {
-            const [rateData, markupData] = await Promise.all([
+            const [rateData, markupData, apiData] = await Promise.all([
                 getExchangeRate(),
-                getGlobalMarkup()
+                getGlobalMarkup(),
+                getExternalDollarRate()
             ]);
             setRate(rateData.rate);
             setAutoUpdate(rateData.isAutoUpdate);
             setLastUpdated(rateData.lastUpdated);
             setMarkup(markupData);
+            setApiRate(apiData);
         }
         loadSettings();
     }, []);
@@ -71,9 +74,16 @@ export default function AdminSettingsPage() {
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <div className="space-y-4">
                             <div>
-                                <label className="block text-sm font-medium mb-2 text-[hsl(var(--text-secondary))]">
-                                    Valor del Dólar ($1 USD = ?)
-                                </label>
+                                <div className="flex justify-between items-center mb-2">
+                                    <label className="block text-sm font-medium text-[hsl(var(--text-secondary))]">
+                                        Valor del Dólar ($1 USD = ?)
+                                    </label>
+                                    {apiRate && (
+                                        <span className="text-[10px] px-2 py-0.5 rounded-full bg-blue-500/10 text-blue-400 border border-blue-500/20">
+                                            Dólar Blue API: ${apiRate}
+                                        </span>
+                                    )}
+                                </div>
                                 <div className="relative">
                                     <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
                                         <span className="text-[hsl(var(--text-tertiary))] font-bold">$</span>
@@ -187,14 +197,16 @@ export default function AdminSettingsPage() {
 
 
 
-                {status && (
-                    <div className={`p-4 rounded-xl border animate-in fade-in zoom-in duration-300 ${status.type === 'success'
-                        ? 'bg-green-500/10 border-green-500/30 text-green-400'
-                        : 'bg-red-500/10 border-red-500/30 text-red-400'
-                        }`}>
-                        {status.message}
-                    </div>
-                )}
+                {
+                    status && (
+                        <div className={`p-4 rounded-xl border animate-in fade-in zoom-in duration-300 ${status.type === 'success'
+                            ? 'bg-green-500/10 border-green-500/30 text-green-400'
+                            : 'bg-red-500/10 border-red-500/30 text-red-400'
+                            }`}>
+                            {status.message}
+                        </div>
+                    )
+                }
 
                 <div className="flex justify-end pt-4">
                     <button
@@ -210,8 +222,8 @@ export default function AdminSettingsPage() {
                         Guardar Configuración Global
                     </button>
                 </div>
-            </form>
-        </div>
+            </form >
+        </div >
     );
 }
 

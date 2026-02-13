@@ -46,6 +46,15 @@ export async function getExchangeRate() {
     }
 }
 
+export async function getExternalDollarRate() {
+    try {
+        const rate = await fetchLiveExchangeRate();
+        return rate;
+    } catch (error) {
+        return null;
+    }
+}
+
 export async function updateExchangeRate(rate: number, autoUpdate: boolean) {
     try {
         await prisma.$transaction([
