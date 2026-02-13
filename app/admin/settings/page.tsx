@@ -50,7 +50,7 @@ export default function AdminSettingsPage() {
     };
 
     return (
-        <div className="max-w-4xl space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
+        <div className="max-w-4xl mx-auto space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700">
             <div>
                 <h1 className="text-3xl font-bold mb-2">Configuración</h1>
                 <p className="text-[hsl(var(--text-secondary))]">
@@ -109,8 +109,8 @@ export default function AdminSettingsPage() {
                                         className="sr-only peer"
                                     />
                                     <div className={`w-11 h-6 rounded-full after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all ${autoUpdate
-                                            ? 'bg-[hsl(var(--accent-primary))] after:translate-x-full'
-                                            : 'bg-gray-600 after:translate-x-0'
+                                        ? 'bg-[hsl(var(--accent-primary))] after:translate-x-full'
+                                        : 'bg-gray-600 after:translate-x-0'
                                         }`}></div>
                                 </button>
                                 <div className="flex flex-col">
