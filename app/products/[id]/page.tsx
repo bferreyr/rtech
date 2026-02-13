@@ -5,6 +5,7 @@ import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import { Metadata } from "next";
 import { getExchangeRate, getGlobalMarkup } from "@/app/actions/settings";
 import { ShieldCheck } from "lucide-react";
+import { ReviewsSection } from "@/components/product/ReviewsSection";
 
 // Force dynamic rendering to ensure fresh data
 export const dynamic = 'force-dynamic';
@@ -217,6 +218,11 @@ export default async function ProductPage({ params }: Props) {
                     </div>
                 </section>
             </main>
+
+            {/* Reviews Section */}
+            <section className="mt-16">
+                <ReviewsSection productId={product.id} />
+            </section>
         </div>
     );
 }

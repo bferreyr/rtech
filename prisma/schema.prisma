@@ -3,7 +3,7 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
+  provider = "sqlite"
   url      = env("DATABASE_URL")
 }
 
@@ -21,6 +21,7 @@ model User {
   orders       Order[]
   pointHistory PointHistory[]
   printingJobs PrintingJob[]
+  reviews      Review[]
 }
 
 model PointHistory {
@@ -74,6 +75,7 @@ model Product {
   updatedAt            DateTime    @updatedAt
   items                OrderItem[]
   category             Category?   @relation(fields: [categoryId], references: [id])
+  reviews              Review[]
 
   // Indexes for optimized filtering and search
   @@index([marca])
@@ -99,41 +101,42 @@ model Category {
 }
 
 model Order {
-  id                String      @id @default(cuid())
-  userId            String
-  
+  id     String @id @default(cuid())
+  userId String
+
   // Información de contacto
-  customerName      String?     // Nombre y apellido
-  customerEmail     String?     // Email
-  customerPhone     String?     // Teléfono
-  
+  customerName  String? // Nombre y apellido
+  customerEmail String? // Email
+  customerPhone String? // Teléfono
+
   // Dirección de envío
-  shippingAddress   String?     // Dirección y altura
-  shippingProvince  String?     // Provincia
-  shippingCity      String?     // Ciudad
-  shippingZip       String?     // Código postal
-  shippingDetails   String?     // Descripción (casa, depto, piso, número)
-  
+  shippingAddress  String? // Dirección y altura
+  shippingProvince String? // Provincia
+  shippingCity     String? // Ciudad
+  shippingZip      String? // Código postal
+  shippingDetails  String? // Descripción (casa, depto, piso, número)
+
   // Envío
-  shippingType      String?     @default("STANDARD") // STANDARD, EXPRESS, PICKUP
-  shippingCost      Decimal?
-  shippingMethod    String?     @default("Correo Argentino")
-  trackingUrl       String?     // URL de seguimiento de Correo Argentino
-  isFreeShipping    Boolean     @default(false)
-  
+  shippingType   String?  @default("STANDARD") // STANDARD, EXPRESS, PICKUP
+  shippingCost   Decimal?
+  shippingMethod String?  @default("Correo Argentino")
+  trackingUrl    String? // URL de seguimiento de Correo Argentino
+  isFreeShipping Boolean  @default(false)
+
   // Pago
-  paymentMethod     String?     // "mercadopago" o "transferencia"
-  paymentReceiptUrl String?     // URL del comprobante de pago
-  paymentStatus     String?     @default("PENDING")
-  
-  status            OrderStatus @default(PENDING)
-  total             Decimal
-  createdAt         DateTime    @default(now())
-  updatedAt         DateTime    @updatedAt
-  
-  user              User        @relation(fields: [userId], references: [id])
-  items             OrderItem[]
-  shipment          Shipment?
+  paymentMethod     String? // "mercadopago" o "transferencia"
+  paymentReceiptUrl String? // URL del comprobante de pago
+  paymentStatus     String? @default("PENDING")
+
+  status    OrderStatus @default(PENDING)
+  total     Decimal
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @updatedAt
+
+  user     User        @relation(fields: [userId], references: [id])
+  items    OrderItem[]
+  shipment Shipment?
+  reviews  Review[]
 }
 
 model OrderItem {
@@ -199,6 +202,31 @@ enum ShipmentStatus {
   DELIVERED
   FAILED
   CANCELLED
+}
+
+// Product Reviews
+model Review {
+  id                 String   @id @default(cuid())
+  productId          String
+  userId             String
+  orderId            String?
+  rating             Int // 1-5 stars
+  title              String
+  comment            String
+  isVerifiedPurchase Boolean  @default(false)
+  isApproved         Boolean  @default(true)
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  product Product @relation(fields: [productId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  order   Order?  @relation(fields: [orderId], references: [id], onDelete: SetNull)
+
+  @@index([productId])
+  @@index([userId])
+  @@index([isApproved])
+  @@index([productId, isApproved])
+  @@index([rating])
 }
 
 // 3D Printing Jobs

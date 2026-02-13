@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Package, ShoppingCart, Users, LogOut, Settings, Truck, Box, ChevronLeft, ChevronRight } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingCart, Users, LogOut, Settings, Truck, Box, ChevronLeft, ChevronRight, MessageSquare } from 'lucide-react';
 import { logoutUser } from '@/app/actions/auth';
 import { useState, useEffect } from 'react';
 
@@ -15,6 +15,7 @@ const menuItems = [
     { icon: Truck, label: 'Envíos', href: '/admin/shipments' },
     { icon: Users, label: 'Usuarios', href: '/admin/users' },
     { icon: Settings, label: 'Configuración', href: '/admin/settings' },
+    { icon: MessageSquare, label: 'Reseñas', href: '/admin/reviews' },
     { icon: Box, label: 'Impresiones 3D', href: '/admin/3d-printing' },
 ];
 
@@ -61,8 +62,8 @@ export function AdminSidebar() {
                             <Link
                                 href={item.href}
                                 className={`flex items-center ${isCollapsed ? 'justify-center' : 'gap-3'} px-4 py-3 rounded-lg transition-all duration-200 ${isActive
-                                        ? 'bg-gradient-to-r from-[hsl(var(--accent-primary))] to-[hsl(var(--accent-secondary))] text-white shadow-lg shadow-[hsl(var(--accent-glow))]'
-                                        : 'text-[hsl(var(--text-secondary))] hover:bg-white/5 hover:text-[hsl(var(--text-primary))] hover:border-white/20'
+                                    ? 'bg-gradient-to-r from-[hsl(var(--accent-primary))] to-[hsl(var(--accent-secondary))] text-white shadow-lg shadow-[hsl(var(--accent-glow))]'
+                                    : 'text-[hsl(var(--text-secondary))] hover:bg-white/5 hover:text-[hsl(var(--text-primary))] hover:border-white/20'
                                     }`}
                             >
                                 <Icon size={20} />
