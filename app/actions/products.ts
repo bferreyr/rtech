@@ -405,7 +405,8 @@ export async function bulkUploadProducts(formData: FormData) {
 
     console.log(`Processing ${data.length} products in ${chunks.length} batches...`);
 
-    for (const [index, chunk] of chunks.entries()) {
+    for (let index = 0; index < chunks.length; index++) {
+        const chunk = chunks[index];
         console.log(`Processing batch ${index + 1}/${chunks.length}`);
 
         await Promise.all(chunk.map(async (row: any) => {
