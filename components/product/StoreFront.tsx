@@ -304,19 +304,25 @@ export function StoreFront({ initialProducts, categories, pagination, availableF
                     )}
 
                     {/* Sort Controls */}
-                    <div className="flex items-center gap-4 w-full lg:w-auto pb-2 lg:pb-0">
-                        <div className="relative flex-1 lg:flex-none w-full">
-                            <select
-                                value={sortBy}
-                                onChange={(e) => updateParams({ sort: e.target.value })}
-                                className="w-full lg:w-48 appearance-none bg-white/5 border border-white/10 rounded-xl px-4 py-2 text-sm focus:outline-none focus:border-[hsl(var(--accent-primary))] transition-colors cursor-pointer"
-                            >
-                                <option value="newest" className="bg-[#09090b]">Los más nuevos</option>
-                                <option value="price_asc" className="bg-[#09090b]">Precio: bajo a alto</option>
-                                <option value="price_desc" className="bg-[#09090b]">Precio: alto a bajo</option>
-                                <option value="name_asc" className="bg-[#09090b]">Nombre: A-Z</option>
-                            </select>
-                            <ChevronDown size={16} className="absolute right-3 top-1/2 -translate-y-1/2 pointer-events-none text-[hsl(var(--text-secondary))]" />
+                    <div className="flex items-center gap-4 w-full lg:w-auto pb-2 lg:pb-0 overflow-x-auto">
+                        <div className="flex bg-white/5 p-1 rounded-xl border border-white/10">
+                            {[
+                                { value: 'newest', label: 'Los más nuevos' },
+                                { value: 'price_asc', label: 'Precio: bajo a alto' },
+                                { value: 'price_desc', label: 'Precio: alto a bajo' },
+                                { value: 'name_asc', label: 'Nombre: A-Z' },
+                            ].map((option) => (
+                                <button
+                                    key={option.value}
+                                    onClick={() => updateParams({ sort: option.value })}
+                                    className={`px-4 py-2 rounded-lg text-sm font-medium transition-all whitespace-nowrap ${sortBy === option.value
+                                            ? 'bg-[hsl(var(--accent-primary))] text-white shadow-lg'
+                                            : 'text-[hsl(var(--text-secondary))] hover:text-white hover:bg-white/5'
+                                        }`}
+                                >
+                                    {option.label}
+                                </button>
+                            ))}
                         </div>
                     </div>
                 </div>
