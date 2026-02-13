@@ -17,12 +17,12 @@ export async function POST(request: NextRequest) {
             shippingZip,
             shippingDetails,
             shippingType,
-            shippingCost,
+            // shippingCost, // Ignored from client
             isFreeShipping,
             paymentMethod,
             paymentReceiptUrl,
-            items,
-            total,
+            items, // We only trust productId and quantity
+            // total, // Ignored from client
         } = data;
 
         // Validate required fields
@@ -47,37 +47,95 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        if (!items || items.length === 0) {
+        if (!items || !Array.isArray(items) || items.length === 0) {
             return NextResponse.json(
                 { error: 'El carrito está vacío' },
                 { status: 400 }
             );
         }
 
+        // --- SERVER SIDE PRICE CALCULATION START ---
+
+        // 1. Fetch all products involved (to minimize DB queries, we could use findMany with 'in', 
+        // but verify stock individually is safer for race conditions if we used transactions, 
+        // though here we just check).
+        const productIds = items.map((item: any) => item.productId);
+        const products = await prisma.product.findMany({
+            where: { id: { in: productIds } }
+        });
+
+        if (products.length !== items.length) {
+            // Check if any product was not found
+            // This is a simple check assuming unique productIds in items
+            // Ideally we map and check
+        }
+
+        let calculatedTotal = 0;
+        const validItems = [];
+
+        for (const item of items) {
+            const product = products.find(p => p.id === item.productId);
+
+            if (!product) {
+                return NextResponse.json(
+                    { error: `Producto no encontrado: ${item.productId}` },
+                    { status: 400 }
+                );
+            }
+
+            // Check Stock
+            const quantity = parseInt(item.quantity) || 1;
+            if (product.stock < quantity) {
+                return NextResponse.json(
+                    { error: `Stock insuficiente para: ${product.name}` },
+                    { status: 400 }
+                );
+            }
+
+            // Determine Price (Prioritize USD Sale Price)
+            // We use Number() because Prisma returns Decimal
+            const price = product.pvpUsd ? Number(product.pvpUsd) : Number(product.price);
+
+            calculatedTotal += price * quantity;
+
+            validItems.push({
+                productId: product.id,
+                quantity: quantity,
+                price: price // Store the trusted price
+            });
+        }
+
+        // Calculate Shipping
+        // For now, based on previous logic, we default to 0 (Pay on Delivery / Calculated elsewhere)
+        // Check strictness: if we want to enforce free shipping logic, we should do it here.
+        // But for now, let's keep it 0 as per the original code's behavior which trusted client's 0.
+        // We will FORCE it to 0 or valid value, not client's value.
+        const shippingCost = 0;
+
+        const finalTotal = calculatedTotal + shippingCost;
+
+        // --- END CALCULATION ---
+
         // Get or create user
         let userId: string;
 
         if (session?.user?.id) {
-            // User is logged in, use their ID
             userId = session.user.id as string;
         } else {
-            // Guest checkout - find or create user by email
             let user = await prisma.user.findUnique({
                 where: { email: customerEmail.toLowerCase() }
             });
 
             if (!user) {
-                // Create new user account for guest
                 user = await prisma.user.create({
                     data: {
                         name: customerName,
                         email: customerEmail.toLowerCase(),
                         role: 'USER',
-                        password: '', // Empty password - user will need to reset password to login
+                        password: '',
                     }
                 });
             }
-
             userId = user.id;
         }
 
@@ -95,15 +153,15 @@ export async function POST(request: NextRequest) {
                 shippingDetails,
                 shippingType,
                 shippingCost,
-                isFreeShipping,
+                isFreeShipping: isFreeShipping || false, // Should interpret from logic
                 shippingMethod: 'Correo Argentino',
                 paymentMethod,
                 paymentReceiptUrl,
-                paymentStatus: paymentMethod === 'mercadopago' ? 'PENDING' : 'PENDING',
+                paymentStatus: 'PENDING',
                 status: 'PENDING',
-                total,
+                total: finalTotal, // Use server calculated total
                 items: {
-                    create: items.map((item: any) => ({
+                    create: validItems.map(item => ({
                         productId: item.productId,
                         quantity: item.quantity,
                         price: item.price,
@@ -114,6 +172,17 @@ export async function POST(request: NextRequest) {
                 items: true,
             },
         });
+
+        // Update Stock (Simple decrement)
+        // Ideally should be a transaction with the order creation, but Prisma doesn't support 
+        // nested write with arbitrary logic easily without $transaction interactive.
+        // We will do it in parallel for now.
+        await Promise.all(validItems.map(item =>
+            prisma.product.update({
+                where: { id: item.productId },
+                data: { stock: { decrement: item.quantity } }
+            })
+        ));
 
         return NextResponse.json(order);
 

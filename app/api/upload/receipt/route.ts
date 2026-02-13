@@ -15,9 +15,16 @@ export async function POST(request: NextRequest) {
             );
         }
 
-        // Validate file type
-        const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'application/pdf'];
-        if (!validTypes.includes(file.type)) {
+        // Validate file type and get extension
+        const mimeToExt: Record<string, string> = {
+            'image/jpeg': 'jpg',
+            'image/jpg': 'jpg',
+            'image/png': 'png',
+            'application/pdf': 'pdf'
+        };
+
+        const extension = mimeToExt[file.type];
+        if (!extension) {
             return NextResponse.json(
                 { error: 'Tipo de archivo no válido. Solo se permiten JPG, PNG o PDF' },
                 { status: 400 }
@@ -38,10 +45,10 @@ export async function POST(request: NextRequest) {
             await mkdir(uploadsDir, { recursive: true });
         }
 
-        // Generate unique filename
+        // Generate unique and safe filename
         const timestamp = Date.now();
-        const extension = file.name.split('.').pop();
-        const filename = `receipt-${timestamp}.${extension}`;
+        const random = Math.random().toString(36).substring(7);
+        const filename = `receipt-${timestamp}-${random}.${extension}`;
         const filepath = join(uploadsDir, filename);
 
         // Convert file to buffer and save

@@ -4,8 +4,15 @@ import { prisma } from "@/lib/prisma";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import * as XLSX from 'xlsx';
+import { auth } from "@/auth";
 
 export async function createProduct(formData: FormData) {
+    const session = await auth();
+    // @ts-ignore
+    if (session?.user?.role !== "ADMIN") {
+        throw new Error("No autorizado");
+    }
+
     const sku = formData.get('sku') as string;
     const name = formData.get('name') as string;
     const description = formData.get('description') as string;
@@ -39,6 +46,12 @@ export async function createProduct(formData: FormData) {
 }
 
 export async function updateProduct(id: string, formData: FormData) {
+    const session = await auth();
+    // @ts-ignore
+    if (session?.user?.role !== "ADMIN") {
+        throw new Error("No autorizado");
+    }
+
     const sku = formData.get('sku') as string;
     const name = formData.get('name') as string;
     const description = formData.get('description') as string;
@@ -73,6 +86,12 @@ export async function updateProduct(id: string, formData: FormData) {
 }
 
 export async function deleteProduct(id: string) {
+    const session = await auth();
+    // @ts-ignore
+    if (session?.user?.role !== "ADMIN") {
+        throw new Error("No autorizado");
+    }
+
     await prisma.product.delete({
         where: { id }
     });
@@ -82,6 +101,12 @@ export async function deleteProduct(id: string) {
 }
 
 export async function deleteProducts(ids: string[]) {
+    const session = await auth();
+    // @ts-ignore
+    if (session?.user?.role !== "ADMIN") {
+        return { success: false, error: "No autorizado" };
+    }
+
     if (!ids || ids.length === 0) return { success: false, error: "No IDs provided" };
 
     try {
@@ -99,6 +124,12 @@ export async function deleteProducts(ids: string[]) {
 }
 
 export async function deleteAllProducts(provider?: string) {
+    const session = await auth();
+    // @ts-ignore
+    if (session?.user?.role !== "ADMIN") {
+        return { success: false, error: "No autorizado" };
+    }
+
     try {
         const where = provider ? { provider } : {};
         // Delete all products for specific provider
@@ -274,6 +305,12 @@ export async function getAdminProducts(options?: {
 // ... existing imports
 
 export async function bulkUploadProducts(formData: FormData) {
+    const session = await auth();
+    // @ts-ignore
+    if (session?.user?.role !== "ADMIN") {
+        throw new Error("No autorizado");
+    }
+
     const file = formData.get('file') as File;
     const provider = (formData.get('provider') as string) || 'ELIT';
 
