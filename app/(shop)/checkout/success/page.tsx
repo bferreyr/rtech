@@ -67,14 +67,18 @@ export default async function CheckoutSuccessPage({ searchParams }: Props) {
                         {order.items.map((item) => (
                             <div key={item.id} className="flex gap-4 p-4 rounded-lg bg-[hsl(var(--bg-primary))]">
                                 <div className="w-16 h-16 rounded-lg bg-[hsl(var(--bg-tertiary))] overflow-hidden flex-shrink-0">
-                                    {item.product.imageUrl && (
-                                        <img src={item.product.imageUrl} alt={item.product.name} className="w-full h-full object-cover" />
+                                    {(item.product?.imageUrl || item.productImage) && (
+                                        <img
+                                            src={item.product?.imageUrl || item.productImage || ''}
+                                            alt={item.product?.name || item.productName || 'Producto'}
+                                            className="w-full h-full object-cover"
+                                        />
                                     )}
                                 </div>
-                                <div className="flex-1">
-                                    <p className="font-medium">{item.product.name}</p>
+                                <div>
+                                    <p className="font-medium">{item.product?.name || item.productName || 'Producto eliminado'}</p>
                                     <p className="text-sm text-[hsl(var(--text-secondary))]">
-                                        Cantidad: {item.quantity} × ${Number(item.price).toFixed(2)}
+                                        Cant: {item.quantity} x ${parseFloat(item.price.toString()).toLocaleString('es-AR', { minimumFractionDigits: 2 })}
                                     </p>
                                 </div>
                                 <p className="font-bold">
