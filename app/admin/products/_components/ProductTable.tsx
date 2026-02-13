@@ -9,9 +9,10 @@ interface ProductTableProps {
     products: any[];
     globalMarkup: number;
     exchangeRate: number;
+    provider?: string;
 }
 
-export function ProductTable({ products, globalMarkup, exchangeRate }: ProductTableProps) {
+export function ProductTable({ products, globalMarkup, exchangeRate, provider = 'ELIT' }: ProductTableProps) {
     const [selectedIds, setSelectedIds] = useState<string[]>([]);
     const [isPending, startTransition] = useTransition();
 
@@ -41,12 +42,21 @@ export function ProductTable({ products, globalMarkup, exchangeRate }: ProductTa
     };
 
     const handleDeleteAll = async () => {
-        if (!confirm("ADVERTENCIA: ¿Estás seguro de eliminar TODOS los productos? Esta acción no se puede deshacer.")) return;
-        if (!confirm("¿Realmente estás seguro? Se borrará todo el inventario.")) return;
+        const providerName = provider === 'MOBE' ? 'MOBE' : 'ELIT';
+        if (!confirm(`ADVERTENCIA: ¿Estás seguro de eliminar TODOS los productos de ${providerName}? Esta acción no se puede deshacer.`)) return;
+        if (!confirm("¿Realmente estás seguro? Se borrará todo el inventario de este proveedor.")) return;
 
         startTransition(async () => {
-            await deleteAllProducts();
+            await deleteAllProducts(provider);
             setSelectedIds([]);
+        });
+    };
+
+    const handleDeleteOne = async (id: string, name: string) => {
+        if (!confirm(`¿Estás seguro de eliminar el producto "${name}"?`)) return;
+
+        startTransition(async () => {
+            await deleteProduct(id);
         });
     };
 
@@ -246,11 +256,14 @@ export function ProductTable({ products, globalMarkup, exchangeRate }: ProductTa
                                             <Link href={`/admin/products/${product.id}/edit`} className="p-2 hover:text-[color:var(--accent-primary)] transition-colors">
                                                 <Pencil size={18} />
                                             </Link>
-                                            <form action={deleteProduct.bind(null, product.id)}>
-                                                <button className="p-2 hover:text-red-400 transition-colors">
-                                                    <Trash2 size={18} />
-                                                </button>
-                                            </form>
+                                            <button
+                                                onClick={() => handleDeleteOne(product.id, product.name)}
+                                                className="p-2 hover:text-red-400 transition-colors"
+                                                disabled={isPending}
+                                                title="Eliminar producto"
+                                            >
+                                                <Trash2 size={18} />
+                                            </button>
                                         </div>
                                     </td>
                                 </tr>

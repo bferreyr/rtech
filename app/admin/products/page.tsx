@@ -50,7 +50,7 @@ export default async function AdminProductsPage(props: {
 
             <AdminFilters categories={categories} />
 
-            <ProductTable products={products} globalMarkup={globalMarkup} exchangeRate={exchangeRate} />
+            <ProductTable products={products} globalMarkup={globalMarkup} exchangeRate={exchangeRate} provider="ELIT" />
 
             <Pagination totalPages={pagination.totalPages} currentPage={pagination.currentPage} />
         </div>
