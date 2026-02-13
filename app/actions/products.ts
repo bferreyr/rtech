@@ -313,7 +313,7 @@ export async function getAdminProducts({
         products: products.map(serializeProduct),
         pagination: {
             total,
-            totalPages,
+            totalPages: Math.ceil(total / limit),
             currentPage: page,
             limit
         }
