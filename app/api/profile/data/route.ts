@@ -71,18 +71,25 @@ export async function GET() {
             console.warn('Printing jobs table might not exist or schema mismatch');
         }
 
-        // Serialize orders to handle null products (deleted)
+        // Serialize orders to handle null products (deleted) AND convert Decimals
         const serializedOrders = orders.map((order: any) => ({
             ...order,
+            total: Number(order.total), // Convert Decimal to Number
+            shippingCost: Number(order.shippingCost || 0), // Convert Decimal to Number
             items: order.items.map((item: any) => ({
                 ...item,
-                product: item.product || {
+                price: Number(item.price), // Convert Decimal to Number
+                product: item.product ? {
+                    ...item.product,
+                    price: Number(item.product.price), // Convert Decimal
+                    precio: Number(item.product.precio || 0), // Convert Decimal
+                } : {
                     id: 'deleted',
                     name: item.productName || 'Producto eliminado',
                     sku: item.productSku || 'N/A',
                     imageUrl: item.productImage || null,
                     description: 'Este producto ya no está disponible en el catálogo.',
-                    price: item.price, // Preserve historical price
+                    price: Number(item.price), // Preserve historical price
                     stock: 0,
                     category: null
                 }
