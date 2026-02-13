@@ -22,8 +22,10 @@ export default async function AdminProductsPage(props: {
     const search = searchParams.search as string;
     const categoryId = searchParams.category as string;
 
+    const PROVIDER = 'ELIT';
+
     const [data, categories, globalMarkup, rateData] = await Promise.all([
-        getAdminProducts({ page, limit, search, categoryId }),
+        getAdminProducts({ page, limit, search, categoryId, provider: PROVIDER }),
         getCategories(),
         getGlobalMarkup(),
         getExchangeRate()
@@ -35,12 +37,12 @@ export default async function AdminProductsPage(props: {
     return (
         <div className="space-y-6">
             <AdminHeader
-                title="Inventario Detallado"
-                description={`Gestiona tus productos (${pagination.total} total).`}
+                title="Inventario ELIT"
+                description={`Gestiona tus productos de ELIT (${pagination.total} total).`}
                 actions={
                     <>
                         <ExportProductsButton products={products} />
-                        <BulkUploadButton />
+                        <BulkUploadButton provider={PROVIDER} />
                         <NextLink href="/admin/products/new" className="btn btn-primary">
                             <Plus size={20} className="mr-2" /> Nuevo
                         </NextLink>
@@ -50,7 +52,7 @@ export default async function AdminProductsPage(props: {
 
             <AdminFilters categories={categories} />
 
-            <ProductTable products={products} globalMarkup={globalMarkup} exchangeRate={exchangeRate} provider="ELIT" />
+            <ProductTable products={products} globalMarkup={globalMarkup} exchangeRate={exchangeRate} provider={PROVIDER} />
 
             <Pagination totalPages={pagination.totalPages} currentPage={pagination.currentPage} />
         </div>

@@ -161,11 +161,18 @@ export async function POST(request: NextRequest) {
                 status: 'PENDING',
                 total: finalTotal, // Use server calculated total
                 items: {
-                    create: validItems.map(item => ({
-                        productId: item.productId,
-                        quantity: item.quantity,
-                        price: item.price,
-                    })),
+                    create: validItems.map(item => {
+                        const product = products.find(p => p.id === item.productId);
+                        return {
+                            productId: item.productId,
+                            quantity: item.quantity,
+                            price: item.price,
+                            // Snapshot fields
+                            productName: product?.name || 'Producto desconocido',
+                            productSku: product?.sku || 'N/A',
+                            productImage: product?.imageUrl || null,
+                        };
+                    }),
                 },
             },
             include: {

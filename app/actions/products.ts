@@ -258,48 +258,56 @@ function serializeProduct(p: any) {
     };
 }
 
-export async function getAdminProducts(options?: {
+export async function getAdminProducts({
+    page = 1,
+    limit = 10,
+    search = '',
+    categoryId = '',
+    provider = ''
+}: {
     page?: number;
     limit?: number;
     search?: string;
     categoryId?: string;
     provider?: string;
 }) {
-    const { page = 1, limit = 50, search, categoryId } = options || {};
+    const session = await auth();
+    // @ts-ignore
+    if (session?.user?.role !== "ADMIN") {
+        throw new Error("No autorizado");
+    }
+
     const skip = (page - 1) * limit;
 
     const where: any = {};
 
     if (search) {
         where.OR = [
-            { name: { contains: search } },
-            { description: { contains: search } },
-            { sku: { contains: search } },
-            { marca: { contains: search } }
+            { name: { contains: search, mode: 'insensitive' } },
+            { sku: { contains: search, mode: 'insensitive' } },
+            { marca: { contains: search, mode: 'insensitive' } },
         ];
     }
 
-    if (categoryId && categoryId !== 'all') {
+    if (categoryId) {
         where.categoryId = categoryId;
     }
 
-    if (options?.provider) {
-        // @ts-ignore
-        where.provider = options.provider;
+    // Filter by provider if specified (ELIT / MOBE)
+    if (provider) {
+        where.provider = provider;
     }
 
-    const [total, products] = await Promise.all([
-        prisma.product.count({ where }),
+    const [products, total] = await Promise.all([
         prisma.product.findMany({
             where,
-            orderBy: { createdAt: 'desc' },
             skip,
             take: limit,
+            orderBy: { updatedAt: 'desc' },
             include: { category: true }
-        })
+        }),
+        prisma.product.count({ where })
     ]);
-
-    const totalPages = Math.ceil(total / limit);
 
     return {
         products: products.map(serializeProduct),
