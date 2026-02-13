@@ -483,8 +483,8 @@ export async function bulkUploadProducts(formData: FormData) {
                     return isNaN(parsed) ? null : parsed;
                 };
 
-                const stockVal = parseNum(getVal(['Stock', 'stock', 'stock_total'])) || 0;
-                const priceVal = parseNum(getVal(['Precio (DOLAR (U$S))', 'Precio', 'precio', 'price'])) || 0;
+                const stockVal = parseNum(getVal(['Stock', 'stock', 'stock_total', 'Cantidad', 'Cant.', 'Existencia', 'Saldo', 'Disponible'])) || 0;
+                const priceVal = parseNum(getVal(['Precio (DOLAR (U$S))', 'Precio', 'precio', 'price', 'Precio Venta', 'Precio U$S', 'Precio Usd'])) || 0;
 
                 // Prepare base data (scalars)
                 const baseData = {
