@@ -43,7 +43,25 @@ export async function GET() {
             }
         });
 
-        return NextResponse.json({ orders, user, printingJobs })
+        // Serialize orders to handle null products (deleted)
+        const serializedOrders = orders.map((order: any) => ({
+            ...order,
+            items: order.items.map((item: any) => ({
+                ...item,
+                product: item.product || {
+                    id: 'deleted',
+                    name: item.productName || 'Producto eliminado',
+                    sku: item.productSku || 'N/A',
+                    imageUrl: item.productImage || null,
+                    description: 'Este producto ya no está disponible en el catálogo.',
+                    price: item.price, // Preserve historical price
+                    stock: 0,
+                    category: null
+                }
+            }))
+        }));
+
+        return NextResponse.json({ orders: serializedOrders, user, printingJobs })
     } catch (error) {
         console.error('Error fetching profile data:', error)
         return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 })
