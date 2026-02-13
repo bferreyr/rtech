@@ -475,7 +475,11 @@ export async function bulkUploadProducts(formData: FormData) {
                     return isNaN(parsed) ? null : parsed;
                 };
 
-                const productData = {
+                const stockVal = parseNum(getVal(['Stock', 'stock', 'stock_total'])) || 0;
+                const priceVal = parseNum(getVal(['Precio (DOLAR (U$S))', 'Precio', 'precio', 'price'])) || 0;
+
+                // Prepare base data (scalars)
+                const baseData = {
                     // Product Identification
                     sku: String(sku || `PROD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`),
                     codigoAlfa: getVal(['Cód. Fab.', 'Cód Fab', 'codigo_alfa']) ? String(getVal(['Cód. Fab.', 'Cód Fab', 'codigo_alfa'])) : null,
@@ -485,16 +489,14 @@ export async function bulkUploadProducts(formData: FormData) {
                     name: fixEncoding(String(name || '')),
                     description: fixEncoding(String(getVal(['Descripción Detallada', 'Descripcion Detallada', 'description', 'Description']) || getVal(['Descripción Larga', 'Descripcion Larga']) || '')),
                     categoria: catName ? fixEncoding(String(catName)) : null,
-                    subCategoria: null, // Mapped above if needed, but keeping field for now
+                    subCategoria: null,
                     marca: getVal(['Marca', 'brand', 'marca']) ? fixEncoding(String(getVal(['Marca', 'brand', 'marca']))) : null,
 
-                    categoryId: categoryId || null,
-
                     // Pricing & Taxes
-                    precio: parseNum(getVal(['Precio (DOLAR (U$S))', 'Precio', 'precio', 'price'])) || 0,
+                    precio: priceVal,
                     impuestoInterno: parseNum(getVal(['Impuestos', 'impuesto_interno'])),
                     iva: parseNum(getVal(['IVA', 'iva'])),
-                    moneda: 'USD', // Defaulting to USD based on column name
+                    moneda: 'USD',
 
                     // Dynamic Calculation
                     markup: null,
@@ -506,7 +508,7 @@ export async function bulkUploadProducts(formData: FormData) {
 
                     // Stock Management
                     nivelStock: null,
-                    stockTotal: parseInt(String(getVal(['Stock', 'stock', 'stock_total']) || 0)),
+                    stockTotal: stockVal, // Ensure valid integer
                     stockDepositoCliente: 0,
                     stockDepositoCd: 0,
 
@@ -523,17 +525,29 @@ export async function bulkUploadProducts(formData: FormData) {
                     gamer: false,
 
                     // Legacy fields
-                    price: parseNum(getVal(['Precio (DOLAR (U$S))', 'Precio', 'precio', 'price'])) || 0,
-                    stock: parseInt(String(getVal(['Stock', 'stock', 'stock_total']) || 0)),
+                    price: priceVal,
+                    stock: stockVal,
                     imageUrl: getVal(['Imagen', 'imagen', 'image', 'imageUrl']) ? String(getVal(['Imagen', 'imagen', 'image', 'imageUrl'])) : null,
                     weight: parseNum(getVal(['Peso', 'peso', 'weight'])),
                     provider,
                 };
 
+                // Add relations cleanly
+                const createData: any = {
+                    ...baseData,
+                    category: categoryId ? { connect: { id: categoryId } } : undefined
+                };
+
+                const updateData: any = {
+                    ...baseData,
+                    category: categoryId ? { connect: { id: categoryId } } : { disconnect: true }
+                };
+
+
                 await prisma.product.upsert({
-                    where: { sku: productData.sku },
-                    update: productData,
-                    create: productData
+                    where: { sku: baseData.sku },
+                    update: updateData,
+                    create: createData
                 });
                 return { status: 'success' };
             } catch (err: any) {
