@@ -410,13 +410,25 @@ export async function bulkUploadProducts(formData: FormData) {
         console.log(`Processing batch ${index + 1}/${chunks.length}`);
 
         await Promise.all(chunk.map(async (row: any) => {
-            // Skip rows without essential data
-            if (!row.codigo_producto && !row.sku && !row.nombre && !row.name) return;
+            // Dictionary of Excel keys to normalize access
+            // "Cód." -> row['Cód.']
+            const getVal = (keys: string[]) => {
+                for (const key of keys) {
+                    if (row[key] !== undefined && row[key] !== null && row[key] !== '') return row[key];
+                }
+                return null;
+            };
+
+            // Essential fields check
+            const sku = getVal(['Cód.', 'Cód', 'codigo_producto', 'sku', 'SKU']);
+            const name = getVal(['Descripción', 'Descripcion', 'nombre', 'name', 'Name']);
+
+            if (!sku && !name) return;
 
             let categoryId = null;
 
             // 1. Handle Main Category
-            const catName = row.categoria || row.category || row.Categoria;
+            const catName = getVal(['Rubro', 'categoria', 'category', 'Categoria']);
             if (catName && typeof catName === 'string') {
                 const parentId = await resolveCategory(catName);
 
@@ -424,7 +436,7 @@ export async function bulkUploadProducts(formData: FormData) {
                     categoryId = parentId; // Default to parent
 
                     // 2. Handle Subcategory (if exists)
-                    const subCatName = row.sub_categoria || row.subcategory || row.SubCategoria || row.subCategoria;
+                    const subCatName = getVal(['SubRubro', 'sub_categoria', 'subcategory', 'SubCategoria']);
                     if (subCatName && typeof subCatName === 'string') {
                         // Create/Find subcategory with parentId
                         const subId = await resolveCategory(subCatName, parentId);
@@ -435,63 +447,57 @@ export async function bulkUploadProducts(formData: FormData) {
 
             const productData = {
                 // Product Identification
-                sku: String(row.codigo_producto || row.sku || `PROD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`),
-                codigoAlfa: row.codigo_alfa ? String(row.codigo_alfa) : null,
-                codigoProducto: row.codigo_producto ? String(row.codigo_producto) : null,
+                sku: String(sku || `PROD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`),
+                codigoAlfa: getVal(['Cód. Fab.', 'Cód Fab', 'codigo_alfa']) ? String(getVal(['Cód. Fab.', 'Cód Fab', 'codigo_alfa'])) : null,
+                codigoProducto: sku ? String(sku) : null,
 
                 // Basic Information
-                name: fixEncoding(String(row.nombre || row.name || '')),
-                description: fixEncoding(String(row.description || '')),
-                categoria: row.categoria ? fixEncoding(String(row.categoria)) : null,
-                subCategoria: row.sub_categoria ? fixEncoding(String(row.sub_categoria)) : null,
-                marca: row.marca ? fixEncoding(String(row.marca)) : null,
+                name: fixEncoding(String(name || '')),
+                description: fixEncoding(String(getVal(['Descripción Detallada', 'Descripcion Detallada', 'description', 'Description']) || getVal(['Descripción Larga', 'Descripcion Larga']) || '')),
+                categoria: catName ? fixEncoding(String(catName)) : null,
+                subCategoria: null, // Mapped above if needed, but keeping field for now
+                marca: getVal(['Marca', 'brand', 'marca']) ? fixEncoding(String(getVal(['Marca', 'brand', 'marca']))) : null,
 
-                categoryId: categoryId || null, // Link to resolved Category (Parent or Sub)
+                categoryId: categoryId || null,
 
                 // Pricing & Taxes
-                precio: parseFloat(String(row.precio || row.price || 0)),
-                impuestoInterno: row.impuesto_interno ? parseFloat(String(row.impuesto_interno)) : null,
-                iva: row.iva ? parseFloat(String(row.iva)) : null,
-                moneda: row.moneda ? String(row.moneda) : 'USD',
+                precio: parseFloat(String(getVal(['Precio (DOLAR (U$S))', 'Precio', 'precio', 'price']) || 0)),
+                impuestoInterno: getVal(['Impuestos', 'impuesto_interno']) ? parseFloat(String(getVal(['Impuestos', 'impuesto_interno']))) : null,
+                iva: getVal(['IVA', 'iva']) ? parseFloat(String(getVal(['IVA', 'iva']))) : null,
+                moneda: 'USD', // Defaulting to USD based on column name
 
-                // Dynamic Calculation - Raw
-                markup: row.markup ? parseFloat(String(row.markup)) : null,
-                cotizacion: row.cotizacion ? parseFloat(String(row.cotizacion)) : null,
-
-                // Logic: Raw pvp_usd from Excel
-                pvpUsd: row.pvp_usd ? parseFloat(String(row.pvp_usd)) : null,
-
-                // Logic: Raw pvp_ars from Excel
-                pvpArs: row.pvp_ars ? parseFloat(String(row.pvp_ars)) : null,
+                // Dynamic Calculation
+                markup: null,
+                cotizacion: null,
 
                 // Physical Properties
-                peso: row.peso ? parseFloat(String(row.peso)) : null,
-                ean: row.ean ? String(row.ean) : null,
+                peso: getVal(['Peso', 'peso', 'weight']) ? parseFloat(String(getVal(['Peso', 'peso', 'weight']))) : null,
+                ean: getVal(['EAN', 'ean']) ? String(getVal(['EAN', 'ean'])) : null,
 
                 // Stock Management
-                nivelStock: row.nivel_stock ? String(row.nivel_stock) : null,
-                stockTotal: parseInt(String(row.stock_total || row.stock || 0)),
-                stockDepositoCliente: row.stock_deposito_cliente ? parseInt(String(row.stock_deposito_cliente)) : 0,
-                stockDepositoCd: row.stock_deposito_cd ? parseInt(String(row.stock_deposito_cd)) : 0,
+                nivelStock: null,
+                stockTotal: parseInt(String(getVal(['Stock', 'stock', 'stock_total']) || 0)),
+                stockDepositoCliente: 0,
+                stockDepositoCd: 0,
 
                 // Additional Info
-                garantia: row.garantia ? String(row.garantia) : null,
-                link: row.link ? String(row.link) : null,
+                garantia: getVal(['Garantia', 'garantia']) ? String(getVal(['Garantia', 'garantia'])) : null,
+                link: null,
 
                 // Media
-                imagen: row.imagen ? String(row.imagen) : null,
-                miniatura: row.miniatura ? String(row.miniatura) : null,
+                imagen: getVal(['Imagen', 'imagen', 'image', 'imageUrl']) ? String(getVal(['Imagen', 'imagen', 'image', 'imageUrl'])) : null,
+                miniatura: null,
 
                 // Attributes & Flags
-                atributos: row.atributos ? String(row.atributos) : null,
-                gamer: row.gamer === true || row.gamer === 'true' || row.gamer === 1 || row.gamer === '1',
+                atributos: getVal(['Atributos', 'atributos']) ? String(getVal(['Atributos', 'atributos'])) : null,
+                gamer: false,
 
-                // Legacy fields for backward compatibility
-                price: parseFloat(String(row.precio || row.price || 0)),
-                stock: parseInt(String(row.stock_total || row.stock || 0)),
-                imageUrl: row.imagen || row.imageUrl || null,
-                weight: row.peso ? parseFloat(String(row.peso)) : null,
-                provider, // Add Provider Tag
+                // Legacy fields
+                price: parseFloat(String(getVal(['Precio (DOLAR (U$S))', 'Precio', 'precio', 'price']) || 0)),
+                stock: parseInt(String(getVal(['Stock', 'stock', 'stock_total']) || 0)),
+                imageUrl: getVal(['Imagen', 'imagen', 'image', 'imageUrl']) ? String(getVal(['Imagen', 'imagen', 'image', 'imageUrl'])) : null,
+                weight: getVal(['Peso', 'peso', 'weight']) ? parseFloat(String(getVal(['Peso', 'peso', 'weight']))) : null,
+                provider,
             };
 
             await prisma.product.upsert({
