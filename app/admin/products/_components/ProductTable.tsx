@@ -36,8 +36,13 @@ export function ProductTable({ products, globalMarkup, exchangeRate, provider = 
         if (!confirm(`¿Estás seguro de eliminar ${selectedIds.length} productos seleccionados?`)) return;
 
         startTransition(async () => {
-            await deleteProducts(selectedIds);
-            setSelectedIds([]);
+            const result = await deleteProducts(selectedIds);
+            if (!result.success) {
+                alert(`Error al eliminar productos: ${result.error}`);
+            } else {
+                setSelectedIds([]);
+                alert("Productos eliminados correctamente.");
+            }
         });
     };
 
@@ -47,8 +52,13 @@ export function ProductTable({ products, globalMarkup, exchangeRate, provider = 
         if (!confirm("¿Realmente estás seguro? Se borrará todo el inventario de este proveedor.")) return;
 
         startTransition(async () => {
-            await deleteAllProducts(provider);
-            setSelectedIds([]);
+            const result = await deleteAllProducts(provider);
+            if (!result.success) {
+                alert(`Error al eliminar productos: ${result.error}`);
+            } else {
+                setSelectedIds([]);
+                alert("Inventario eliminado correctamente.");
+            }
         });
     };
 
@@ -56,7 +66,10 @@ export function ProductTable({ products, globalMarkup, exchangeRate, provider = 
         if (!confirm(`¿Estás seguro de eliminar el producto "${name}"?`)) return;
 
         startTransition(async () => {
-            await deleteProduct(id);
+            const result = await deleteProduct(id);
+            if (!result.success) {
+                alert(`Error al eliminar producto: ${result.error}`);
+            }
         });
     };
 

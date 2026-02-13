@@ -89,15 +89,21 @@ export async function deleteProduct(id: string) {
     const session = await auth();
     // @ts-ignore
     if (session?.user?.role !== "ADMIN") {
-        throw new Error("No autorizado");
+        return { success: false, error: "No autorizado" };
     }
 
-    await prisma.product.delete({
-        where: { id }
-    });
+    try {
+        await prisma.product.delete({
+            where: { id }
+        });
 
-    revalidatePath('/admin/products');
-    revalidatePath('/products');
+        revalidatePath('/admin/products');
+        revalidatePath('/products');
+        return { success: true };
+    } catch (error: any) {
+        console.error("Error deleting product:", error);
+        return { success: false, error: error.message || "Failed to delete product" };
+    }
 }
 
 export async function deleteProducts(ids: string[]) {
@@ -117,9 +123,9 @@ export async function deleteProducts(ids: string[]) {
         revalidatePath('/admin/products');
         revalidatePath('/products');
         return { success: true };
-    } catch (error) {
+    } catch (error: any) {
         console.error("Error deleting products:", error);
-        return { success: false, error: "Failed to delete products" };
+        return { success: false, error: error.message || "Failed to delete products" };
     }
 }
 
@@ -139,9 +145,13 @@ export async function deleteAllProducts(provider?: string) {
         revalidatePath('/admin/products');
         revalidatePath('/products');
         return { success: true };
-    } catch (error) {
+    } catch (error: any) {
         console.error("Error deleting all products:", error);
-        return { success: false, error: "Failed to delete all products" };
+        // Check for common Prisma errors
+        if (error.code === 'P2003') {
+            return { success: false, error: "No se pueden eliminar productos que tienen pedidos o datos asociados." };
+        }
+        return { success: false, error: error.message || "Failed to delete all products" };
     }
 }
 
