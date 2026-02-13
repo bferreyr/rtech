@@ -452,6 +452,29 @@ export async function bulkUploadProducts(formData: FormData) {
                     }
                 }
 
+                // Helper for number parsing (handles "1.200,50" and "1200.50")
+                const parseNum = (val: any): number | null => {
+                    if (val === undefined || val === null || val === '') return null;
+                    if (typeof val === 'number') return val;
+                    const str = String(val).trim();
+                    // If contains comma and dot, assume comma is decimal if it comes last? 
+                    // Or standard Argentine format: dot=thousands, comma=decimal
+                    // Simple heuristic: replace comma with dot if dot is not present?
+                    // Better: remove dots, replace comma with dot
+                    // "1.200,50" -> "1200.50"
+                    // "1200.50" -> "1200.50"
+                    // "1,200.50" -> "1200.50" (US format)
+
+                    // Try primitive parse first
+                    const simple = parseFloat(str);
+                    if (!isNaN(simple) && simple.toString() === str) return simple;
+
+                    // Handle "1.200,00" format
+                    let clean = str.replace(/\./g, '').replace(',', '.');
+                    const parsed = parseFloat(clean);
+                    return isNaN(parsed) ? null : parsed;
+                };
+
                 const productData = {
                     // Product Identification
                     sku: String(sku || `PROD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`),
@@ -468,9 +491,9 @@ export async function bulkUploadProducts(formData: FormData) {
                     categoryId: categoryId || null,
 
                     // Pricing & Taxes
-                    precio: parseFloat(String(getVal(['Precio (DOLAR (U$S))', 'Precio', 'precio', 'price']) || 0)),
-                    impuestoInterno: getVal(['Impuestos', 'impuesto_interno']) ? parseFloat(String(getVal(['Impuestos', 'impuesto_interno']))) : null,
-                    iva: getVal(['IVA', 'iva']) ? parseFloat(String(getVal(['IVA', 'iva']))) : null,
+                    precio: parseNum(getVal(['Precio (DOLAR (U$S))', 'Precio', 'precio', 'price'])) || 0,
+                    impuestoInterno: parseNum(getVal(['Impuestos', 'impuesto_interno'])),
+                    iva: parseNum(getVal(['IVA', 'iva'])),
                     moneda: 'USD', // Defaulting to USD based on column name
 
                     // Dynamic Calculation
@@ -478,7 +501,7 @@ export async function bulkUploadProducts(formData: FormData) {
                     cotizacion: null,
 
                     // Physical Properties
-                    peso: getVal(['Peso', 'peso', 'weight']) ? parseFloat(String(getVal(['Peso', 'peso', 'weight']))) : null,
+                    peso: parseNum(getVal(['Peso', 'peso', 'weight'])),
                     ean: getVal(['EAN', 'ean']) ? String(getVal(['EAN', 'ean'])) : null,
 
                     // Stock Management
@@ -500,10 +523,10 @@ export async function bulkUploadProducts(formData: FormData) {
                     gamer: false,
 
                     // Legacy fields
-                    price: parseFloat(String(getVal(['Precio (DOLAR (U$S))', 'Precio', 'precio', 'price']) || 0)),
+                    price: parseNum(getVal(['Precio (DOLAR (U$S))', 'Precio', 'precio', 'price'])) || 0,
                     stock: parseInt(String(getVal(['Stock', 'stock', 'stock_total']) || 0)),
                     imageUrl: getVal(['Imagen', 'imagen', 'image', 'imageUrl']) ? String(getVal(['Imagen', 'imagen', 'image', 'imageUrl'])) : null,
-                    weight: getVal(['Peso', 'peso', 'weight']) ? parseFloat(String(getVal(['Peso', 'peso', 'weight']))) : null,
+                    weight: parseNum(getVal(['Peso', 'peso', 'weight'])),
                     provider,
                 };
 

@@ -25,13 +25,18 @@ export function BulkUploadButton({ provider = 'ELIT' }: { provider?: string }) {
                 const result = await bulkUploadProducts(formData);
                 if (result.success) {
                     setStatus('success');
-                    setMessage(result.message || 'Productos actualizados correctamente');
-                    // Auto-hide success message after 5s
-                    setTimeout(() => setStatus('idle'), 5000);
+                    // @ts-ignore
+                    if (result.errors && result.errors.length > 0) {
+                        // @ts-ignore
+                        setMessage(`Procesados: ${result.count}. Errores: ${result.errors.length}. Primer error: ${result.errors[0]}`);
+                    } else {
+                        setMessage(`Exito: ${result.count} productos procesados.`);
+                        setTimeout(() => setStatus('idle'), 5000);
+                    }
                 } else {
                     setStatus('error');
                     // @ts-ignore
-                    setMessage(result.error || 'Error al procesar el archivo');
+                    setMessage(result.error || 'Error crítico al procesar');
                 }
             } catch (error) {
                 setStatus('error');
@@ -85,10 +90,16 @@ export function BulkUploadButton({ provider = 'ELIT' }: { provider?: string }) {
             </label>
 
             {message && status !== 'idle' && (
-                <div className={`absolute top-full mt-2 right-0 w-64 p-3 rounded-lg text-xs font-medium backdrop-blur-md border animate-in fade-in slide-in-from-top-2 z-10 ${status === 'success' ? 'bg-green-500/10 border-green-500/20 text-green-400' :
+                <div className={`absolute top-full mt-2 right-0 w-80 p-3 rounded-lg text-xs font-medium backdrop-blur-md border animate-in fade-in slide-in-from-top-2 z-10 shadow-xl max-h-64 overflow-y-auto ${status === 'success' ? 'bg-green-500/10 border-green-500/20 text-green-400' :
                     'bg-red-500/10 border-red-500/20 text-red-400'
                     }`}>
-                    {message}
+                    <p className="font-bold mb-1">{message}</p>
+                    {/* @ts-ignore */}
+                    {status === 'success' && message.includes('errores') && (
+                        <p className="mt-2 text-[10px] opacity-80">
+                            Revisa la consola o intenta de nuevo verificando el formato.
+                        </p>
+                    )}
                 </div>
             )}
         </div>
