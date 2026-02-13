@@ -22,11 +22,17 @@ export function BulkUploadButton({ provider = 'ELIT' }: { provider?: string }) {
 
         startTransition(async () => {
             try {
-                await bulkUploadProducts(formData);
-                setStatus('success');
-                setMessage('Productos actualizados correctamente');
-                // Auto-hide success message after 3s
-                setTimeout(() => setStatus('idle'), 3000);
+                const result = await bulkUploadProducts(formData);
+                if (result.success) {
+                    setStatus('success');
+                    setMessage(result.message || 'Productos actualizados correctamente');
+                    // Auto-hide success message after 5s
+                    setTimeout(() => setStatus('idle'), 5000);
+                } else {
+                    setStatus('error');
+                    // @ts-ignore
+                    setMessage(result.error || 'Error al procesar el archivo');
+                }
             } catch (error) {
                 setStatus('error');
                 setMessage(error instanceof Error ? error.message : 'Error al subir el archivo');

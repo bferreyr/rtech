@@ -395,7 +395,8 @@ export async function bulkUploadProducts(formData: FormData) {
     };
 
     // Process in batches to avoid timeouts and improve performance
-    const BATCH_SIZE = 50;
+    // Reduced batch size to preventing timeouts and memory issues
+    const BATCH_SIZE = 20;
     const chunks = [];
 
     // Split data into chunks
@@ -405,111 +406,138 @@ export async function bulkUploadProducts(formData: FormData) {
 
     console.log(`Processing ${data.length} products in ${chunks.length} batches...`);
 
+    let successCount = 0;
+    let errorCount = 0;
+    const errors: string[] = [];
+
     for (let index = 0; index < chunks.length; index++) {
         const chunk = chunks[index];
         console.log(`Processing batch ${index + 1}/${chunks.length}`);
 
-        await Promise.all(chunk.map(async (row: any) => {
-            // Dictionary of Excel keys to normalize access
-            // "Cód." -> row['Cód.']
-            const getVal = (keys: string[]) => {
-                for (const key of keys) {
-                    if (row[key] !== undefined && row[key] !== null && row[key] !== '') return row[key];
-                }
-                return null;
-            };
+        // process batch
+        const results = await Promise.all(chunk.map(async (row: any) => {
+            try {
+                // Dictionary of Excel keys to normalize access
+                // "Cód." -> row['Cód.']
+                const getVal = (keys: string[]) => {
+                    for (const key of keys) {
+                        if (row[key] !== undefined && row[key] !== null && row[key] !== '') return row[key];
+                    }
+                    return null;
+                };
 
-            // Essential fields check
-            const sku = getVal(['Cód.', 'Cód', 'codigo_producto', 'sku', 'SKU']);
-            const name = getVal(['Descripción', 'Descripcion', 'nombre', 'name', 'Name']);
+                // Essential fields check
+                const sku = getVal(['Cód.', 'Cód', 'codigo_producto', 'sku', 'SKU']);
+                const name = getVal(['Descripción', 'Descripcion', 'nombre', 'name', 'Name']);
 
-            if (!sku && !name) return;
+                if (!sku && !name) return { status: 'skipped' };
 
-            let categoryId = null;
+                let categoryId = null;
 
-            // 1. Handle Main Category
-            const catName = getVal(['Rubro', 'categoria', 'category', 'Categoria']);
-            if (catName && typeof catName === 'string') {
-                const parentId = await resolveCategory(catName);
+                // 1. Handle Main Category
+                const catName = getVal(['Rubro', 'categoria', 'category', 'Categoria']);
+                if (catName && typeof catName === 'string') {
+                    const parentId = await resolveCategory(catName);
 
-                if (parentId) {
-                    categoryId = parentId; // Default to parent
+                    if (parentId) {
+                        categoryId = parentId; // Default to parent
 
-                    // 2. Handle Subcategory (if exists)
-                    const subCatName = getVal(['SubRubro', 'sub_categoria', 'subcategory', 'SubCategoria']);
-                    if (subCatName && typeof subCatName === 'string') {
-                        // Create/Find subcategory with parentId
-                        const subId = await resolveCategory(subCatName, parentId);
-                        if (subId) categoryId = subId; // Link to subcategory instead
+                        // 2. Handle Subcategory (if exists)
+                        const subCatName = getVal(['SubRubro', 'sub_categoria', 'subcategory', 'SubCategoria']);
+                        if (subCatName && typeof subCatName === 'string') {
+                            // Create/Find subcategory with parentId
+                            const subId = await resolveCategory(subCatName, parentId);
+                            if (subId) categoryId = subId; // Link to subcategory instead
+                        }
                     }
                 }
+
+                const productData = {
+                    // Product Identification
+                    sku: String(sku || `PROD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`),
+                    codigoAlfa: getVal(['Cód. Fab.', 'Cód Fab', 'codigo_alfa']) ? String(getVal(['Cód. Fab.', 'Cód Fab', 'codigo_alfa'])) : null,
+                    codigoProducto: sku ? String(sku) : null,
+
+                    // Basic Information
+                    name: fixEncoding(String(name || '')),
+                    description: fixEncoding(String(getVal(['Descripción Detallada', 'Descripcion Detallada', 'description', 'Description']) || getVal(['Descripción Larga', 'Descripcion Larga']) || '')),
+                    categoria: catName ? fixEncoding(String(catName)) : null,
+                    subCategoria: null, // Mapped above if needed, but keeping field for now
+                    marca: getVal(['Marca', 'brand', 'marca']) ? fixEncoding(String(getVal(['Marca', 'brand', 'marca']))) : null,
+
+                    categoryId: categoryId || null,
+
+                    // Pricing & Taxes
+                    precio: parseFloat(String(getVal(['Precio (DOLAR (U$S))', 'Precio', 'precio', 'price']) || 0)),
+                    impuestoInterno: getVal(['Impuestos', 'impuesto_interno']) ? parseFloat(String(getVal(['Impuestos', 'impuesto_interno']))) : null,
+                    iva: getVal(['IVA', 'iva']) ? parseFloat(String(getVal(['IVA', 'iva']))) : null,
+                    moneda: 'USD', // Defaulting to USD based on column name
+
+                    // Dynamic Calculation
+                    markup: null,
+                    cotizacion: null,
+
+                    // Physical Properties
+                    peso: getVal(['Peso', 'peso', 'weight']) ? parseFloat(String(getVal(['Peso', 'peso', 'weight']))) : null,
+                    ean: getVal(['EAN', 'ean']) ? String(getVal(['EAN', 'ean'])) : null,
+
+                    // Stock Management
+                    nivelStock: null,
+                    stockTotal: parseInt(String(getVal(['Stock', 'stock', 'stock_total']) || 0)),
+                    stockDepositoCliente: 0,
+                    stockDepositoCd: 0,
+
+                    // Additional Info
+                    garantia: getVal(['Garantia', 'garantia']) ? String(getVal(['Garantia', 'garantia'])) : null,
+                    link: null,
+
+                    // Media
+                    imagen: getVal(['Imagen', 'imagen', 'image', 'imageUrl']) ? String(getVal(['Imagen', 'imagen', 'image', 'imageUrl'])) : null,
+                    miniatura: null,
+
+                    // Attributes & Flags
+                    atributos: getVal(['Atributos', 'atributos']) ? String(getVal(['Atributos', 'atributos'])) : null,
+                    gamer: false,
+
+                    // Legacy fields
+                    price: parseFloat(String(getVal(['Precio (DOLAR (U$S))', 'Precio', 'precio', 'price']) || 0)),
+                    stock: parseInt(String(getVal(['Stock', 'stock', 'stock_total']) || 0)),
+                    imageUrl: getVal(['Imagen', 'imagen', 'image', 'imageUrl']) ? String(getVal(['Imagen', 'imagen', 'image', 'imageUrl'])) : null,
+                    weight: getVal(['Peso', 'peso', 'weight']) ? parseFloat(String(getVal(['Peso', 'peso', 'weight']))) : null,
+                    provider,
+                };
+
+                await prisma.product.upsert({
+                    where: { sku: productData.sku },
+                    update: productData,
+                    create: productData
+                });
+                return { status: 'success' };
+            } catch (err: any) {
+                console.error(`Error processing row: ${err.message}`);
+                return { status: 'error', message: err.message };
             }
-
-            const productData = {
-                // Product Identification
-                sku: String(sku || `PROD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`),
-                codigoAlfa: getVal(['Cód. Fab.', 'Cód Fab', 'codigo_alfa']) ? String(getVal(['Cód. Fab.', 'Cód Fab', 'codigo_alfa'])) : null,
-                codigoProducto: sku ? String(sku) : null,
-
-                // Basic Information
-                name: fixEncoding(String(name || '')),
-                description: fixEncoding(String(getVal(['Descripción Detallada', 'Descripcion Detallada', 'description', 'Description']) || getVal(['Descripción Larga', 'Descripcion Larga']) || '')),
-                categoria: catName ? fixEncoding(String(catName)) : null,
-                subCategoria: null, // Mapped above if needed, but keeping field for now
-                marca: getVal(['Marca', 'brand', 'marca']) ? fixEncoding(String(getVal(['Marca', 'brand', 'marca']))) : null,
-
-                categoryId: categoryId || null,
-
-                // Pricing & Taxes
-                precio: parseFloat(String(getVal(['Precio (DOLAR (U$S))', 'Precio', 'precio', 'price']) || 0)),
-                impuestoInterno: getVal(['Impuestos', 'impuesto_interno']) ? parseFloat(String(getVal(['Impuestos', 'impuesto_interno']))) : null,
-                iva: getVal(['IVA', 'iva']) ? parseFloat(String(getVal(['IVA', 'iva']))) : null,
-                moneda: 'USD', // Defaulting to USD based on column name
-
-                // Dynamic Calculation
-                markup: null,
-                cotizacion: null,
-
-                // Physical Properties
-                peso: getVal(['Peso', 'peso', 'weight']) ? parseFloat(String(getVal(['Peso', 'peso', 'weight']))) : null,
-                ean: getVal(['EAN', 'ean']) ? String(getVal(['EAN', 'ean'])) : null,
-
-                // Stock Management
-                nivelStock: null,
-                stockTotal: parseInt(String(getVal(['Stock', 'stock', 'stock_total']) || 0)),
-                stockDepositoCliente: 0,
-                stockDepositoCd: 0,
-
-                // Additional Info
-                garantia: getVal(['Garantia', 'garantia']) ? String(getVal(['Garantia', 'garantia'])) : null,
-                link: null,
-
-                // Media
-                imagen: getVal(['Imagen', 'imagen', 'image', 'imageUrl']) ? String(getVal(['Imagen', 'imagen', 'image', 'imageUrl'])) : null,
-                miniatura: null,
-
-                // Attributes & Flags
-                atributos: getVal(['Atributos', 'atributos']) ? String(getVal(['Atributos', 'atributos'])) : null,
-                gamer: false,
-
-                // Legacy fields
-                price: parseFloat(String(getVal(['Precio (DOLAR (U$S))', 'Precio', 'precio', 'price']) || 0)),
-                stock: parseInt(String(getVal(['Stock', 'stock', 'stock_total']) || 0)),
-                imageUrl: getVal(['Imagen', 'imagen', 'image', 'imageUrl']) ? String(getVal(['Imagen', 'imagen', 'image', 'imageUrl'])) : null,
-                weight: getVal(['Peso', 'peso', 'weight']) ? parseFloat(String(getVal(['Peso', 'peso', 'weight']))) : null,
-                provider,
-            };
-
-            await prisma.product.upsert({
-                where: { sku: productData.sku },
-                update: productData,
-                create: productData
-            });
         }));
+
+        // Tally results
+        results.forEach((res: any) => {
+            if (res.status === 'success') successCount++;
+            if (res.status === 'error') {
+                errorCount++;
+                if (errors.length < 10) errors.push(res.message); // Store first 10 errors
+            }
+        });
     }
 
     revalidatePath('/admin/products');
     revalidatePath('/admin/categories');
     revalidatePath('/products');
     revalidatePath('/');
+
+    return {
+        success: true,
+        count: successCount,
+        errors: errorCount > 0 ? errors : undefined,
+        message: `Procesados ${successCount} productos correctamente. ${errorCount > 0 ? `${errorCount} errores.` : ''}`
+    };
 }
