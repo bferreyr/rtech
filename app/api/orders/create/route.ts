@@ -196,11 +196,18 @@ export async function POST(request: NextRequest) {
         let mpUrl = null;
         if (paymentMethod === 'mercadopago') {
             try {
+                // Fetch current exchange rate
+                const exchangeRate = await import('@/lib/exchange-rate').then(m => m.fetchLiveExchangeRate());
+
+                if (!exchangeRate) {
+                    throw new Error("No se pudo obtener la cotización del dólar");
+                }
+
                 const mpItems = validItems.map(item => ({
                     id: item.productId,
                     title: item.title,
                     quantity: item.quantity,
-                    unit_price: Number(item.price)
+                    unit_price: Math.round(Number(item.price) * exchangeRate) // Convert USD to ARS
                 }));
                 mpUrl = await createPreference(mpItems, order.id);
             } catch (error) {
@@ -208,7 +215,7 @@ export async function POST(request: NextRequest) {
                 // Return success false or warn user?
                 // For now, let's return error so frontend handles it
                 return NextResponse.json(
-                    { error: 'Orden creada pero falló la generación de pago. Contacte soporte.' },
+                    { error: 'Orden creada pero falló la generación de pago (Cotización no disponible). Contacte soporte.' },
                     { status: 500 }
                 );
             }
