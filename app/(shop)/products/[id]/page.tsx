@@ -196,6 +196,13 @@ export default async function ProductPage({ params }: Props) {
                                 <span className="font-mono text-[color:var(--text-primary)] text-xs truncate" title={product.id}>{product.id}</span>
                             </div>
 
+                            <div>
+                                <span className="block text-xs text-[color:var(--text-tertiary)] uppercase tracking-wider mb-1">Centro de Distribución</span>
+                                <span className="font-medium text-[color:var(--text-primary)]">
+                                    {(product as any).provider === 'MOBE' ? 'Centro de Distribución Paraná' : 'Centro de distribución Santa Fe'}
+                                </span>
+                            </div>
+
                             {(product as any).garantia && (
                                 <div className="col-span-2 border-t border-[color:var(--border-color)] pt-4 mt-2">
                                     <span className="block text-xs text-[color:var(--text-tertiary)] uppercase tracking-wider mb-2">Garantía Asegurada</span>
