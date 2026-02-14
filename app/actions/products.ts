@@ -483,7 +483,21 @@ export async function bulkUploadProducts(formData: FormData) {
                     return isNaN(parsed) ? null : parsed;
                 };
 
-                const stockVal = parseNum(getVal(['Stock', 'stock', 'stock_total', 'Cantidad', 'Cant.', 'Existencia', 'Saldo', 'Disponible'])) || 0;
+                const rawStock = getVal(['Stock', 'stock', 'stock_total', 'Cantidad', 'Cant.', 'Existencia', 'Saldo', 'Disponible']);
+                let stockVal = 0;
+
+                if (typeof rawStock === 'string') {
+                    const normalized = rawStock.trim().toUpperCase();
+                    if (normalized === 'SI') {
+                        stockVal = 10; // Available
+                    } else if (normalized === 'NO') {
+                        stockVal = 0; // Not available
+                    } else {
+                        stockVal = parseNum(rawStock) || 0;
+                    }
+                } else {
+                    stockVal = parseNum(rawStock) || 0;
+                }
                 const priceVal = parseNum(getVal(['Precio (DOLAR (U$S))', 'Precio', 'precio', 'price', 'Precio Venta', 'Precio U$S', 'Precio Usd'])) || 0;
 
                 // Prepare base data (scalars)
