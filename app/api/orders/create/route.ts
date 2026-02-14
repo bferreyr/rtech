@@ -196,11 +196,13 @@ export async function POST(request: NextRequest) {
         let mpUrl = null;
         if (paymentMethod === 'mercadopago') {
             try {
-                // Fetch current exchange rate
-                const exchangeRate = await import('@/lib/exchange-rate').then(m => m.fetchLiveExchangeRate());
+                // Fetch current exchange rate using the system settings
+                // This respects the Manual/Auto setting in the Admin Panel
+                const { getExchangeRate } = await import('@/app/actions/settings');
+                const { rate: exchangeRate } = await getExchangeRate();
 
                 if (!exchangeRate) {
-                    throw new Error("No se pudo obtener la cotización del dólar");
+                    throw new Error("No se pudo obtener la cotización del dólar del sistema");
                 }
 
                 const mpItems = validItems.map(item => ({
