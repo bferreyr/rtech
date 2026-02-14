@@ -341,15 +341,12 @@ export async function bulkUploadProducts(formData: FormData) {
     const data = XLSX.utils.sheet_to_json(worksheet) as any[];
 
     // Helper to fix common encoding issues (Double UTF-8 or Latin1 viewed as UTF-8)
+    // Helper to fix common encoding issues 
+    // MODIFIED: Simply returning the string as is. The previous logic was breaking valid UTF-8 strings
+    // from standard Excel files by re-interpreting them, causing "Código" -> "Cdigo".
     const fixEncoding = (str: string | null | undefined): string => {
         if (!str) return '';
-        try {
-            // FIX: Use Node.js Buffer to reverse Latin1 interpretation of UTF-8 bytes
-            // This handles "PerifÃ©ricos" -> "Periféricos" properly at the byte level
-            return Buffer.from(str, 'binary').toString('utf-8');
-        } catch (e) {
-            return str;
-        }
+        return str.trim();
     };
 
     // Cache to minimize DB queries during loop

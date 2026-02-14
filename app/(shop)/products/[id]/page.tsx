@@ -197,27 +197,16 @@ export default async function ProductPage({ params }: Props) {
                         </div>
                     </div>
 
-                    <p className="text-[color:var(--text-secondary)] leading-relaxed text-lg">
-                        {product.description}
-                    </p>
-
-                    <div className="space-y-6 pt-6 border-t border-[color:var(--border-color)]">
-                        <div className="flex items-center justify-between">
-                            <span className="text-sm text-[color:var(--text-secondary)]">Disponibilidad</span>
-                            <span className={`font-medium ${product.stock > 0 ? 'text-green-400' : 'text-red-400'}`}>
-                                {product.stock > 0 ? `En Stock (${product.stock})` : 'Agotado'}
-                            </span>
-                        </div>
-
-                        <div className="flex flex-col gap-3">
-                            <AddToCartButton product={product} fullWidth />
-                            <button className="btn btn-outline w-full py-4 text-center">
-                                Comprar Ahora
-                            </button>
-                        </div>
-                    </div>
                 </section>
             </main>
+
+            {/* Description Section - Moved below main product info for better visibility of long texts */}
+            <section className="mt-16 border-t border-[color:var(--border-color)] pt-12">
+                <h2 className="text-2xl font-bold mb-6">Descripción del Producto</h2>
+                <div className="prose prose-invert max-w-none text-[color:var(--text-secondary)] leading-relaxed whitespace-pre-wrap">
+                    {product.description}
+                </div>
+            </section>
 
             {/* Reviews Section */}
             <section className="mt-16">
