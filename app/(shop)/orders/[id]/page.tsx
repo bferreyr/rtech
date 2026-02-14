@@ -137,10 +137,13 @@ export default function OrderConfirmationPage() {
                                 {order.items.map((item) => (
                                     <div key={item.id} className="flex gap-4 pb-4 border-b border-[hsl(var(--border-color))] last:border-0 last:pb-0">
                                         <div className="w-20 h-20 rounded-lg bg-[hsl(var(--bg-tertiary))] overflow-hidden flex-shrink-0">
-                                            {item.product.imageUrl && (
+                                            {/* @ts-ignore */}
+                                            {(item.product?.imageUrl || item.productImage) && (
                                                 <Image
-                                                    src={item.product.imageUrl}
-                                                    alt={item.product.name}
+                                                    // @ts-ignore
+                                                    src={item.product?.imageUrl || item.productImage || ''}
+                                                    // @ts-ignore
+                                                    alt={item.product?.name || item.productName || 'Producto'}
                                                     width={80}
                                                     height={80}
                                                     className="w-full h-full object-cover"
@@ -148,7 +151,8 @@ export default function OrderConfirmationPage() {
                                             )}
                                         </div>
                                         <div className="flex-1">
-                                            <p className="font-medium">{item.product.name}</p>
+                                            {/* @ts-ignore */}
+                                            <p className="font-medium">{item.product?.name || item.productName || 'Producto eliminado'}</p>
                                             <p className="text-sm text-[hsl(var(--text-secondary))]">
                                                 Cantidad: {item.quantity}
                                             </p>

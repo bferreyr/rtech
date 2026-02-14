@@ -252,9 +252,9 @@ export default function ProfilePage() {
                                                         Pedido #{order.id.slice(-8).toUpperCase()}
                                                     </p>
                                                     <span className={`text-xs font-bold px-3 py-1 rounded-full ${order.status === 'PAID' ? 'bg-green-500/10 text-green-400' :
-                                                            order.status === 'SHIPPED' ? 'bg-blue-500/10 text-blue-400' :
-                                                                order.status === 'DELIVERED' ? 'bg-purple-500/10 text-purple-400' :
-                                                                    'bg-yellow-500/10 text-yellow-500'
+                                                        order.status === 'SHIPPED' ? 'bg-blue-500/10 text-blue-400' :
+                                                            order.status === 'DELIVERED' ? 'bg-purple-500/10 text-purple-400' :
+                                                                'bg-yellow-500/10 text-yellow-500'
                                                         }`}>
                                                         {order.status}
                                                     </span>
@@ -292,12 +292,15 @@ export default function ProfilePage() {
                                                 {(order as any).items.map((item: any) => (
                                                     <div key={item.id} className="flex items-center gap-4">
                                                         <div className="w-12 h-12 rounded-lg bg-white/5 overflow-hidden flex-shrink-0">
-                                                            {item.product.imageUrl && (
-                                                                <img src={item.product.imageUrl} alt={item.product.name} className="w-full h-full object-cover" />
+                                                            {/* @ts-ignore */}
+                                                            {(item.product?.imageUrl || item.productImage) && (
+                                                                // @ts-ignore
+                                                                <img src={item.product?.imageUrl || item.productImage} alt={item.product?.name || item.productName} className="w-full h-full object-cover" />
                                                             )}
                                                         </div>
                                                         <div className="flex-1 min-w-0">
-                                                            <p className="text-sm font-medium truncate">{item.product.name}</p>
+                                                            {/* @ts-ignore */}
+                                                            <p className="text-sm font-medium truncate">{item.product?.name || item.productName || 'Producto eliminado'}</p>
                                                             <p className="text-xs text-[hsl(var(--text-tertiary))]">Cant: {item.quantity}</p>
                                                         </div>
                                                         <p className="text-sm font-bold">USD {Number(item.price).toFixed(2)}</p>
