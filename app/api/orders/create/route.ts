@@ -58,9 +58,7 @@ export async function POST(request: NextRequest) {
 
         // --- SERVER SIDE PRICE CALCULATION START ---
 
-        // 1. Fetch all products involved (to minimize DB queries, we could use findMany with 'in', 
-        // but verify stock individually is safer for race conditions if we used transactions, 
-        // though here we just check).
+        // 1. Fetch all products involved
         const productIds = items.map((item: any) => item.productId);
         const products = await prisma.product.findMany({
             where: { id: { in: productIds } }
@@ -68,9 +66,12 @@ export async function POST(request: NextRequest) {
 
         if (products.length !== items.length) {
             // Check if any product was not found
-            // This is a simple check assuming unique productIds in items
-            // Ideally we map and check
         }
+
+        // Fetch Global Markup
+        const { getGlobalMarkup } = await import('@/app/actions/settings');
+        const globalMarkup = await getGlobalMarkup();
+        const markupMultiplier = 1 + (globalMarkup / 100);
 
         let calculatedTotal = 0;
         const validItems = [];
@@ -96,14 +97,17 @@ export async function POST(request: NextRequest) {
 
             // Determine Price (Prioritize USD Sale Price)
             // We use Number() because Prisma returns Decimal
-            const price = product.pvpUsd ? Number(product.pvpUsd) : Number(product.price);
+            const basePrice = product.pvpUsd ? Number(product.pvpUsd) : Number(product.price);
+
+            // Apply Markup
+            const price = basePrice * markupMultiplier;
 
             calculatedTotal += price * quantity;
 
             validItems.push({
                 productId: product.id,
                 quantity: quantity,
-                price: price, // Store the trusted price
+                price: price, // Store the trusted price WITH MARKUP
                 title: product.name // Need title for MP
             });
         }
