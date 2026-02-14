@@ -205,12 +205,18 @@ export async function POST(request: NextRequest) {
                     throw new Error("No se pudo obtener la cotización del dólar del sistema");
                 }
 
-                const mpItems = validItems.map(item => ({
-                    id: item.productId,
-                    title: item.title,
-                    quantity: item.quantity,
-                    unit_price: Math.round(Number(item.price) * exchangeRate) // Convert USD to ARS
-                }));
+                console.log("DEBUG MP: Exchange Rate used:", exchangeRate);
+
+                const mpItems = validItems.map(item => {
+                    const unitPrice = Math.round(Number(item.price) * exchangeRate);
+                    console.log(`DEBUG MP: Item ${item.productId} - USD: ${item.price} - ARS: ${unitPrice}`);
+                    return {
+                        id: item.productId,
+                        title: item.title,
+                        quantity: item.quantity,
+                        unit_price: unitPrice // Convert USD to ARS
+                    };
+                });
                 mpUrl = await createPreference(mpItems, order.id);
             } catch (error) {
                 console.error("Error creating MP preference:", error);
