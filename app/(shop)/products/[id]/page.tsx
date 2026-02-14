@@ -142,15 +142,26 @@ export default async function ProductPage({ params }: Props) {
                 <section className="space-y-8">
                     <div>
                         <h1 className="text-4xl font-bold mb-2 tracking-tight">{product.name}</h1>
-                        <div className="flex flex-col">
-                            <p className="text-4xl font-black bg-gradient-to-r from-[hsl(var(--accent-primary))] to-[hsl(var(--accent-secondary))] bg-clip-text text-transparent">
-                                ${Number(product.price).toFixed(2)}
-                                <span className="text-sm font-normal text-[color:var(--text-tertiary)] ml-2 uppercase tracking-widest">USD</span>
-                            </p>
-                            <p className="text-xl font-bold text-[color:var(--text-secondary)] mt-1">
-                                {new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(priceARS)}
-                                <span className="text-xs font-medium text-[color:var(--text-tertiary)] ml-2 uppercase tracking-widest">ARS (Hoy)</span>
-                            </p>
+                        <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6">
+                            <div className="flex flex-col">
+                                <p className="text-4xl font-black bg-gradient-to-r from-[hsl(var(--accent-primary))] to-[hsl(var(--accent-secondary))] bg-clip-text text-transparent">
+                                    ${Number(product.price).toFixed(2)}
+                                    <span className="text-sm font-normal text-[color:var(--text-tertiary)] ml-2 uppercase tracking-widest">USD</span>
+                                </p>
+                                <p className="text-xl font-bold text-[color:var(--text-secondary)] mt-1">
+                                    {new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(priceARS)}
+                                    <span className="text-xs font-medium text-[color:var(--text-tertiary)] ml-2 uppercase tracking-widest">ARS (Hoy)</span>
+                                </p>
+                            </div>
+
+                            <div className="flex flex-col items-end gap-3 w-full md:w-auto min-w-[200px]">
+                                <span className={`text-sm font-medium ${product.stock > 0 ? 'text-green-400' : 'text-red-400'} mb-1`}>
+                                    {product.stock > 0 ? `En Stock (${product.stock})` : 'Agotado'}
+                                </span>
+                                <div className="flex gap-3 w-full md:w-auto">
+                                    <AddToCartButton product={product} />
+                                </div>
+                            </div>
                         </div>
                     </div>
 
