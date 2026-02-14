@@ -44,7 +44,7 @@ export default async function AdminOrdersPage() {
                             ) : (
                                 orders.map((order) => (
                                     <tr key={order.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
-                                        <td className="p-4 font-mono text-xs">{order.id.slice(0, 8)}...</td>
+                                        <td className="p-4 font-mono text-xs">{order.id}</td>
                                         <td className="p-4">
                                             <div className="flex flex-col">
                                                 <span className="font-medium">{order.customerName}</span>
@@ -54,7 +54,18 @@ export default async function AdminOrdersPage() {
                                         <td className="p-4">
                                             <div className="flex items-center gap-1 text-xs">
                                                 <Phone size={12} className="text-[hsl(var(--text-secondary))]" />
-                                                <span>{order.customerPhone}</span>
+                                                {order.customerPhone ? (
+                                                    <a
+                                                        href={`https://wa.me/${order.customerPhone.replace(/[^0-9]/g, '')}`}
+                                                        target="_blank"
+                                                        rel="noopener noreferrer"
+                                                        className="hover:text-green-400 hover:underline"
+                                                    >
+                                                        {order.customerPhone}
+                                                    </a>
+                                                ) : (
+                                                    <span>-</span>
+                                                )}
                                             </div>
                                         </td>
                                         <td className="p-4 text-[hsl(var(--text-secondary))]">
