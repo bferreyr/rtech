@@ -49,7 +49,8 @@ export async function createShipmentForOrder(orderId: string, shippingData: {
         // Calculate total weight from order items
         let totalWeight = 0;
         for (const item of order.items) {
-            const productWeight = item.product.weight ? parseFloat(item.product.weight.toString()) : 1;
+            // @ts-ignore
+            const productWeight = item.product?.weight ? parseFloat(item.product.weight.toString()) : (item.product?.peso ? parseFloat(item.product.peso.toString()) : 1);
             totalWeight += productWeight * item.quantity;
         }
 
