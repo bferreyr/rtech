@@ -1,12 +1,14 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import { auth } from '@/auth';
+import { createPreference } from '@/lib/mercadopago';
 
 export async function POST(request: NextRequest) {
     try {
         const session = await auth();
         const data = await request.json();
 
+        // ... existing validation ...
         const {
             customerName,
             customerEmail,
@@ -101,7 +103,8 @@ export async function POST(request: NextRequest) {
             validItems.push({
                 productId: product.id,
                 quantity: quantity,
-                price: price // Store the trusted price
+                price: price, // Store the trusted price
+                title: product.name // Need title for MP
             });
         }
 
@@ -161,18 +164,16 @@ export async function POST(request: NextRequest) {
                 status: 'PENDING',
                 total: finalTotal, // Use server calculated total
                 items: {
-                    create: validItems.map(item => {
-                        const product = products.find(p => p.id === item.productId);
-                        return {
-                            productId: item.productId,
-                            quantity: item.quantity,
-                            price: item.price,
-                            // Snapshot fields
-                            productName: product?.name || 'Producto desconocido',
-                            productSku: product?.sku || 'N/A',
-                            productImage: product?.imageUrl || null,
-                        };
-                    }),
+                    create: validItems.map(item => ({
+                        productId: item.productId,
+                        quantity: item.quantity,
+                        price: item.price,
+                        // Snapshot fields (re-fetch product or use found)
+                        // Ideally we already have product info in validItems or can find it again
+                        productName: products.find(p => p.id === item.productId)?.name || 'Producto desconocido',
+                        productSku: products.find(p => p.id === item.productId)?.sku || 'N/A',
+                        productImage: products.find(p => p.id === item.productId)?.imageUrl || null,
+                    })),
                 },
             },
             include: {
@@ -191,7 +192,29 @@ export async function POST(request: NextRequest) {
             })
         ));
 
-        return NextResponse.json(order);
+        // Generate Mercado Pago Preference
+        let mpUrl = null;
+        if (paymentMethod === 'mercadopago') {
+            try {
+                const mpItems = validItems.map(item => ({
+                    id: item.productId,
+                    title: item.title,
+                    quantity: item.quantity,
+                    unit_price: Number(item.price)
+                }));
+                mpUrl = await createPreference(mpItems, order.id);
+            } catch (error) {
+                console.error("Error creating MP preference:", error);
+                // Return success false or warn user?
+                // For now, let's return error so frontend handles it
+                return NextResponse.json(
+                    { error: 'Orden creada pero falló la generación de pago. Contacte soporte.' },
+                    { status: 500 }
+                );
+            }
+        }
+
+        return NextResponse.json({ ...order, url: mpUrl });
 
     } catch (error) {
         console.error('Error creating order:', error);
