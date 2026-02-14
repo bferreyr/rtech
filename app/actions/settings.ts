@@ -124,3 +124,54 @@ export async function updateGlobalMarkup(markup: number) {
         return { success: false, error: "Failed to update markup" };
     }
 }
+
+const MP_PUBLIC_KEY = "MP_PUBLIC_KEY";
+const MP_ACCESS_TOKEN = "MP_ACCESS_TOKEN";
+
+export async function getMPSettings() {
+    try {
+        const [publicKey, accessToken] = await Promise.all([
+            prisma.setting.findUnique({ where: { key: MP_PUBLIC_KEY } }),
+            prisma.setting.findUnique({ where: { key: MP_ACCESS_TOKEN } }),
+        ]);
+
+        return {
+            publicKey: publicKey?.value || "",
+            accessToken: accessToken?.value || "",
+        };
+    } catch (error) {
+        console.error("Error getting MP settings:", error);
+        return { publicKey: "", accessToken: "" };
+    }
+}
+
+export async function updateMPSettings(publicKey: string, accessToken: string) {
+    try {
+        await prisma.$transaction([
+            prisma.setting.upsert({
+                where: { key: MP_PUBLIC_KEY },
+                update: { value: publicKey },
+                create: {
+                    key: MP_PUBLIC_KEY,
+                    value: publicKey,
+                    description: "Mercado Pago Public Key",
+                },
+            }),
+            prisma.setting.upsert({
+                where: { key: MP_ACCESS_TOKEN },
+                update: { value: accessToken },
+                create: {
+                    key: MP_ACCESS_TOKEN,
+                    value: accessToken,
+                    description: "Mercado Pago Access Token",
+                },
+            }),
+        ]);
+
+        revalidatePath("/admin/settings");
+        return { success: true };
+    } catch (error) {
+        console.error("Error updating MP settings:", error);
+        return { success: false, error: "Failed to update MP settings" };
+    }
+}

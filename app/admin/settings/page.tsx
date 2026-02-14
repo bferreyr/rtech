@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useTransition, useEffect } from "react";
-import { getExchangeRate, updateExchangeRate, getGlobalMarkup, updateGlobalMarkup, getExternalDollarRate } from "@/app/actions/settings";
+import { getExchangeRate, updateExchangeRate, getGlobalMarkup, updateGlobalMarkup, getExternalDollarRate, getMPSettings, updateMPSettings } from "@/app/actions/settings";
 import { DollarSign, RefreshCw, Save, Loader2, Info, TrendingUp, CreditCard, Wallet, Truck } from "lucide-react";
 
 export default function AdminSettingsPage() {
@@ -9,7 +9,9 @@ export default function AdminSettingsPage() {
     const [apiRate, setApiRate] = useState<number | null>(null);
     const [markup, setMarkup] = useState<number>(30);
 
-
+    // MP Settings
+    const [mpPublicKey, setMpPublicKey] = useState<string>("");
+    const [mpAccessToken, setMpAccessToken] = useState<string>("");
 
     const [autoUpdate, setAutoUpdate] = useState<boolean>(true);
     const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
@@ -18,16 +20,19 @@ export default function AdminSettingsPage() {
 
     useEffect(() => {
         async function loadSettings() {
-            const [rateData, markupData, apiData] = await Promise.all([
+            const [rateData, markupData, apiData, mpData] = await Promise.all([
                 getExchangeRate(),
                 getGlobalMarkup(),
-                getExternalDollarRate()
+                getExternalDollarRate(),
+                getMPSettings()
             ]);
             setRate(rateData.rate);
             setAutoUpdate(rateData.isAutoUpdate);
             setLastUpdated(rateData.lastUpdated);
             setMarkup(markupData);
             setApiRate(apiData);
+            setMpPublicKey(mpData.publicKey);
+            setMpAccessToken(mpData.accessToken);
         }
         loadSettings();
     }, []);
@@ -36,18 +41,19 @@ export default function AdminSettingsPage() {
         e.preventDefault();
         setStatus(null);
         startTransition(async () => {
-            const [rateResult, markupResult] = await Promise.all([
+            const [rateResult, markupResult, mpResult] = await Promise.all([
                 updateExchangeRate(rate, autoUpdate),
-                updateGlobalMarkup(markup)
+                updateGlobalMarkup(markup),
+                updateMPSettings(mpPublicKey, mpAccessToken)
             ]);
 
-            if (rateResult.success && markupResult.success) {
+            if (rateResult.success && markupResult.success && mpResult.success) {
                 setStatus({ message: "Configuración guardada correctamente", type: 'success' });
                 // Reload settings to get updated lastUpdated time
                 const data = await getExchangeRate();
                 setLastUpdated(data.lastUpdated);
             } else {
-                setStatus({ message: rateResult.error || markupResult.error || "Error al guardar", type: 'error' });
+                setStatus({ message: rateResult.error || markupResult.error || mpResult.error || "Error al guardar", type: 'error' });
             }
         });
     };
@@ -57,7 +63,7 @@ export default function AdminSettingsPage() {
             <div>
                 <h1 className="text-3xl font-bold mb-2">Configuración</h1>
                 <p className="text-[hsl(var(--text-secondary))]">
-                    Gestiona la cotización del dólar y márgenes de ganancia.
+                    Gestiona la cotización del dólar, márgenes de ganancia e integraciones.
                 </p>
             </div>
 
@@ -193,9 +199,55 @@ export default function AdminSettingsPage() {
                     </div>
                 </div>
 
+                {/* Mercado Pago Card */}
+                <div className="glass-card p-8">
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-blue-400 to-blue-600 flex items-center justify-center">
+                            <CreditCard className="w-5 h-5 text-white" />
+                        </div>
+                        <div>
+                            <h2 className="text-xl font-bold">Integración Mercado Pago</h2>
+                            <p className="text-xs text-[hsl(var(--text-secondary))]">Configura las credenciales para procesar pagos.</p>
+                        </div>
+                    </div>
 
+                    <div className="grid grid-cols-1 gap-6">
+                        <div>
+                            <label className="block text-sm font-medium mb-2 text-[hsl(var(--text-secondary))]">
+                                Public Key
+                            </label>
+                            <div className="relative">
+                                <input
+                                    type="text"
+                                    value={mpPublicKey}
+                                    onChange={(e) => setMpPublicKey(e.target.value)}
+                                    disabled={isPending}
+                                    placeholder="APP_USR-..."
+                                    className="w-full pl-4 pr-4 py-3 rounded-xl bg-[hsl(var(--bg-primary))] border border-[hsl(var(--border-color))] focus:border-[hsl(var(--accent-primary))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--accent-primary))]/20 transition-all disabled:opacity-50 font-mono text-sm"
+                                />
+                            </div>
+                        </div>
 
-
+                        <div>
+                            <label className="block text-sm font-medium mb-2 text-[hsl(var(--text-secondary))]">
+                                Access Token
+                            </label>
+                            <div className="relative">
+                                <input
+                                    type="password"
+                                    value={mpAccessToken}
+                                    onChange={(e) => setMpAccessToken(e.target.value)}
+                                    disabled={isPending}
+                                    placeholder="APP_USR-..."
+                                    className="w-full pl-4 pr-4 py-3 rounded-xl bg-[hsl(var(--bg-primary))] border border-[hsl(var(--border-color))] focus:border-[hsl(var(--accent-primary))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--accent-primary))]/20 transition-all disabled:opacity-50 font-mono text-sm"
+                                />
+                            </div>
+                            <p className="mt-2 text-xs text-[hsl(var(--text-tertiary))]">
+                                Estas credenciales se utilizan para generar preferencias de pago y validar transacciones.
+                            </p>
+                        </div>
+                    </div>
+                </div>
 
                 {
                     status && (

@@ -138,7 +138,11 @@ export function OptimizedCheckout({ items, cartTotal, onClearCart }: OptimizedCh
 
             // Redirect based on payment method
             if (paymentMethod === 'mercadopago') {
-                window.location.href = `https://link.mercadopago.com.ar/rincontech?amount=${total}`;
+                if (order.url) {
+                    window.location.href = order.url;
+                } else {
+                    throw new Error('No se pudo generar el link de pago');
+                }
             } else {
                 router.push(`/orders/${order.id}?success=true`);
             }
