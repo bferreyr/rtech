@@ -1,7 +1,5 @@
 'use client';
 
-import { PriceRangeFilter } from './filters/PriceRangeFilter';
-import { BrandFilter } from './filters/BrandFilter';
 import { CategoryFilter } from './filters/CategoryFilter';
 import { X, SlidersHorizontal } from 'lucide-react';
 
@@ -71,55 +69,21 @@ export function FilterSidebar({ filters, activeFilters, onFilterChange }: Filter
             </div>
 
             {/* Filter Sections */}
-            <div className="space-y-6 p-4 bg-white/5 border border-white/10 rounded-xl">
-                {/* Price Range Filter */}
-                <PriceRangeFilter
-                    min={filters.priceRange.min}
-                    max={filters.priceRange.max}
-                    value={[
-                        activeFilters.priceMin ?? filters.priceRange.min,
-                        activeFilters.priceMax ?? filters.priceRange.max
-                    ]}
-                    onChange={(range) =>
-                        onFilterChange({
-                            ...activeFilters,
-                            priceMin: range[0] === filters.priceRange.min ? undefined : range[0],
-                            priceMax: range[1] === filters.priceRange.max ? undefined : range[1]
-                        })
-                    }
-                />
-
-                <div className="border-t border-white/10 my-4" />
-
-                {/* Brand Filter */}
-                <BrandFilter
-                    brands={filters.brands}
-                    selected={activeFilters.brands || []}
-                    onChange={(brands) =>
-                        onFilterChange({
-                            ...activeFilters,
-                            brands: brands.length > 0 ? brands : undefined
-                        })
-                    }
-                />
-
-                <div className="border-t border-white/10 my-4" />
-
+            <div className="p-4 bg-white/5 border border-white/10 rounded-xl">
                 {/* Category Filter */}
-                {filters.categories && filters.categories.length > 0 && (
-                    <>
-                        <CategoryFilter
-                            categories={filters.categories}
-                            selected={activeFilters.category}
-                            onChange={(category) =>
-                                onFilterChange({
-                                    ...activeFilters,
-                                    category: category || undefined
-                                })
-                            }
-                        />
-
-                    </>
+                {filters.categories && filters.categories.length > 0 ? (
+                    <CategoryFilter
+                        categories={filters.categories}
+                        selected={activeFilters.category}
+                        onChange={(category) =>
+                            onFilterChange({
+                                ...activeFilters,
+                                category: category || undefined
+                            })
+                        }
+                    />
+                ) : (
+                    <p className="text-sm text-[hsl(var(--text-tertiary))]">No hay categorías disponibles</p>
                 )}
             </div>
 
