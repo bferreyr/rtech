@@ -270,9 +270,8 @@ export function OfferForm({ initialData, isEditing = false }: OfferFormProps) {
                             Guardando...
                         </div>
                     ) : (
-                        item => (isEditing ? 'Actualizar Oferta' : 'Crear Oferta')
+                        isEditing ? 'Actualizar Oferta' : 'Crear Oferta'
                     )}
-                    {!loading && (isEditing ? 'Actualizar Oferta' : 'Crear Oferta')}
                 </button>
             </div>
         </form>
