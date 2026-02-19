@@ -1,4 +1,3 @@
-```
 import { AdminNavbar } from "@/components/admin/AdminNavbar";
 
 export default function AdminLayout({ children }: { children: React.ReactNode }) {
@@ -13,4 +12,3 @@ export default function AdminLayout({ children }: { children: React.ReactNode })
         </div>
     );
 }
-```
