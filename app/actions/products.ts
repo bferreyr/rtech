@@ -155,7 +155,7 @@ export async function deleteAllProducts(provider?: string) {
     }
 }
 
-export export async function searchProducts(query: string) {
+export async function searchProducts(query: string) {
     if (!query || query.length < 2) return [];
 
     const products = await prisma.product.findMany({
