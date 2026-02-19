@@ -204,7 +204,7 @@ export function CategoryFilter({ categories, selected, onChange }: CategoryFilte
             </div>
 
             {/* Category Tree */}
-            <div className="space-y-0.5 max-h-[400px] overflow-y-auto custom-scrollbar pr-2 -mr-2">
+            <div className="space-y-0.5 max-h-[1050px] overflow-y-auto custom-scrollbar pr-2 -mr-2">
                 {!searchQuery && !selected && (
                     <div
                         className="
