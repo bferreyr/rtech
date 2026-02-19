@@ -6,11 +6,12 @@ import { redirect } from "next/navigation";
 import { auth } from "@/auth";
 
 export async function getCarouselSlides() {
-    return await prisma.carouselSlide.findMany({
+    const slides = await prisma.carouselSlide.findMany({
         orderBy: { order: 'asc' },
         include: {
             product: {
                 select: {
+                    id: true,
                     name: true,
                     description: true,
                     price: true,
@@ -21,6 +22,16 @@ export async function getCarouselSlides() {
             }
         }
     });
+
+    return slides.map(slide => ({
+        ...slide,
+        priceArs: slide.priceArs !== null ? Number(slide.priceArs) : null,
+        priceUsd: slide.priceUsd !== null ? Number(slide.priceUsd) : null,
+        product: {
+            ...slide.product,
+            price: Number(slide.product.price)
+        }
+    }));
 }
 
 export async function getCarouselSlide(id: string) {
