@@ -259,21 +259,47 @@ function serializeProduct(p: any) {
 }
 
 
+
 export async function getFeaturedProducts() {
+    // 1. Get total count of eligible products
+    const count = await prisma.product.count({
+        where: {
+            stockTotal: { gt: 0 },
+            price: { gt: 250 },
+            imageUrl: { not: null }
+        }
+    });
+
+    if (count === 0) return [];
+
+    // 2. Determine a random skip value
+    // We want to fetch a random subset. Since Prisma doesn't support RAND() natively and efficiently across DBs,
+    // we'll fetch a larger pool from a random offset if safe, or just fetch more ids.
+
+    // Better strategy for "Offers":
+    // Fetch a pool of IDs first (lightweight), shuffle them, then fetch full details for X amount.
     const products = await prisma.product.findMany({
         where: {
             stockTotal: { gt: 0 },
             price: { gt: 250 },
             imageUrl: { not: null }
         },
-        take: 20,
-        orderBy: { updatedAt: 'desc' }
+        select: { id: true }, // Only fetch IDs
+        take: 100, // Look at up to 100 potential offers
+        orderBy: { updatedAt: 'desc' } // Still prefer somewhat recent, but pool is larger
     });
 
-    // Randomize client-side (efficient enough for small datasets)
-    const shuffled = products.sort(() => 0.5 - Math.random()).slice(0, 5);
+    // Shuffle the IDs
+    const shuffledIds = products.sort(() => 0.5 - Math.random()).slice(0, 8); // Take 8 random IDs
 
-    return shuffled.map(serializeProduct);
+    // Fetch details for these IDs
+    const randomProducts = await prisma.product.findMany({
+        where: {
+            id: { in: shuffledIds.map(p => p.id) }
+        }
+    });
+
+    return randomProducts.map(serializeProduct);
 }
 
 export async function getAdminProducts({
