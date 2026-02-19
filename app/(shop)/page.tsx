@@ -2,7 +2,8 @@ import { StoreFront } from "@/components/product/StoreFront";
 import { BrandsCarousel } from "@/components/ui/BrandsCarousel";
 import { HeroCarousel } from "@/components/ui/HeroCarousel";
 import { getCategories, getProducts } from "@/app/actions/categories";
-import { getAvailableFilters, getFeaturedProducts } from "@/app/actions/products";
+import { getAvailableFilters } from "@/app/actions/products";
+import { getCarouselSlides } from "@/app/actions/carousel";
 
 export const dynamic = 'force-dynamic';
 
@@ -19,7 +20,7 @@ export default async function Home(props: {
     const priceMax = searchParams.priceMax ? Number(searchParams.priceMax) : undefined;
     const inStock = searchParams.inStock === 'true' ? true : undefined;
 
-    const [{ products, pagination }, categories, availableFilters, featuredProducts] = await Promise.all([
+    const [{ products, pagination }, categories, availableFilters, carouselSlides] = await Promise.all([
         getProducts({
             page,
             limit: 12,
@@ -33,13 +34,13 @@ export default async function Home(props: {
         }),
         getCategories(),
         getAvailableFilters(categoryId),
-        getFeaturedProducts()
+        getCarouselSlides()
     ]);
 
     return (
         <div className="min-h-screen">
             {/* Hero Carousel Section */}
-            <HeroCarousel products={featuredProducts} />
+            <HeroCarousel slides={carouselSlides.filter(s => s.active)} />
 
             {/* Main Product Section */}
             <section className="container pb-32 pt-12">

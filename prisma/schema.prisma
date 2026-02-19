@@ -76,6 +76,7 @@ model Product {
   items                OrderItem[]
   category             Category?   @relation(fields: [categoryId], references: [id])
   reviews              Review[]
+  carouselSlides       CarouselSlide[]
 
   // Indexes for optimized filtering and search
   @@index([marca])
@@ -255,4 +256,18 @@ enum PrintingJobStatus {
   IN_PROGRESS
   COMPLETED
   DELIVERED
+}
+
+model CarouselSlide {
+  id        String   @id @default(cuid())
+  title     String?
+  imageUrl  String
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+  priceArs  Decimal?
+  priceUsd  Decimal?
+  order     Int      @default(0)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
