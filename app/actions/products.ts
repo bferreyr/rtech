@@ -258,6 +258,24 @@ function serializeProduct(p: any) {
     };
 }
 
+
+export async function getFeaturedProducts() {
+    const products = await prisma.product.findMany({
+        where: {
+            stockTotal: { gt: 0 },
+            price: { gt: 250 },
+            imageUrl: { not: null }
+        },
+        take: 20,
+        orderBy: { updatedAt: 'desc' }
+    });
+
+    // Randomize client-side (efficient enough for small datasets)
+    const shuffled = products.sort(() => 0.5 - Math.random()).slice(0, 5);
+
+    return shuffled.map(serializeProduct);
+}
+
 export async function getAdminProducts({
     page = 1,
     limit = 10,
