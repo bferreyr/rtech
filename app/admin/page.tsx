@@ -7,8 +7,8 @@ import {
 import { StatCard } from "@/components/admin/ui/StatCard";
 import { AdminHeader } from "@/components/admin/ui/AdminHeader";
 import Link from "next/link";
-// Charts come from a Client Component boundary — ssr:false lives there, not here
 import { RevenueChart, OrderStatusChart, TopProductsChart, PaymentMethodChart } from "@/components/admin/charts/DashboardCharts";
+import { formatDate, formatTime, formatMonthYear, nowTimeAR } from "@/lib/date-utils";
 
 export const dynamic = 'force-dynamic';
 
@@ -81,7 +81,7 @@ async function getDashboardData() {
     }
     allOrders.forEach(o => {
         const d = new Date(o.createdAt);
-        const key = d.toLocaleDateString('es-AR', { month: 'short', year: '2-digit' });
+        const key = formatMonthYear(d);
         if (key in months) {
             months[key].orders += 1;
             if (o.paymentStatus === 'PAID') months[key].revenue += Number(o.total);
@@ -183,7 +183,7 @@ export default async function AdminDashboard() {
         <div className="space-y-8">
             <AdminHeader
                 title="Panel de Control"
-                description={`Última actualización: ${now.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}`}
+                description={`Última actualización: ${nowTimeAR()}`}
             />
 
             {/* ── KPI Cards ── */}
@@ -359,7 +359,7 @@ export default async function AdminDashboard() {
                                         <p className="text-xs text-[hsl(var(--text-secondary))] truncate max-w-[180px]">{order.customerEmail}</p>
                                     </td>
                                     <td className="px-6 py-3 text-xs text-[hsl(var(--text-secondary))] whitespace-nowrap">
-                                        {new Date(order.createdAt).toLocaleDateString('es-AR')}
+                                        {formatDate(order.createdAt)}
                                     </td>
                                     <td className="px-6 py-3 text-xs capitalize">
                                         {order.paymentMethod === 'mercadopago' ? 'MercadoPago' : order.paymentMethod === 'transferencia' ? 'Transferencia' : order.paymentMethod || '—'}

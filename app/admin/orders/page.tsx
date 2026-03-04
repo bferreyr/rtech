@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Eye, Phone, CreditCard, Clock, Package } from "lucide-react";
 import { OrderStatusSelector } from "./_components/OrderStatusSelector";
 import { AdminHeader } from "@/components/admin/ui/AdminHeader";
+import { formatDate, formatTime } from "@/lib/date-utils";
 
 export const dynamic = 'force-dynamic';
 
@@ -98,10 +99,10 @@ export default async function AdminOrdersPage() {
                                             {/* Fecha con hora */}
                                             <td className="p-4 whitespace-nowrap">
                                                 <div className="flex flex-col text-xs">
-                                                    <span>{date.toLocaleDateString('es-AR')}</span>
+                                                    <span>{formatDate(order.createdAt)}</span>
                                                     <span className="text-[hsl(var(--text-secondary))] flex items-center gap-1">
                                                         <Clock size={10} />
-                                                        {date.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}
+                                                        {formatTime(order.createdAt)}
                                                     </span>
                                                 </div>
                                             </td>

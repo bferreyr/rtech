@@ -9,6 +9,7 @@ import {
 import { OrderStatusSelector } from "../_components/OrderStatusSelector";
 import { TrackingUrlEditor } from "../_components/TrackingUrlEditor";
 import Image from "next/image";
+import { formatDate, formatTime } from "@/lib/date-utils";
 
 interface Props {
     params: Promise<{ id: string }>;
@@ -247,11 +248,11 @@ export default async function OrderDetailPage({ params }: Props) {
                             </div>
                             <InfoRow
                                 label="Creado"
-                                value={`${createdAt.toLocaleDateString('es-AR')} a las ${createdAt.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}`}
+                                value={`${formatDate(order.createdAt)} a las ${formatTime(order.createdAt)}`}
                             />
                             <InfoRow
                                 label="Actualizado"
-                                value={`${updatedAt.toLocaleDateString('es-AR')} a las ${updatedAt.toLocaleTimeString('es-AR', { hour: '2-digit', minute: '2-digit' })}`}
+                                value={`${formatDate(order.updatedAt)} a las ${formatTime(order.updatedAt)}`}
                             />
                         </div>
                     </SectionCard>
