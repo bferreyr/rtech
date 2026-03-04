@@ -38,11 +38,19 @@ export async function GET() {
             const client = new MercadoPagoConfig({ accessToken });
             // Try to GET a non-existent payment to confirm the token works
             await new Payment(client).get({ id: '0' }).catch((err: any) => {
-                // A 404 means the token works but payment doesn't exist — that's expected
-                if (err?.status === 404 || err?.cause?.[0]?.code === 2000) {
-                    report.tokenTest = { status: 'OK', message: 'Token is valid (received expected 404 for test call)' };
+                const msg: string = err?.message || JSON.stringify(err);
+                // These errors all confirm the token IS valid — MP rejected the request for
+                // content reasons (ID is 0), not auth reasons.
+                const tokenIsValid =
+                    err?.status === 404 ||
+                    err?.cause?.[0]?.code === 2000 ||
+                    msg.includes("can't be less than or equal to zero") ||
+                    msg.includes('payment_id');
+
+                if (tokenIsValid) {
+                    report.tokenTest = { status: 'OK', message: 'Token is valid (MP rejected test ID=0, which is expected)' };
                 } else {
-                    report.tokenTest = { status: 'ERROR', message: err?.message || JSON.stringify(err) };
+                    report.tokenTest = { status: 'ERROR', message: msg };
                 }
             });
         } catch (e: any) {
