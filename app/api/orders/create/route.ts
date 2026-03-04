@@ -108,7 +108,8 @@ export async function POST(request: NextRequest) {
                 productId: product.id,
                 quantity: quantity,
                 price: price, // Store the trusted price WITH MARKUP
-                title: product.name // Need title for MP
+                title: product.name, // Need title for MP
+                description: product.description || product.name, // MP quality score
             });
         }
 

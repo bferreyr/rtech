@@ -21,6 +21,8 @@ export async function createPreference(items: any[], orderId: string) {
         return {
             id: String(item.id),
             title: String(item.title),
+            description: String(item.description || item.title), // MP quality: item description
+            category_id: 'electronics',                          // MP quality: category_id
             quantity: Number(item.quantity),
             unit_price: unitPrice,
             currency_id: 'ARS',
@@ -37,6 +39,7 @@ export async function createPreference(items: any[], orderId: string) {
 
     const response = await preference.create({
         body: {
+            statement_descriptor: 'RTECH',  // MP quality: nombre en resumen de tarjeta
             items: validatedItems,
             back_urls: {
                 success: `${appUrl}/checkout/success?orderId=${orderId}`,
