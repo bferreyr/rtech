@@ -1,5 +1,4 @@
 import { prisma } from "@/lib/prisma";
-import dynamicImport from "next/dynamic";
 import {
     DollarSign, Package, ShoppingCart, TrendingUp,
     AlertCircle, Clock, CheckCircle2, XCircle,
@@ -8,14 +7,10 @@ import {
 import { StatCard } from "@/components/admin/ui/StatCard";
 import { AdminHeader } from "@/components/admin/ui/AdminHeader";
 import Link from "next/link";
+// Charts come from a Client Component boundary — ssr:false lives there, not here
+import { RevenueChart, OrderStatusChart, TopProductsChart, PaymentMethodChart } from "@/components/admin/charts/DashboardCharts";
 
 export const dynamic = 'force-dynamic';
-
-// Dynamic imports — charts are client components
-const RevenueChart = dynamicImport(() => import('@/components/admin/charts/RevenueChart').then(m => m.RevenueChart), { ssr: false });
-const OrderStatusChart = dynamicImport(() => import('@/components/admin/charts/OrderStatusChart').then(m => m.OrderStatusChart), { ssr: false });
-const TopProductsChart = dynamicImport(() => import('@/components/admin/charts/TopProductsChart').then(m => m.TopProductsChart), { ssr: false });
-const PaymentMethodChart = dynamicImport(() => import('@/components/admin/charts/PaymentMethodChart').then(m => m.PaymentMethodChart), { ssr: false });
 
 // ─── Data Fetching ────────────────────────────────────────────────────────────
 
