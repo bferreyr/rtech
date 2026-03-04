@@ -205,29 +205,31 @@ export async function POST(request: NextRequest) {
                 const { getExchangeRate } = await import('@/app/actions/settings');
                 const { rate: exchangeRate } = await getExchangeRate();
 
-                if (!exchangeRate) {
-                    throw new Error("No se pudo obtener la cotización del dólar del sistema");
+                if (!exchangeRate || exchangeRate <= 0) {
+                    throw new Error("Cotización del dólar no configurada o inválida. Configurala en Admin > Configuración.");
                 }
 
-                console.log("DEBUG MP: Exchange Rate used:", exchangeRate);
+                console.log("[MP] Exchange Rate used:", exchangeRate);
+                console.log("[MP] Items to convert:", JSON.stringify(validItems.map(i => ({ id: i.productId, priceUsd: i.price, qty: i.quantity }))));
 
                 const mpItems = validItems.map(item => {
-                    const unitPrice = Math.round(Number(item.price) * exchangeRate);
-                    console.log(`DEBUG MP: Item ${item.productId} - USD: ${item.price} - ARS: ${unitPrice}`);
+                    const priceNum = Number(item.price);
+                    const unitPrice = Math.round(priceNum * exchangeRate);
+                    console.log(`[MP] Item "${item.title}" - USD: ${priceNum.toFixed(4)} x rate ${exchangeRate} = ARS: ${unitPrice}`);
                     return {
                         id: item.productId,
                         title: item.title,
                         quantity: item.quantity,
-                        unit_price: unitPrice // Convert USD to ARS
+                        unit_price: unitPrice // ARS integer
                     };
                 });
+
                 mpUrl = await createPreference(mpItems, order.id);
-            } catch (error) {
-                console.error("Error creating MP preference:", error);
-                // Return success false or warn user?
-                // For now, let's return error so frontend handles it
+                console.log("[MP] Preference URL generated:", mpUrl);
+            } catch (error: any) {
+                console.error("[MP] Error creating preference:", error);
                 return NextResponse.json(
-                    { error: 'Orden creada pero falló la generación de pago (Cotización no disponible). Contacte soporte.' },
+                    { error: `Error al generar el pago: ${error?.message || 'Error desconocido'}` },
                     { status: 500 }
                 );
             }
