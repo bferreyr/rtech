@@ -253,12 +253,22 @@ export default function ProfilePage() {
                                                     <p className="text-xs font-bold uppercase tracking-widest text-[hsl(var(--text-tertiary))]">
                                                         Pedido #{order.id.slice(-8).toUpperCase()}
                                                     </p>
-                                                    <span className={`text-xs font-bold px-3 py-1 rounded-full ${order.status === 'PAID' ? 'bg-green-500/10 text-green-400' :
-                                                        order.status === 'SHIPPED' ? 'bg-blue-500/10 text-blue-400' :
-                                                            order.status === 'DELIVERED' ? 'bg-purple-500/10 text-purple-400' :
-                                                                'bg-yellow-500/10 text-yellow-500'
+                                                    <span className={`text-xs font-bold px-3 py-1 rounded-full ${order.status === 'PENDING' ? 'bg-yellow-500/15 text-yellow-400 border border-yellow-500/30' :
+                                                            order.status === 'PROCESSING' ? 'bg-orange-500/15 text-orange-400 border border-orange-500/30' :
+                                                                order.status === 'PAID' ? 'bg-violet-500/15 text-violet-400 border border-violet-500/30' :
+                                                                    order.status === 'SHIPPED' ? 'bg-blue-500/15 text-blue-400 border border-blue-500/30' :
+                                                                        order.status === 'DELIVERED' ? 'bg-green-500/15 text-green-400 border border-green-500/30' :
+                                                                            order.status === 'CANCELLED' ? 'bg-red-500/15 text-red-400 border border-red-500/30' :
+                                                                                'bg-white/10 text-white/60 border border-white/20'
                                                         }`}>
-                                                        {order.status}
+                                                        {{
+                                                            PENDING: 'Pendiente',
+                                                            PROCESSING: 'En proceso',
+                                                            PAID: 'Pagado',
+                                                            SHIPPED: 'Enviado',
+                                                            DELIVERED: 'Entregado',
+                                                            CANCELLED: 'Cancelado',
+                                                        }[order.status as string] ?? order.status}
                                                     </span>
                                                 </div>
                                                 <div className="flex items-center gap-4 text-sm text-[hsl(var(--text-secondary))] flex-wrap">
