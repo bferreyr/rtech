@@ -145,12 +145,12 @@ export default async function ProductPage({ params }: Props) {
                         <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6">
                             <div className="flex flex-col">
                                 <p className="text-4xl font-black bg-gradient-to-r from-[hsl(var(--accent-primary))] to-[hsl(var(--accent-secondary))] bg-clip-text text-transparent">
-                                    ${Number(product.price).toFixed(2)}
-                                    <span className="text-sm font-normal text-[color:var(--text-tertiary)] ml-2 uppercase tracking-widest">USD</span>
-                                </p>
-                                <p className="text-xl font-bold text-[color:var(--text-secondary)] mt-1">
                                     {new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(priceARS)}
-                                    <span className="text-xs font-medium text-[color:var(--text-tertiary)] ml-2 uppercase tracking-widest">ARS (Hoy)</span>
+                                    <span className="text-sm font-normal text-[color:var(--text-tertiary)] ml-2 uppercase tracking-widest">ARS</span>
+                                </p>
+                                <p className="text-lg font-semibold text-[color:var(--text-secondary)] mt-1">
+                                    ${Number(product.price).toFixed(2)}
+                                    <span className="text-xs font-medium text-[color:var(--text-tertiary)] ml-2 uppercase tracking-widest">USD (Ref.)</span>
                                 </p>
                             </div>
 

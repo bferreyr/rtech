@@ -121,8 +121,8 @@ export function SearchOverlay({ isOpen, onClose }: SearchOverlayProps) {
                                         <div className="flex-1 min-w-0 flex flex-col justify-center">
                                             <h4 className="font-bold text-lg truncate group-hover:text-[hsl(var(--accent-primary))] transition-colors">{product.name}</h4>
                                             <div className="flex items-baseline gap-2 mt-1">
-                                                <span className="text-[hsl(var(--accent-primary))] font-bold">{formatUSD(product.price)}</span>
-                                                <span className="text-xs text-[hsl(var(--text-tertiary))]">{formatARS(product.price)}</span>
+                                                <span className="text-[hsl(var(--accent-primary))] font-bold">{formatARS(product.price)}</span>
+                                                <span className="text-xs text-[hsl(var(--text-tertiary))]">{formatUSD(product.price)} USD</span>
                                             </div>
                                         </div>
                                         <div className="flex items-center">

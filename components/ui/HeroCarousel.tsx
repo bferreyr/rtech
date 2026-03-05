@@ -133,29 +133,38 @@ export function HeroCarousel({ slides }: HeroCarouselProps) {
                         {/* Price Block */}
                         <div className="bg-white/5 border border-white/10 rounded-2xl px-5 py-4 inline-block backdrop-blur-sm">
                             <div className="flex flex-wrap items-end gap-x-4 gap-y-1">
-                                {/* USD Price */}
+                                {/* ARS Price — Primary */}
+                                {currentSlide.priceArs ? (
+                                    <div>
+                                        <p className="text-[10px] font-bold uppercase tracking-widest text-[hsl(var(--text-tertiary))] mb-0.5">
+                                            Precio ARS
+                                        </p>
+                                        <span className="text-3xl md:text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-[hsl(var(--accent-primary))] to-[hsl(var(--accent-secondary))]">
+                                            $ {currentSlide.priceArs.toLocaleString('es-AR')}
+                                        </span>
+                                    </div>
+                                ) : (
+                                    <div>
+                                        <p className="text-[10px] font-bold uppercase tracking-widest text-[hsl(var(--text-tertiary))] mb-0.5">
+                                            Precio ARS
+                                        </p>
+                                        <span className="text-3xl md:text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-[hsl(var(--accent-primary))] to-[hsl(var(--accent-secondary))]">
+                                            {formatUSD(Number(product.price))}
+                                        </span>
+                                    </div>
+                                )}
+
+                                {/* USD Price — Secondary */}
                                 <div>
                                     <p className="text-[10px] font-bold uppercase tracking-widest text-[hsl(var(--text-tertiary))] mb-0.5">
-                                        Precio USD
+                                        Ref. USD
                                     </p>
-                                    <span className="text-3xl md:text-4xl font-black bg-clip-text text-transparent bg-gradient-to-r from-[hsl(var(--accent-primary))] to-[hsl(var(--accent-secondary))]">
+                                    <span className="text-xl md:text-2xl text-gray-400 font-semibold">
                                         {currentSlide.priceUsd
                                             ? formatUSD(currentSlide.priceUsd)
                                             : formatUSD(Number(product.price))}
                                     </span>
                                 </div>
-
-                                {/* ARS Price */}
-                                {currentSlide.priceArs && (
-                                    <div>
-                                        <p className="text-[10px] font-bold uppercase tracking-widest text-[hsl(var(--text-tertiary))] mb-0.5">
-                                            Precio ARS
-                                        </p>
-                                        <span className="text-xl md:text-2xl text-gray-200 font-bold">
-                                            $ {currentSlide.priceArs.toLocaleString('es-AR')}
-                                        </span>
-                                    </div>
-                                )}
                             </div>
 
                             {/* Stock indicator */}
@@ -251,8 +260,8 @@ export function HeroCarousel({ slides }: HeroCarouselProps) {
                                 onClick={() => { goTo(idx, idx > currentIndex ? 'right' : 'left'); setIsAutoPlaying(false); }}
                                 aria-label={`Ir a oferta ${idx + 1}`}
                                 className={`h-2 rounded-full transition-all duration-300 ${idx === currentIndex
-                                        ? 'w-8 bg-[hsl(var(--accent-primary))]'
-                                        : 'w-2 bg-white/25 hover:bg-white/50'
+                                    ? 'w-8 bg-[hsl(var(--accent-primary))]'
+                                    : 'w-2 bg-white/25 hover:bg-white/50'
                                     }`}
                             />
                         ))}

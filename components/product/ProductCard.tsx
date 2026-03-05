@@ -83,15 +83,15 @@ export function ProductCard({ product }: ProductCardProps) {
                         <div className="flex flex-col">
                             <div className="flex items-baseline gap-2">
                                 <span className="text-3xl font-black bg-gradient-to-r from-[hsl(var(--accent-primary))] to-[hsl(var(--accent-secondary))] bg-clip-text text-transparent">
-                                    {formatUSD(product.price)}
+                                    {formatARS(product.price)}
                                 </span>
-                                <span className="text-xs text-[hsl(var(--text-tertiary))] font-medium uppercase tracking-wider">USD</span>
+                                <span className="text-xs text-[hsl(var(--text-tertiary))] font-medium uppercase tracking-wider">ARS</span>
                             </div>
                             <div className="flex items-center gap-1.5 mt-0.5">
                                 <span className="text-sm font-semibold text-[hsl(var(--text-secondary))]">
-                                    {formatARS(product.price)}
+                                    {formatUSD(product.price)}
                                 </span>
-                                <span className="text-[10px] text-[hsl(var(--text-tertiary))] font-medium uppercase tracking-widest">ARS</span>
+                                <span className="text-[10px] text-[hsl(var(--text-tertiary))] font-medium uppercase tracking-widest">USD</span>
                             </div>
                         </div>
 
