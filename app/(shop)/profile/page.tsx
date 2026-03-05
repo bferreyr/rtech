@@ -7,12 +7,14 @@ import { ShoppingBag, Package, MapPin, Calendar, ArrowRight, User as UserIcon, C
 import Link from "next/link"
 import { ModelViewer } from "@/components/3d/ModelViewer"
 import { formatCurrency } from "@/lib/utils"
+import { useCurrency } from "@/context/CurrencyContext"
 import { OrderTimeline } from "@/components/orders/OrderTimeline"
 import { OrderStatus } from "@prisma/client"
 
 
 export default function ProfilePage() {
     const { data: session } = useSession()
+    const { formatARS, formatUSD } = useCurrency()
     const [isPending, startTransition] = useTransition()
     const [orders, setOrders] = useState<any[]>([])
     const [printingJobs, setPrintingJobs] = useState<any[]>([])
@@ -273,7 +275,8 @@ export default function ProfilePage() {
                                             <div className="flex items-center gap-4">
                                                 <div className="text-right">
                                                     <p className="text-xs text-[hsl(var(--text-tertiary))] mb-1">Total</p>
-                                                    <p className="text-lg font-black gradient-text">USD {Number(order.total).toFixed(2)}</p>
+                                                    <p className="text-lg font-black gradient-text">{formatARS(Number(order.total))}</p>
+                                                    <p className="text-xs text-[hsl(var(--text-tertiary))]">{formatUSD(Number(order.total))} USD</p>
                                                 </div>
                                                 <ChevronDown
                                                     className={`w-5 h-5 text-[hsl(var(--text-secondary))] transition-transform flex-shrink-0 ${isExpanded ? 'rotate-180' : ''
@@ -303,7 +306,10 @@ export default function ProfilePage() {
                                                             <p className="text-sm font-medium truncate">{item.product?.name || item.productName || 'Producto eliminado'}</p>
                                                             <p className="text-xs text-[hsl(var(--text-tertiary))]">Cant: {item.quantity}</p>
                                                         </div>
-                                                        <p className="text-sm font-bold">USD {Number(item.price).toFixed(2)}</p>
+                                                        <div className="text-right">
+                                                            <p className="text-sm font-bold">{formatARS(Number(item.price))}</p>
+                                                            <p className="text-xs text-[hsl(var(--text-tertiary))]">{formatUSD(Number(item.price))} USD</p>
+                                                        </div>
                                                     </div>
                                                 ))}
                                             </div>
