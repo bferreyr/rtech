@@ -196,7 +196,7 @@ export async function getFullSearchResults(query: string) {
 export async function getAvailableFilters(categoryId?: string) {
     const where: any = categoryId ? { categoryId } : {};
 
-    const [brands, priceRange, categories] = await Promise.all([
+    const [brands, priceRange, allCategories] = await Promise.all([
         // Get unique brands with product count
         prisma.product.groupBy({
             by: ['marca'],
@@ -212,16 +212,64 @@ export async function getAvailableFilters(categoryId?: string) {
             _max: { price: true },
         }),
 
-        // Get categories with product count
+        // Get ALL categories flat (with parentId and direct product count)
+        // @ts-ignore
         prisma.category.findMany({
             include: {
-                _count: {
-                    select: { products: true },
-                },
+                _count: { select: { products: true } },
             },
             orderBy: { name: 'asc' },
         }),
     ]);
+
+    // Build nested tree from flat list
+    // Each node: { id, name, slug, parentId, productCount (own + children) }
+    type CatNode = {
+        id: string;
+        name: string;
+        slug: string;
+        parentId: string | null;
+        productCount: number;
+        children: CatNode[];
+    };
+
+    const nodeMap = new Map<string, CatNode>();
+
+    // First pass: create all nodes
+    for (const c of allCategories as any[]) {
+        nodeMap.set(c.id, {
+            id: c.id,
+            name: c.name,
+            slug: c.slug,
+            parentId: c.parentId ?? null,
+            productCount: c._count.products,
+            children: [],
+        });
+    }
+
+    // Second pass: attach children to parents
+    const roots: CatNode[] = [];
+    for (const node of Array.from(nodeMap.values())) {
+        if (node.parentId && nodeMap.has(node.parentId)) {
+            nodeMap.get(node.parentId)!.children.push(node);
+        } else {
+            roots.push(node);
+        }
+    }
+
+    // Third pass: bubble up product counts from children to parents
+    const sumCounts = (node: CatNode): number => {
+        const childSum = node.children.reduce((acc, child) => acc + sumCounts(child), 0);
+        node.productCount = node.productCount + childSum;
+        return node.productCount;
+    };
+    roots.forEach(sumCounts);
+
+    // Filter out parent categories with 0 total products (no products anywhere in the tree)
+    const filterEmpty = (nodes: CatNode[]): CatNode[] =>
+        nodes
+            .map(n => ({ ...n, children: filterEmpty(n.children) }))
+            .filter(n => n.productCount > 0);
 
     return {
         brands: brands
@@ -234,10 +282,7 @@ export async function getAvailableFilters(categoryId?: string) {
             min: priceRange._min.price ? Number(priceRange._min.price) : 0,
             max: priceRange._max.price ? Number(priceRange._max.price) : 1000,
         },
-        categories: categories.map(c => ({
-            ...c,
-            productCount: c._count.products,
-        })),
+        categories: filterEmpty(roots),
     };
 }
 
