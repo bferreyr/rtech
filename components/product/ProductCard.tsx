@@ -70,7 +70,7 @@ export function ProductCard({ product }: ProductCardProps) {
                 {/* Content */}
                 <div className="flex-1 flex flex-col p-6">
                     <Link href={`/products/${product.id}`}>
-                        <h3 className="font-bold text-lg mb-2 group-hover:text-[hsl(var(--accent-primary))] transition-colors line-clamp-2 min-h-[3.5rem]">
+                        <h3 className="font-bold text-lg mb-2 group-hover:text-[hsl(var(--accent-primary))] transition-colors">
                             {product.name}
                         </h3>
                     </Link>
