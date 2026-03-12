@@ -76,6 +76,16 @@ export async function deleteCategory(id: string) {
     revalidatePath('/');
 }
 
+export async function deleteAllCategories() {
+    // @ts-ignore
+    await prisma.category.deleteMany({});
+
+    revalidatePath('/admin/categories');
+    revalidatePath('/admin/products');
+    revalidatePath('/products');
+    revalidatePath('/');
+}
+
 export async function getProducts(options?: {
     categoryId?: string,
     brands?: string[], // NEW: Multiple brand filter

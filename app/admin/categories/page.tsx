@@ -3,6 +3,7 @@ import Link from "next/link";
 import { Plus, Pencil, Trash2, Tag, FileDown } from "lucide-react";
 import { deleteCategory } from "@/app/actions/categories";
 import { BulkUploadCategoriesButton } from "./_components/BulkUploadCategoriesButton";
+import { DeleteAllCategoriesButton } from "./_components/DeleteAllCategoriesButton";
 import { AdminHeader } from "@/components/admin/ui/AdminHeader";
 
 export const dynamic = 'force-dynamic';
@@ -28,6 +29,7 @@ export default async function AdminCategoriesPage() {
                 actions={
                     <>
                         <BulkUploadCategoriesButton />
+                        <DeleteAllCategoriesButton />
                         <Link href="/admin/categories/new" className="btn btn-primary">
                             <Plus size={20} className="mr-2" /> Nueva Categoría
                         </Link>
