@@ -630,7 +630,15 @@ export async function bulkUploadProducts(formData: FormData) {
 
                     // Attributes & Flags
                     atributos: getVal(['Atributos', 'atributos']) ? String(getVal(['Atributos', 'atributos'])) : null,
-                    gamer: false,
+                    gamer: (() => {
+                        const raw = getVal(['gamer', 'Gamer', 'GAMER', 'isGamer']);
+                        if (raw === true || raw === 1) return true;
+                        if (typeof raw === 'string') {
+                            const s = raw.trim().toUpperCase();
+                            return s === 'TRUE' || s === '1' || s === 'SI' || s === 'SÍ';
+                        }
+                        return false;
+                    })(),
 
                     // Legacy fields
                     price: priceVal,
