@@ -8,6 +8,7 @@ import {
 } from "lucide-react";
 import { OrderStatusSelector } from "../_components/OrderStatusSelector";
 import { TrackingUrlEditor } from "../_components/TrackingUrlEditor";
+import { WhatsAppButtons } from "../_components/WhatsAppButtons";
 import Image from "next/image";
 import { formatDate, formatTime } from "@/lib/date-utils";
 
@@ -278,17 +279,17 @@ export default async function OrderDetailPage({ params }: Props) {
                             <InfoRow label="Nombre" value={order.customerName} />
                             <InfoRow label="Email" value={order.customerEmail} />
                             <InfoRow label="Teléfono" value={order.customerPhone} />
-                            {order.customerPhone && (
-                                <a
-                                    href={`https://wa.me/${order.customerPhone.replace(/[^0-9]/g, '')}`}
-                                    target="_blank"
-                                    rel="noopener noreferrer"
-                                    className="flex items-center gap-2 text-xs text-green-400 hover:underline mt-2 pt-2 border-t border-white/5"
-                                >
-                                    <Phone size={12} /> Abrir en WhatsApp
-                                </a>
-                            )}
                         </div>
+
+                        {order.customerPhone && (
+                            <div className="mt-4 pt-4 border-t border-white/10">
+                                <WhatsAppButtons
+                                    phone={order.customerPhone}
+                                    customerName={order.customerName || 'Cliente'}
+                                    orderId={order.id}
+                                />
+                            </div>
+                        )}
                     </SectionCard>
 
                     {/* Dirección */}
