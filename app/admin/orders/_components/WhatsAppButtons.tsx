@@ -34,27 +34,27 @@ export function WhatsAppButtons({ phone, customerName, orderId }: WhatsAppButton
             label: 'Pago recibido ✅',
             color: 'bg-green-600 hover:bg-green-500 border-green-500/40',
             text:
-                `¡Hola ${firstName}! 👋\n` +
-                `Confirmamos que recibimos tu pago para el pedido *N° ${shortId}*. ✅\n` +
-                `Estamos preparando tu envío y te avisaremos cuando esté en camino. ¡Gracias por tu compra! 🛒`,
+                `Hola ${firstName}!\n` +
+                `Confirmamos que recibimos tu pago para el pedido *N° ${shortId}*.\n` +
+                `Estamos preparando tu envio y te avisaremos cuando este en camino. Gracias por tu compra!`,
         },
         {
             id: 'shipped',
             label: 'Pedido en camino 📦',
             color: 'bg-blue-600 hover:bg-blue-500 border-blue-500/40',
             text:
-                `¡Hola ${firstName}! 📦\n` +
-                `Tu pedido *N° ${shortId}* ya está en camino. 🚀\n` +
-                `En breve recibirás más información sobre el seguimiento. ¡Que lo disfrutes!`,
+                `Hola ${firstName}!\n` +
+                `Tu pedido *N° ${shortId}* ya esta en camino.\n` +
+                `En breve recibiras mas informacion sobre el seguimiento. Que lo disfrutes!`,
         },
         {
             id: 'pickup',
             label: 'Listo para retirar 🏪',
             color: 'bg-purple-600 hover:bg-purple-500 border-purple-500/40',
             text:
-                `¡Hola ${firstName}! 🏪\n` +
-                `Tu pedido *N° ${shortId}* ya está listo para ser retirado en nuestra tienda. ✅\n` +
-                `Podés pasar cuando quieras en nuestro horario de atención. ¡Te esperamos!`,
+                `Hola ${firstName}!\n` +
+                `Tu pedido *N° ${shortId}* ya esta listo para ser retirado en nuestra tienda.\n` +
+                `Podes pasar cuando quieras en nuestro horario de atencion. Te esperamos!`,
         },
     ];
 
