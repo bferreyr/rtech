@@ -203,6 +203,15 @@ export default async function ProductPage({ params }: Props) {
                                 </span>
                             </div>
 
+                            {(product as any).peso != null && (
+                                <div>
+                                    <span className="block text-xs text-[color:var(--text-tertiary)] uppercase tracking-wider mb-1">Peso</span>
+                                    <span className="font-medium text-[color:var(--text-primary)]">
+                                        {Number((product as any).peso).toLocaleString('es-AR', { minimumFractionDigits: 0, maximumFractionDigits: 3 })} kg
+                                    </span>
+                                </div>
+                            )}
+
                             {(product as any).garantia && (
                                 <div className="col-span-2 border-t border-[color:var(--border-color)] pt-4 mt-2">
                                     <span className="block text-xs text-[color:var(--text-tertiary)] uppercase tracking-wider mb-2">Garantía Asegurada</span>
