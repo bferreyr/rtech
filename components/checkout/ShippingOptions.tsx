@@ -1,6 +1,6 @@
 'use client';
 
-import { Truck, Building2, Zap } from 'lucide-react';
+import { Truck, Building2 } from 'lucide-react';
 import { SHIPPING_TYPES } from '@/lib/shipping-utils';
 
 interface ShippingOption {
@@ -22,17 +22,10 @@ export function ShippingOptions({ selectedType, onSelect, isFreeShipping }: Ship
     const options: ShippingOption[] = [
         {
             type: SHIPPING_TYPES.STANDARD,
-            label: 'Envío Standard',
-            description: 'Corre por cuenta del cliente',
-            estimatedTime: '2 a 5 días hábiles',
+            label: 'Envío a Domicilio',
+            description: 'Entre 2 y 5 días hábiles',
+            estimatedTime: 'El costo de envío corre por cuenta del cliente',
             icon: <Truck className="w-5 h-5" />,
-        },
-        {
-            type: SHIPPING_TYPES.EXPRESS,
-            label: 'Envío Express',
-            description: 'Corre por cuenta del cliente',
-            estimatedTime: '1 a 3 días hábiles',
-            icon: <Zap className="w-5 h-5" />,
         },
         {
             type: SHIPPING_TYPES.PICKUP,
