@@ -143,23 +143,37 @@ export default async function ProductPage({ params }: Props) {
                 <section className="space-y-8">
                     <div>
                         <h1 className="text-4xl font-bold mb-2 tracking-tight">{product.name}</h1>
-                        <div className="flex flex-col md:flex-row items-start md:items-end justify-between gap-6">
-                            <div className="flex flex-col">
-                                <p className="text-4xl font-black bg-gradient-to-r from-[hsl(var(--accent-primary))] to-[hsl(var(--accent-secondary))] bg-clip-text text-transparent">
-                                    {new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(priceARS)}
-                                    <span className="text-sm font-normal text-[color:var(--text-tertiary)] ml-2 uppercase tracking-widest">ARS</span>
-                                </p>
-                                <p className="text-lg font-semibold text-[color:var(--text-secondary)] mt-1">
-                                    ${Number(product.price).toFixed(2)}
-                                    <span className="text-xs font-medium text-[color:var(--text-tertiary)] ml-2 uppercase tracking-widest">USD (Ref.)</span>
-                                </p>
+                        <div className="flex flex-col lg:flex-row lg:items-center justify-between gap-8 p-8 bg-[color:var(--bg-secondary)]/[0.5] backdrop-blur-sm rounded-2xl border border-[color:var(--border-color)] mt-6">
+                            {/* Left: Price */}
+                            <div className="flex-1 space-y-1">
+                                <p className="text-xs font-bold text-[color:var(--text-tertiary)] uppercase tracking-[0.2em] mb-3">Precio Final</p>
+                                <div className="flex flex-col">
+                                    <p className="text-5xl font-black bg-gradient-to-r from-[hsl(var(--accent-primary))] to-[hsl(var(--accent-secondary))] bg-clip-text text-transparent leading-none py-1">
+                                        {new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(priceARS)}
+                                    </p>
+                                    <p className="text-xl font-bold text-[color:var(--text-secondary)] mt-2 flex items-center gap-2">
+                                        <span>${Number(product.price).toFixed(2)}</span>
+                                        <span className="text-xs font-medium text-[color:var(--text-tertiary)] uppercase tracking-widest bg-[color:var(--bg-tertiary)] px-2 py-0.5 rounded">USD (Ref.)</span>
+                                    </p>
+                                </div>
                             </div>
 
-                            <div className="flex flex-col items-end gap-3 w-full md:w-auto min-w-[200px]">
-                                <span className={`text-sm font-medium ${product.stock > 0 ? 'text-green-400' : 'text-red-400'} mb-1`}>
-                                    {product.stock > 0 ? `En Stock (${product.stock})` : 'Agotado'}
-                                </span>
-                                <div className="flex flex-col gap-3 w-full md:w-auto">
+                            {/* Vertical Separator (Desktop Only) */}
+                            <div className="hidden lg:block w-px h-24 bg-gradient-to-b from-transparent via-[color:var(--border-color)] to-transparent mx-4" />
+
+                            {/* Right: Actions Box */}
+                            <div className="flex flex-col gap-5 w-full lg:w-auto lg:min-w-[300px]">
+                                <div className="flex items-center justify-between lg:justify-end">
+                                    <div className={`flex items-center gap-2 px-3 py-1 rounded-full text-xs font-bold border transition-colors ${
+                                        product.stock > 0 
+                                            ? 'bg-green-500/10 text-green-400 border-green-500/20' 
+                                            : 'bg-red-500/10 text-red-400 border-red-500/20'
+                                    }`}>
+                                        <div className={`w-2 h-2 rounded-full animate-pulse ${product.stock > 0 ? 'bg-green-400' : 'bg-red-400'}`} />
+                                        {product.stock > 0 ? `STOCK DISPONIBLE (${product.stock})` : 'SIN STOCK'}
+                                    </div>
+                                </div>
+                                <div className="flex flex-col gap-3">
                                     <AddToCartButton product={product} fullWidth />
                                     <WhatsAppProductButton 
                                         productName={product.name} 
