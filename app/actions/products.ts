@@ -424,18 +424,26 @@ export async function bulkUploadProducts(formData: FormData) {
     if (!file) throw new Error('No se subió ningún archivo');
 
     const buffer = await file.arrayBuffer();
-    const workbook = XLSX.read(buffer);
+    const workbook = XLSX.read(new Uint8Array(buffer), { type: 'array' });
     const sheetName = workbook.SheetNames[0];
     const worksheet = workbook.Sheets[sheetName];
     const data = XLSX.utils.sheet_to_json(worksheet) as any[];
 
-    // Helper to fix common encoding issues (Double UTF-8 or Latin1 viewed as UTF-8)
-    // Helper to fix common encoding issues 
-    // MODIFIED: Simply returning the string as is. The previous logic was breaking valid UTF-8 strings
-    // from standard Excel files by re-interpreting them, causing "Código" -> "Cdigo".
+    // Fix encoding corrupto tipo "CÃ¡mara" → "Cámara"
+    // Ocurre cuando UTF-8 fue leído como Latin-1 y re-codificado.
+    // Revertimos interpretando cada char como byte Latin-1 y decodificando como UTF-8.
     const fixEncoding = (str: string | null | undefined): string => {
         if (!str) return '';
-        return str.trim();
+        try {
+            // Intentar revertir la doble-codificación: convertir chars Latin-1 → bytes → decodificar UTF-8
+            const bytes = new Uint8Array(str.split('').map(c => c.charCodeAt(0) & 0xff));
+            const decoded = new TextDecoder('utf-8', { fatal: true }).decode(bytes);
+            // Si la decodificación resultó en texto válido diferente al original, usarlo
+            return decoded.trim();
+        } catch {
+            // Si falla (no es UTF-8 doble-codificado), devolver el string original
+            return str.trim();
+        }
     };
 
     // Cache to minimize DB queries during loop
