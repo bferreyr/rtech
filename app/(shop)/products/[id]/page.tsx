@@ -2,6 +2,7 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AddToCartButton } from "@/components/cart/AddToCartButton";
+import { WhatsAppProductButton } from "@/components/product/WhatsAppProductButton";
 import { Metadata } from "next";
 import { getExchangeRate, getGlobalMarkup } from "@/app/actions/settings";
 import { ShieldCheck } from "lucide-react";
@@ -158,8 +159,13 @@ export default async function ProductPage({ params }: Props) {
                                 <span className={`text-sm font-medium ${product.stock > 0 ? 'text-green-400' : 'text-red-400'} mb-1`}>
                                     {product.stock > 0 ? `En Stock (${product.stock})` : 'Agotado'}
                                 </span>
-                                <div className="flex gap-3 w-full md:w-auto">
-                                    <AddToCartButton product={product} />
+                                <div className="flex flex-col gap-3 w-full md:w-auto">
+                                    <AddToCartButton product={product} fullWidth />
+                                    <WhatsAppProductButton 
+                                        productName={product.name} 
+                                        sku={product.sku} 
+                                        fullWidth 
+                                    />
                                 </div>
                             </div>
                         </div>
