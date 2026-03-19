@@ -24,7 +24,7 @@ export function ShippingOptions({ selectedType, onSelect, isFreeShipping }: Ship
             type: SHIPPING_TYPES.STANDARD,
             label: 'Envío a Domicilio',
             description: 'Entre 2 y 5 días hábiles',
-            estimatedTime: 'El costo de envío corre por cuenta del cliente',
+            estimatedTime: 'Costo de envío: $15.000 ARS',
             icon: <Truck className="w-5 h-5" />,
         },
         {

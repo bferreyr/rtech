@@ -46,9 +46,11 @@ export function OptimizedCheckout({ items, cartTotal, onClearCart }: OptimizedCh
     const shippingType = watch('shippingType', SHIPPING_TYPES.STANDARD);
     const paymentMethod = watch('paymentMethod');
 
-    // Calculate if shipping is free
+    // Costo de envío fijo en ARS
+    const SHIPPING_COST_ARS = 15000;
     const isFreeShipping = shippingType === SHIPPING_TYPES.PICKUP || isFreeShippingZone(city, province);
-    const shippingCost = 0; // Always 0 - customer pays or it's free
+    const shippingCostARS = isFreeShipping ? 0 : SHIPPING_COST_ARS;
+    const shippingCost = 0; // El envío se discrimina en ARS, no afecta el total USD
     const total = cartTotal;
 
     // Progress steps
@@ -394,6 +396,8 @@ export function OptimizedCheckout({ items, cartTotal, onClearCart }: OptimizedCh
                                 items={items}
                                 subtotal={cartTotal}
                                 shippingCost={shippingCost}
+                                shippingCostARS={shippingCostARS}
+                                isFreeShipping={isFreeShipping}
                                 total={total}
                                 onCheckout={handleSubmit(onSubmit)}
                                 checkoutDisabled={!isValid || (paymentMethod === 'transferencia' && !receiptFile)}

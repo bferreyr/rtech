@@ -1,7 +1,7 @@
 'use client';
 
 import Image from 'next/image';
-import { ShoppingBag, Lock } from 'lucide-react';
+import { ShoppingBag, Lock, Truck } from 'lucide-react';
 import { useCurrency } from '@/context/CurrencyContext';
 import { CartItem } from '@/context/CartContext';
 
@@ -10,6 +10,8 @@ interface OrderSummaryProps {
     items: CartItem[];
     subtotal: number;
     shippingCost: number;
+    shippingCostARS?: number;
+    isFreeShipping?: boolean;
     total: number;
     onCheckout?: () => void;
     checkoutDisabled?: boolean;
@@ -20,12 +22,18 @@ export function OrderSummary({
     items,
     subtotal,
     shippingCost,
+    shippingCostARS = 0,
+    isFreeShipping = false,
     total,
     onCheckout,
     checkoutDisabled,
     checkoutLoading
 }: OrderSummaryProps) {
-    const { formatUSD, formatARS } = useCurrency();
+    const { formatUSD, formatARS, toARS } = useCurrency();
+
+    // Formateador directo en ARS (sin conversión USD→ARS)
+    const formatARSDirect = (amount: number) =>
+        new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(amount);
 
     return (
         <div className="glass-card p-6 sticky top-6 space-y-6">
@@ -71,17 +79,22 @@ export function OrderSummary({
             {/* Totals */}
             <div className="space-y-3 pt-4 border-t border-white/10">
                 <div className="flex justify-between text-sm">
-                    <span className="text-[hsl(var(--text-secondary))]">Subtotal</span>
+                    <span className="text-[hsl(var(--text-secondary))]">Subtotal productos</span>
                     <span className="font-medium">{formatUSD(subtotal)}</span>
                 </div>
 
-                <div className="flex justify-between text-sm">
-                    <span className="text-[hsl(var(--text-secondary))]">Envío</span>
+                <div className="flex justify-between text-sm items-center gap-2">
+                    <span className="flex items-center gap-1.5 text-[hsl(var(--text-secondary))]">
+                        <Truck className="w-3.5 h-3.5" />
+                        Costo de envío
+                    </span>
                     <span className="font-medium">
-                        {shippingCost === 0 ? (
-                            <span className="text-green-400">Gratis</span>
+                        {isFreeShipping || shippingCostARS === 0 ? (
+                            <span className="text-green-400 font-semibold">Gratis</span>
                         ) : (
-                            formatUSD(shippingCost)
+                            <span className="text-[hsl(var(--accent-primary))] font-semibold">
+                                {formatARSDirect(shippingCostARS)}
+                            </span>
                         )}
                     </span>
                 </div>
@@ -94,7 +107,10 @@ export function OrderSummary({
                                 {formatUSD(total)}
                             </p>
                             <p className="text-sm text-[hsl(var(--text-secondary))]">
-                                {formatARS(total)}
+                                {formatARSDirect(toARS(total) + shippingCostARS)}
+                                {shippingCostARS > 0 && (
+                                    <span className="ml-1 text-xs opacity-60">(incl. envío)</span>
+                                )}
                             </p>
                         </div>
                     </div>
