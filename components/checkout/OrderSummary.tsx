@@ -104,7 +104,7 @@ export function OrderSummary({
                         <span className="text-lg font-bold">Total</span>
                         <div className="text-right">
                             <p className="text-2xl font-black bg-gradient-to-r from-[hsl(var(--accent-primary))] to-[hsl(var(--accent-secondary))] bg-clip-text text-transparent">
-                                {formatARSDirect(toARS(total) + shippingCostARS)}
+                                {formatARSDirect(Math.round(toARS(total)) + shippingCostARS)}
                                 {shippingCostARS > 0 && (
                                     <span className="ml-1 text-xs opacity-60">(incl. envío)</span>
                                 )}

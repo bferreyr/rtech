@@ -80,10 +80,9 @@ export function CartProvider({ children }: { children: ReactNode }) {
     const clearCart = () => setItems([]);
     const toggleCart = () => setIsOpen((prev) => !prev);
 
-    const cartTotal = items.reduce(
-        (total, item) => total + Number(item.price) * item.quantity,
-        0
-    );
+    const cartTotal = Math.round(
+        items.reduce((total, item) => total + Number(item.price) * item.quantity, 0) * 100
+    ) / 100;
 
     const cartCount = items.reduce((total, item) => total + item.quantity, 0);
 
