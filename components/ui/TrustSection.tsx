@@ -10,7 +10,7 @@ export function TrustSection() {
         <section className="py-14 bg-[color:var(--bg-secondary)]/[0.3] border-y border-[color:var(--border-color)]">
             <div className="container mx-auto px-4">
                 <div className="text-center mb-10">
-                    <h2 className="text-2xl md:text-3xl font-black bg-gradient-to-r from-[color:var(--text-primary)] to-[color:var(--text-tertiary)] bg-clip-text text-transparent uppercase tracking-tight">
+                    <h2 className="text-2xl md:text-3xl font-black uppercase tracking-tight gradient-text">
                         Empresas que confían en nosotros
                     </h2>
                 </div>
@@ -21,11 +21,11 @@ export function TrustSection() {
                             key={company.name}
                             className="group relative flex flex-col items-center gap-3"
                         >
-                            <div className="relative w-60 h-32 transition-all duration-500 transform group-hover:scale-105">
+                            <div className="relative w-64 h-32 transition-all duration-500 transform group-hover:scale-105">
                                 <img
                                     src={company.logo}
                                     alt={company.name}
-                                    className="w-full h-full object-contain grayscale opacity-70 contrast-125 group-hover:grayscale-0 group-hover:opacity-100 transition-all duration-500 cursor-default"
+                                    className="w-full h-full object-contain brightness-0 invert opacity-60 group-hover:brightness-100 group-hover:invert-0 group-hover:opacity-100 transition-all duration-500 cursor-default"
                                 />
                             </div>
                             {/* Subtle name label that appears on hover */}
