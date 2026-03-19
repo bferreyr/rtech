@@ -1,5 +1,5 @@
 import { StoreFront } from "@/components/product/StoreFront";
-import { BrandsCarousel } from "@/components/ui/BrandsCarousel";
+import { TrustSection } from "@/components/ui/TrustSection";
 import { HeroCarousel } from "@/components/ui/HeroCarousel";
 import { getCategories, getProducts } from "@/app/actions/categories";
 import { getAvailableFilters } from "@/app/actions/products";
@@ -58,7 +58,7 @@ export default async function Home(props: {
             </section>
 
             {/* Brands Section */}
-            <BrandsCarousel />
+            <TrustSection />
         </div>
     );
 }
