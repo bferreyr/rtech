@@ -160,17 +160,7 @@ export default async function ProductPage({ params }: Props) {
 
                             {/* Actions Group - Horizontal Alignment */}
                             <div className="flex flex-wrap items-center gap-4 pt-2">
-                                <div className={`flex items-center gap-2 px-3 py-2 rounded-lg text-xs font-bold border ${
-                                    product.stock > 0 
-                                        ? 'bg-green-500/10 text-green-400 border-green-500/20' 
-                                        : 'bg-red-500/10 text-red-400 border-red-500/20'
-                                }`}>
-                                    <div className={`w-2 h-2 rounded-full ${product.stock > 0 ? 'bg-green-400' : 'bg-red-400'}`} />
-                                    {product.stock > 0 ? `STOCK: ${product.stock} UNI.` : 'SIN STOCK'}
-                                </div>
-                                
                                 <AddToCartButton product={product} />
-                                
                                 <WhatsAppProductButton 
                                     productName={product.name} 
                                     sku={product.sku} 
@@ -210,31 +200,31 @@ export default async function ProductPage({ params }: Props) {
                                 <span className="font-mono text-[color:var(--text-primary)] text-xs truncate" title={product.id}>{product.id}</span>
                             </div>
 
-                            <div>
-                                <span className="block text-xs text-[color:var(--text-tertiary)] uppercase tracking-wider mb-1">Centro de Distribución</span>
-                                <span className="font-medium text-[color:var(--text-primary)]">
-                                    {(product as any).provider === 'MOBE' ? 'Centro de Distribución Paraná' : 'Centro de distribución Santa Fe'}
-                                </span>
-                            </div>
+                            <div className="col-span-2 border-t border-[color:var(--border-color)] pt-4 mt-2">
+                                <div className="flex flex-wrap items-end gap-x-8 gap-y-4">
+                                    {(product as any).garantia && (
+                                        <div>
+                                            <span className="block text-xs text-[color:var(--text-tertiary)] uppercase tracking-wider mb-2">Garantía Asegurada</span>
+                                            <div className="flex items-center gap-2 text-green-400 bg-green-500/10 w-fit px-3 py-1.5 rounded-lg border border-green-500/20">
+                                                <ShieldCheck size={16} />
+                                                <span className="font-semibold">{(product as any).garantia}</span>
+                                            </div>
+                                        </div>
+                                    )}
 
-                            {(product as any).peso != null && (
-                                <div>
-                                    <span className="block text-xs text-[color:var(--text-tertiary)] uppercase tracking-wider mb-1">Peso</span>
-                                    <span className="font-medium text-[color:var(--text-primary)]">
-                                        {Number((product as any).peso).toLocaleString('es-AR', { minimumFractionDigits: 0, maximumFractionDigits: 3 })} kg
-                                    </span>
-                                </div>
-                            )}
-
-                            {(product as any).garantia && (
-                                <div className="col-span-2 border-t border-[color:var(--border-color)] pt-4 mt-2">
-                                    <span className="block text-xs text-[color:var(--text-tertiary)] uppercase tracking-wider mb-2">Garantía Asegurada</span>
-                                    <div className="flex items-center gap-2 text-green-400 bg-green-500/10 w-fit px-3 py-1.5 rounded-lg border border-green-500/20">
-                                        <ShieldCheck size={16} />
-                                        <span className="font-semibold">{(product as any).garantia}</span>
+                                    <div>
+                                        <span className="block text-xs text-[color:var(--text-tertiary)] uppercase tracking-wider mb-2">Disponibilidad de Stock</span>
+                                        <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold border ${
+                                            product.stock > 0 
+                                                ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' 
+                                                : 'bg-red-500/10 text-red-400 border-red-500/20'
+                                        }`}>
+                                            <div className={`w-2 h-2 rounded-full ${product.stock > 0 ? 'bg-blue-400' : 'bg-red-400'}`} />
+                                            {product.stock > 0 ? `ENTREGA INMEDIATA: ${product.stock} UNI.` : 'SIN STOCK DISPONIBLE'}
+                                        </div>
                                     </div>
                                 </div>
-                            )}
+                            </div>
                         </div>
                     </div>
 
