@@ -1,4 +1,4 @@
-import { Zap, Shield, Sparkles, Target, Eye, Heart, ArrowRight } from "lucide-react";
+import { Zap, Shield, Sparkles, Target, Eye, Heart, ArrowRight, User } from "lucide-react";
 import Link from "next/link";
 import { getRandomContent, ABOUT_TITLES, ABOUT_SUBTITLES } from "@/lib/marketing-content";
 
@@ -163,6 +163,82 @@ export default function AboutPage() {
                             <div className="flex flex-col">
                                 <span className="text-sm font-bold text-[hsl(var(--text-primary))]">Fundadores</span>
                                 <span className="text-sm text-[hsl(var(--text-tertiary))]">Pasión & Tecnología</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            {/* Team Organigram Section */}
+            <section className="bg-gradient-to-b from-transparent to-white/5 py-24">
+                <div className="container px-4">
+                    <div className="text-center mb-16 space-y-4">
+                        <h2 className="text-sm font-bold uppercase tracking-[0.3em] text-[color:var(--accent-primary)]">Estructura Organizativa</h2>
+                        <h3 className="text-4xl font-bold">Nuestro Equipo</h3>
+                        <p className="text-[hsl(var(--text-secondary))] max-w-xl mx-auto text-lg leading-relaxed">
+                            Profesionales apasionados trabajando para brindar la mejor experiencia en hardware del país.
+                        </p>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+                        {/* CEO: Bartolomé Ferreyra */}
+                        <div className="group glass-card overflow-hidden">
+                            <div className="aspect-[4/5] relative">
+                                <div className="absolute inset-0 bg-gradient-to-br from-[hsl(var(--accent-primary))]/20 to-transparent flex items-center justify-center">
+                                    <User size={80} className="text-[hsl(var(--accent-primary))]/30" />
+                                </div>
+                                {/* Placeholder overlay until real image is provided */}
+                                <div className="absolute inset-0 flex items-center justify-center p-8 text-center bg-black/40 backdrop-blur-[2px]">
+                                    <span className="text-xs font-bold uppercase tracking-widest text-white/40">Foto Bartolomé Ferreyra</span>
+                                </div>
+                            </div>
+                            <div className="p-6 space-y-3 relative">
+                                <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-[hsl(var(--accent-primary))] to-transparent opacity-50" />
+                                <h4 className="text-xl font-bold text-white group-hover:text-[hsl(var(--accent-primary))] transition-colors">Bartolomé Ferreyra</h4>
+                                <p className="text-xs font-black uppercase text-[hsl(var(--accent-primary))] tracking-tighter">CEO / FUNDADOR</p>
+                                <p className="text-sm text-[hsl(var(--text-secondary))] leading-relaxed">
+                                    Liderazgo estratégico y visión técnica. Apasionado por la innovación en hardware de alto rendimiento y el crecimiento de Rincón Tech como referente nacional.
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* CORPORATE SALES: Sofia Petrosino */}
+                        <div className="group glass-card overflow-hidden">
+                            <div className="aspect-[4/5] relative">
+                                <div className="absolute inset-0 bg-gradient-to-br from-[hsl(var(--accent-secondary))]/20 to-transparent flex items-center justify-center">
+                                    <User size={80} className="text-[hsl(var(--accent-secondary))]/30" />
+                                </div>
+                                <div className="absolute inset-0 flex items-center justify-center p-8 text-center bg-black/40 backdrop-blur-[2px]">
+                                    <span className="text-xs font-bold uppercase tracking-widest text-white/40">Foto Sofia Petrosino</span>
+                                </div>
+                            </div>
+                            <div className="p-6 space-y-3 relative">
+                                <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-[hsl(var(--accent-secondary))] to-transparent opacity-50" />
+                                <h4 className="text-xl font-bold text-white group-hover:text-[hsl(var(--accent-secondary))] transition-colors">Sofia Petrosino</h4>
+                                <p className="text-xs font-black uppercase text-[hsl(var(--accent-secondary))] tracking-tighter">VENTAS CORPORATIVAS</p>
+                                <p className="text-sm text-[hsl(var(--text-secondary))] leading-relaxed">
+                                    Especialista en soluciones a medida para empresas. Coordinación de proyectos a gran escala y asesoramiento técnico especializado para el sector corporativo.
+                                </p>
+                            </div>
+                        </div>
+
+                        {/* MARKETING: Victoria Petrosino */}
+                        <div className="group glass-card overflow-hidden">
+                            <div className="aspect-[4/5] relative">
+                                <div className="absolute inset-0 bg-gradient-to-br from-[#f59e0b]/20 to-transparent flex items-center justify-center">
+                                    <User size={80} className="text-[#f59e0b]/30" />
+                                </div>
+                                <div className="absolute inset-0 flex items-center justify-center p-8 text-center bg-black/40 backdrop-blur-[2px]">
+                                    <span className="text-xs font-bold uppercase tracking-widest text-white/40">Foto Victoria Petrosino</span>
+                                </div>
+                            </div>
+                            <div className="p-6 space-y-3 relative">
+                                <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-[#f59e0b] to-transparent opacity-50" />
+                                <h4 className="text-xl font-bold text-white group-hover:text-[#f59e0b] transition-colors">Victoria Petrosino</h4>
+                                <p className="text-xs font-black uppercase text-[#f59e0b] tracking-tighter">MARKETING</p>
+                                <p className="text-sm text-[hsl(var(--text-secondary))] leading-relaxed">
+                                    Creatividad y estrategia digital. Impulsando la marca Rincón Tech a través de experiencias visuales y comunicación centrada en la comunidad tech.
+                                </p>
                             </div>
                         </div>
                     </div>
