@@ -155,3 +155,23 @@
     background: hsl(var(--accent-primary) / 0.6);
   }
 }
+
+/* ── EMPRESAS LANDING — Design Tokens ── */
+:root {
+    --rt-bg:       #080c14;
+    --rt-bg2:      #0d1320;
+    --rt-bg3:      #111827;
+    --rt-border:   rgba(255,255,255,0.07);
+    --rt-border2:  rgba(255,255,255,0.13);
+    --rt-blue:     #0ea5e9;
+    --rt-cyan:     #06b6d4;
+    --rt-violet:   #8b5cf6;
+    --rt-amber:    #f59e0b;
+    --rt-green:    #10b981;
+    --rt-text:     #f1f5f9;
+    --rt-muted:    #94a3b8;
+    --rt-dimmed:   #475569;
+    --rt-wa:       #25d366;
+    --rt-radius:   1rem;
+    --rt-glow:     rgba(14,165,233,0.18);
+}
