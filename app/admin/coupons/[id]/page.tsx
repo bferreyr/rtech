@@ -1,5 +1,5 @@
 import { getCoupon, updateCoupon } from "@/app/actions/coupons";
-import { CouponForm } from "../../_components/CouponForm";
+import { CouponForm } from "../_components/CouponForm";
 import Link from "next/link";
 import { ArrowLeft, Ticket } from "lucide-react";
 import { notFound } from "next/navigation";
