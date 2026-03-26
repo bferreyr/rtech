@@ -15,7 +15,7 @@ interface CouponFormProps {
         maxUses?: number | null;
         oncePerUser?: boolean;
         active?: boolean;
-        expiresAt?: Date | null;
+        expiresAt?: Date | string | null;
     };
 }
 
