@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
-import { LayoutDashboard, Package, ShoppingCart, Users, LogOut, Settings, Truck, Box, MessageSquare, Menu, X, Tag } from 'lucide-react';
+import { LayoutDashboard, Package, ShoppingCart, Users, LogOut, Settings, Truck, Box, MessageSquare, Menu, X, Tag, Ticket } from 'lucide-react';
 import { logoutUser } from '@/app/actions/auth';
 import { useState } from 'react';
 
@@ -14,6 +14,7 @@ const menuItems = [
     { icon: ShoppingCart, label: 'Pedidos', href: '/admin/orders' },
     { icon: Truck, label: 'Envíos', href: '/admin/shipments' },
     { icon: Tag, label: 'Ofertas', href: '/admin/offers' },
+    { icon: Ticket, label: 'Cupones', href: '/admin/coupons' },
     { icon: Users, label: 'Usuarios', href: '/admin/users' },
     { icon: MessageSquare, label: 'Reseñas', href: '/admin/reviews' },
     { icon: Box, label: '3D', href: '/admin/3d-printing' },

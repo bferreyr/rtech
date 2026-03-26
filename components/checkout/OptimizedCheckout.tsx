@@ -3,8 +3,9 @@
 import { useState, useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
-import { User, MapPin, CreditCard, Mail, Phone, Building2 } from 'lucide-react';
+import { User, MapPin, CreditCard, Mail, Phone, Building2, Ticket, X, Loader2 } from 'lucide-react';
 import { checkoutSchema, CheckoutFormData, FieldState } from '@/lib/checkout-validation';
+import { validateCoupon } from '@/app/actions/coupons';
 import { FormField, TextareaField } from './FormField';
 import { ProgressIndicator } from './ProgressIndicator';
 import { OrderSummary } from './OrderSummary';
@@ -29,6 +30,15 @@ export function OptimizedCheckout({ items, cartTotal, onClearCart }: OptimizedCh
     const [receiptFile, setReceiptFile] = useState<File | null>(null);
     const [currentStep, setCurrentStep] = useState(0);
 
+    // Coupon state
+    const [couponCode, setCouponCode] = useState('');
+    const [couponInput, setCouponInput] = useState('');
+    const [couponId, setCouponId] = useState<string | null>(null);
+    const [discountAmountARS, setDiscountAmountARS] = useState(0);
+    const [couponMessage, setCouponMessage] = useState<string | null>(null);
+    const [couponError, setCouponError] = useState<string | null>(null);
+    const [couponLoading, setCouponLoading] = useState(false);
+
     const {
         register,
         handleSubmit,
@@ -52,6 +62,42 @@ export function OptimizedCheckout({ items, cartTotal, onClearCart }: OptimizedCh
     const shippingCostARS = isFreeShipping ? 0 : SHIPPING_COST_ARS;
     const shippingCost = 0; // El envío se discrimina en ARS, no afecta el total USD
     const total = cartTotal;
+
+    // Apply coupon
+    const applyCoupon = async () => {
+        if (!couponInput.trim()) return;
+        setCouponLoading(true);
+        setCouponError(null);
+        setCouponMessage(null);
+        try {
+            const result = await validateCoupon(couponInput, null, cartTotal);
+            if (result.valid) {
+                setCouponCode(couponInput.trim().toUpperCase());
+                setCouponId(result.couponId);
+                setDiscountAmountARS(result.discountAmount);
+                setCouponMessage(result.message);
+                setCouponError(null);
+            } else {
+                setCouponError(result.error);
+                setCouponCode('');
+                setCouponId(null);
+                setDiscountAmountARS(0);
+            }
+        } catch {
+            setCouponError('Error al validar el cupón');
+        } finally {
+            setCouponLoading(false);
+        }
+    };
+
+    const removeCoupon = () => {
+        setCouponCode('');
+        setCouponId(null);
+        setCouponInput('');
+        setDiscountAmountARS(0);
+        setCouponMessage(null);
+        setCouponError(null);
+    };
 
     // Progress steps
     const steps = [
@@ -114,6 +160,9 @@ export function OptimizedCheckout({ items, cartTotal, onClearCart }: OptimizedCh
                 isFreeShipping,
                 paymentMethod: data.paymentMethod,
                 paymentReceiptUrl: receiptUrl,
+                couponCode: couponCode || null,
+                couponId: couponId || null,
+                discountAmountARS: discountAmountARS || 0,
                 items: items.map(item => ({
                     productId: item.id,
                     quantity: item.quantity,
@@ -399,6 +448,8 @@ export function OptimizedCheckout({ items, cartTotal, onClearCart }: OptimizedCh
                                 shippingCostARS={shippingCostARS}
                                 isFreeShipping={isFreeShipping}
                                 total={total}
+                                discountAmountARS={discountAmountARS}
+                                couponCode={couponCode}
                                 onCheckout={handleSubmit(onSubmit)}
                                 checkoutDisabled={!isValid || (paymentMethod === 'transferencia' && !receiptFile)}
                                 checkoutLoading={isSubmitting}

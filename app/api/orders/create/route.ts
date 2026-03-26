@@ -23,6 +23,8 @@ export async function POST(request: NextRequest) {
             isFreeShipping,
             paymentMethod,
             paymentReceiptUrl,
+            couponCode,    // May be null
+            couponId,      // May be null
             items, // We only trust productId and quantity
             // total, // Ignored from client
         } = data;
@@ -114,10 +116,6 @@ export async function POST(request: NextRequest) {
         }
 
         // Calculate Shipping
-        // For now, based on previous logic, we default to 0 (Pay on Delivery / Calculated elsewhere)
-        // Check strictness: if we want to enforce free shipping logic, we should do it here.
-        // But for now, let's keep it 0 as per the original code's behavior which trusted client's 0.
-        // We will FORCE it to 0 or valid value, not client's value.
         const shippingCost = 0;
 
         const finalTotal = calculatedTotal + shippingCost;
@@ -147,6 +145,47 @@ export async function POST(request: NextRequest) {
             userId = user.id;
         }
 
+        // --- SERVER-SIDE COUPON VALIDATION ---
+        let serverDiscountARS = 0;
+        let validatedCouponCode: string | null = null;
+        let validatedCouponId: string | null = null;
+
+        if (couponCode && couponId) {
+            const coupon = await prisma.coupon.findUnique({ where: { id: couponId, code: couponCode } });
+
+            if (coupon && coupon.active) {
+                const now = new Date();
+                const notExpired = !coupon.expiresAt || coupon.expiresAt > now;
+                const hasUses = coupon.maxUses === null || coupon.usedCount < coupon.maxUses;
+
+                if (notExpired && hasUses) {
+                    let allowedForUser = true;
+                    if (coupon.oncePerUser) {
+                        const existing = await prisma.couponUsage.findFirst({
+                            where: { couponId: coupon.id, userId }
+                        });
+                        if (existing) allowedForUser = false;
+                    }
+
+                    if (allowedForUser) {
+                        const { getExchangeRate } = await import('@/app/actions/settings');
+                        const { rate: exchangeRate } = await getExchangeRate();
+                        const subtotalARS = Math.round(calculatedTotal * (exchangeRate || 1));
+
+                        if (!coupon.minOrderAmount || subtotalARS >= Number(coupon.minOrderAmount)) {
+                            if (coupon.type === 'PERCENTAGE') {
+                                serverDiscountARS = Math.round(subtotalARS * (Number(coupon.value) / 100));
+                            } else {
+                                serverDiscountARS = Math.min(Number(coupon.value), subtotalARS);
+                            }
+                            validatedCouponCode = coupon.code;
+                            validatedCouponId = coupon.id;
+                        }
+                    }
+                }
+            }
+        }
+
         // Create order
         const order = await prisma.order.create({
             data: {
@@ -161,20 +200,20 @@ export async function POST(request: NextRequest) {
                 shippingDetails,
                 shippingType,
                 shippingCost,
-                isFreeShipping: isFreeShipping || false, // Should interpret from logic
+                isFreeShipping: isFreeShipping || false,
                 shippingMethod: 'Correo Argentino',
                 paymentMethod,
                 paymentReceiptUrl,
                 paymentStatus: 'PENDING',
                 status: 'PENDING',
-                total: finalTotal, // Use server calculated total
+                couponCode: validatedCouponCode,
+                discountAmount: serverDiscountARS,
+                total: finalTotal,
                 items: {
                     create: validItems.map(item => ({
                         productId: item.productId,
                         quantity: item.quantity,
                         price: item.price,
-                        // Snapshot fields (re-fetch product or use found)
-                        // Ideally we already have product info in validItems or can find it again
                         productName: products.find(p => p.id === item.productId)?.name || 'Producto desconocido',
                         productSku: products.find(p => p.id === item.productId)?.sku || 'N/A',
                         productImage: products.find(p => p.id === item.productId)?.imageUrl || null,
@@ -185,6 +224,19 @@ export async function POST(request: NextRequest) {
                 items: true,
             },
         });
+
+        // Register coupon usage and increment counter
+        if (validatedCouponId && serverDiscountARS > 0) {
+            await Promise.all([
+                prisma.coupon.update({
+                    where: { id: validatedCouponId },
+                    data: { usedCount: { increment: 1 } }
+                }),
+                prisma.couponUsage.create({
+                    data: { couponId: validatedCouponId, userId, orderId: order.id }
+                })
+            ]);
+        }
 
         // Update Stock (Simple decrement)
         // Ideally should be a transaction with the order creation, but Prisma doesn't support 

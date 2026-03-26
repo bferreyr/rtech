@@ -13,6 +13,8 @@ interface OrderSummaryProps {
     shippingCostARS?: number;
     isFreeShipping?: boolean;
     total: number;
+    discountAmountARS?: number;
+    couponCode?: string;
     onCheckout?: () => void;
     checkoutDisabled?: boolean;
     checkoutLoading?: boolean;
@@ -25,6 +27,8 @@ export function OrderSummary({
     shippingCostARS = 0,
     isFreeShipping = false,
     total,
+    discountAmountARS = 0,
+    couponCode,
     onCheckout,
     checkoutDisabled,
     checkoutLoading
@@ -83,6 +87,16 @@ export function OrderSummary({
                     <span className="font-medium">{formatUSD(subtotal)}</span>
                 </div>
 
+                {discountAmountARS > 0 && couponCode && (
+                    <div className="flex justify-between text-sm items-center">
+                        <span className="flex items-center gap-1.5 text-green-400">
+                            <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M7 7h.01M7 3h5c.512 0 1.024.195 1.414.586l7 7a2 2 0 010 2.828l-7 7a2 2 0 01-2.828 0l-7-7A1.994 1.994 0 013 12V7a4 4 0 014-4z" /></svg>
+                            Cupón <span className="font-mono font-bold">{couponCode}</span>
+                        </span>
+                        <span className="font-medium text-green-400">-{formatARSDirect(discountAmountARS)}</span>
+                    </div>
+                )}
+
                 <div className="flex justify-between text-sm items-center gap-2">
                     <span className="flex items-center gap-1.5 text-[hsl(var(--text-secondary))]">
                         <Truck className="w-3.5 h-3.5" />
@@ -104,7 +118,7 @@ export function OrderSummary({
                         <span className="text-lg font-bold">Total</span>
                         <div className="text-right">
                             <p className="text-2xl font-black bg-gradient-to-r from-[hsl(var(--accent-primary))] to-[hsl(var(--accent-secondary))] bg-clip-text text-transparent">
-                                {formatARSDirect(Math.round(toARS(total)) + shippingCostARS)}
+                                {formatARSDirect(Math.max(0, Math.round(toARS(total)) + shippingCostARS - discountAmountARS))}
                                 {shippingCostARS > 0 && (
                                     <span className="ml-1 text-xs opacity-60">(incl. envío)</span>
                                 )}

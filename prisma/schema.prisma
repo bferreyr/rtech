@@ -129,6 +129,10 @@ model Order {
   paymentReceiptUrl String? // URL del comprobante de pago
   paymentStatus     String? @default("PENDING")
 
+  // Cupón
+  couponCode     String?
+  discountAmount Decimal? @default(0)
+
   status    OrderStatus @default(PENDING)
   total     Decimal
   createdAt DateTime    @default(now())
@@ -200,6 +204,38 @@ enum OrderStatus {
   DELIVERED
   CANCELLED
 }
+
+enum CouponType {
+  PERCENTAGE
+  FIXED_ARS
+}
+
+model Coupon {
+  id             String      @id @default(cuid())
+  code           String      @unique
+  description    String?
+  type           CouponType
+  value          Decimal     // Si PERCENTAGE: 1-100. Si FIXED_ARS: monto en ARS
+  minOrderAmount Decimal?
+  maxUses        Int?        // null = ilimitados
+  usedCount      Int         @default(0)
+  oncePerUser    Boolean     @default(false)
+  active         Boolean     @default(true)
+  expiresAt      DateTime?
+  createdAt      DateTime    @default(now())
+  updatedAt      DateTime    @updatedAt
+  usages         CouponUsage[]
+}
+
+model CouponUsage {
+  id        String   @id @default(cuid())
+  couponId  String
+  userId    String
+  orderId   String   @unique
+  createdAt DateTime @default(now())
+  coupon    Coupon   @relation(fields: [couponId], references: [id], onDelete: Cascade)
+}
+
 
 enum ShipmentStatus {
   PENDING
