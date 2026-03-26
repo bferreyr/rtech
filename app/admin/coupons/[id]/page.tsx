@@ -4,14 +4,15 @@ import Link from "next/link";
 import { ArrowLeft, Ticket } from "lucide-react";
 import { notFound } from "next/navigation";
 
-export default async function EditCouponPage({ params }: { params: { id: string } }) {
-    const coupon = await getCoupon(params.id);
+export default async function EditCouponPage({ params }: { params: Promise<{ id: string }> }) {
+    const { id } = await params;
+    const coupon = await getCoupon(id);
 
     if (!coupon) notFound();
 
     async function updateWithId(formData: FormData) {
         'use server';
-        await updateCoupon(params.id, formData);
+        await updateCoupon(id, formData);
     }
 
     return (
