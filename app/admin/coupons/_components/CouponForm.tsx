@@ -97,9 +97,9 @@ export function CouponForm({ action, defaultValues }: CouponFormProps) {
                             name="value"
                             defaultValue={defaultValues?.value}
                             required
-                            min={type === 'PERCENTAGE' ? 1 : 1}
+                            min={1}
                             max={type === 'PERCENTAGE' ? 100 : undefined}
-                            step={type === 'PERCENTAGE' ? 1 : 100}
+                            step={1}
                             placeholder={type === 'PERCENTAGE' ? '15' : '5000'}
                             className="w-full pl-10 pr-4 py-3 rounded-xl bg-white/5 border border-white/10 text-white placeholder-[hsl(var(--text-tertiary))] focus:outline-none focus:border-[hsl(var(--accent-primary))] focus:ring-1 focus:ring-[hsl(var(--accent-primary))] transition-all"
                         />
