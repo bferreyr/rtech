@@ -11,10 +11,20 @@ export async function getCoupons() {
     // @ts-ignore
     if (session?.user?.role !== "ADMIN") return [];
 
-    return await prisma.coupon.findMany({
+    const coupons = await prisma.coupon.findMany({
         orderBy: { createdAt: 'desc' },
         include: { _count: { select: { usages: true } } }
     });
+
+    // Serialize Decimal and Date fields for Next.js RSC
+    return coupons.map((c: any) => ({
+        ...c,
+        value: Number(c.value),
+        minOrderAmount: c.minOrderAmount ? Number(c.minOrderAmount) : null,
+        expiresAt: c.expiresAt ? c.expiresAt.toISOString() : null,
+        createdAt: c.createdAt.toISOString(),
+        updatedAt: c.updatedAt.toISOString(),
+    }));
 }
 
 // ─── Admin: obtener uno ───────────────────────────────────────────────────────
@@ -23,7 +33,17 @@ export async function getCoupon(id: string) {
     // @ts-ignore
     if (session?.user?.role !== "ADMIN") return null;
 
-    return await prisma.coupon.findUnique({ where: { id } });
+    const c = await prisma.coupon.findUnique({ where: { id } });
+    if (!c) return null;
+
+    return {
+        ...c,
+        value: Number(c.value),
+        minOrderAmount: c.minOrderAmount ? Number(c.minOrderAmount) : null,
+        expiresAt: c.expiresAt ? c.expiresAt.toISOString() : null,
+        createdAt: c.createdAt.toISOString(),
+        updatedAt: c.updatedAt.toISOString(),
+    };
 }
 
 // ─── Admin: crear cupón ───────────────────────────────────────────────────────

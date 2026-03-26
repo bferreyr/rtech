@@ -2,7 +2,7 @@ import { getCoupons, deleteCoupon, toggleCoupon } from "@/app/actions/coupons";
 import Link from "next/link";
 import { Plus, Trash2, Edit, Power, Ticket, AlertCircle, CheckCircle2, Timer } from "lucide-react";
 
-function formatDate(date: Date | null) {
+function formatDate(date: string | null) {
     if (!date) return '—';
     return new Date(date).toLocaleDateString('es-AR', { day: '2-digit', month: '2-digit', year: 'numeric', hour: '2-digit', minute: '2-digit' });
 }
@@ -14,7 +14,7 @@ function CouponTypeBadge({ type }: { type: 'PERCENTAGE' | 'FIXED_ARS' }) {
     return <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-green-500/15 text-green-300 border border-green-500/20">ARS</span>;
 }
 
-function StatusBadge({ active, expiresAt, usedCount, maxUses }: { active: boolean; expiresAt: Date | null; usedCount: number; maxUses: number | null }) {
+function StatusBadge({ active, expiresAt, usedCount, maxUses }: { active: boolean; expiresAt: string | null; usedCount: number; maxUses: number | null }) {
     const isExpired = expiresAt && new Date(expiresAt) < new Date();
     const isExhausted = maxUses !== null && usedCount >= maxUses;
 
@@ -65,9 +65,9 @@ export default async function CouponsPage() {
             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 {[
                     { label: 'Total cupones', value: coupons.length, color: 'text-white' },
-                    { label: 'Activos', value: coupons.filter(c => c.active && (!c.expiresAt || new Date(c.expiresAt) > new Date())).length, color: 'text-green-400' },
-                    { label: 'Inactivos', value: coupons.filter(c => !c.active).length, color: 'text-red-400' },
-                    { label: 'Usos totales', value: coupons.reduce((sum, c) => sum + c.usedCount, 0), color: 'text-[hsl(var(--accent-primary))]' },
+                    { label: 'Activos', value: coupons.filter((c: { active: boolean; expiresAt: string | null }) => c.active && (!c.expiresAt || new Date(c.expiresAt) > new Date())).length, color: 'text-green-400' },
+                    { label: 'Inactivos', value: coupons.filter((c: { active: boolean }) => !c.active).length, color: 'text-red-400' },
+                    { label: 'Usos totales', value: coupons.reduce((sum: number, c: { usedCount: number }) => sum + c.usedCount, 0), color: 'text-[hsl(var(--accent-primary))]' },
                 ].map((stat) => (
                     <div key={stat.label} className="glass-card p-4 space-y-1">
                         <p className="text-xs text-[hsl(var(--text-tertiary))]">{stat.label}</p>
@@ -105,7 +105,19 @@ export default async function CouponsPage() {
                                     </td>
                                 </tr>
                             ) : (
-                                coupons.map((coupon) => (
+                                coupons.map((coupon: {
+                                    id: string;
+                                    code: string;
+                                    description: string | null;
+                                    type: 'PERCENTAGE' | 'FIXED_ARS';
+                                    value: number;
+                                    minOrderAmount: number | null;
+                                    maxUses: number | null;
+                                    usedCount: number;
+                                    active: boolean;
+                                    expiresAt: string | null;
+                                    _count: { usages: number };
+                                }) => (
                                     <tr key={coupon.id} className="hover:bg-white/5 transition-colors group">
                                         <td className="p-4">
                                             <div className="flex flex-col">
@@ -185,11 +197,6 @@ export default async function CouponsPage() {
                                                         type="submit"
                                                         title="Eliminar"
                                                         className="p-2 rounded-lg bg-red-500/10 text-red-400 hover:bg-red-500/20 transition-colors"
-                                                        onClick={(e) => {
-                                                            if (!confirm(`¿Eliminar el cupón "${coupon.code}"? Esta acción no se puede deshacer.`)) {
-                                                                e.preventDefault();
-                                                            }
-                                                        }}
                                                     >
                                                         <Trash2 className="w-4 h-4" />
                                                     </button>
