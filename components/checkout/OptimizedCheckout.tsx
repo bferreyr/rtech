@@ -15,6 +15,7 @@ import { ReceiptUpload } from './ReceiptUpload';
 import { isFreeShippingZone, SHIPPING_TYPES } from '@/lib/shipping-utils';
 import { useRouter } from 'next/navigation';
 import { CartItem } from '@/context/CartContext';
+import { useCurrency } from '@/context/CurrencyContext';
 
 
 interface OptimizedCheckoutProps {
@@ -25,6 +26,7 @@ interface OptimizedCheckoutProps {
 
 export function OptimizedCheckout({ items, cartTotal, onClearCart }: OptimizedCheckoutProps) {
     const router = useRouter();
+    const { toARS } = useCurrency();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [receiptFile, setReceiptFile] = useState<File | null>(null);
@@ -70,7 +72,9 @@ export function OptimizedCheckout({ items, cartTotal, onClearCart }: OptimizedCh
         setCouponError(null);
         setCouponMessage(null);
         try {
-            const result = await validateCoupon(couponInput, null, cartTotal);
+            // Pasar el monto en ARS para que el descuento se calcule sobre pesos
+            const cartTotalARS = toARS(cartTotal);
+            const result = await validateCoupon(couponInput, null, cartTotalARS);
             if (result.valid) {
                 setCouponCode(couponInput.trim().toUpperCase());
                 setCouponId(result.couponId);

@@ -73,7 +73,7 @@ export function OrderSummary({
                                 Cantidad: {item.quantity}
                             </p>
                             <p className="text-sm font-bold text-[hsl(var(--accent-primary))]">
-                                {formatUSD(item.price * item.quantity)}
+                                {formatARSDirect(toARS(item.price * item.quantity))}
                             </p>
                         </div>
                     </div>
@@ -84,7 +84,7 @@ export function OrderSummary({
             <div className="space-y-3 pt-4 border-t border-white/10">
                 <div className="flex justify-between text-sm">
                     <span className="text-[hsl(var(--text-secondary))]">Subtotal productos</span>
-                    <span className="font-medium">{formatUSD(subtotal)}</span>
+                    <span className="font-medium">{formatARSDirect(toARS(subtotal))}</span>
                 </div>
 
                 {discountAmountARS > 0 && couponCode && (
@@ -124,7 +124,7 @@ export function OrderSummary({
                                 )}
                             </p>
                             <p className="text-sm text-[hsl(var(--text-secondary))]">
-                                {formatUSD(total)}
+                                ≈ {formatUSD(total)}
                             </p>
                         </div>
                     </div>
