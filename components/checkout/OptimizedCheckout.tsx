@@ -431,6 +431,81 @@ export function OptimizedCheckout({ items, cartTotal, onClearCart }: OptimizedCh
                                 </div>
                             </div>
 
+                            {/* 4. Coupon */}
+                            <div className="glass-card p-8">
+                                <div className="flex items-center gap-3 mb-6">
+                                    <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-violet-500 to-purple-600 flex items-center justify-center">
+                                        <Ticket className="w-5 h-5 text-white" />
+                                    </div>
+                                    <h2 className="text-2xl font-bold">4. Cupón de Descuento</h2>
+                                </div>
+
+                                {couponCode ? (
+                                    // Cupón aplicado
+                                    <div className="flex items-center justify-between p-4 rounded-lg bg-green-500/10 border border-green-500/30">
+                                        <div className="flex items-center gap-3">
+                                            <div className="w-8 h-8 rounded-full bg-green-500/20 flex items-center justify-center">
+                                                <svg className="w-4 h-4 text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
+                                                </svg>
+                                            </div>
+                                            <div>
+                                                <p className="font-semibold text-green-400 font-mono">{couponCode}</p>
+                                                {couponMessage && (
+                                                    <p className="text-sm text-green-400/80">{couponMessage}</p>
+                                                )}
+                                            </div>
+                                        </div>
+                                        <button
+                                            type="button"
+                                            onClick={removeCoupon}
+                                            className="p-1.5 rounded-lg hover:bg-red-500/20 text-[hsl(var(--text-secondary))] hover:text-red-400 transition-colors"
+                                            title="Quitar cupón"
+                                        >
+                                            <X className="w-4 h-4" />
+                                        </button>
+                                    </div>
+                                ) : (
+                                    // Input para ingresar cupón
+                                    <div className="space-y-3">
+                                        <div className="flex gap-2">
+                                            <div className="relative flex-1">
+                                                <input
+                                                    type="text"
+                                                    value={couponInput}
+                                                    onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
+                                                    onKeyDown={(e) => e.key === 'Enter' && (e.preventDefault(), applyCoupon())}
+                                                    placeholder="Ingresá tu código de cupón"
+                                                    className="w-full px-4 py-3 rounded-lg bg-[hsl(var(--bg-tertiary))] border border-[hsl(var(--border-color))] focus:border-[hsl(var(--accent-primary))] focus:outline-none transition-colors font-mono uppercase tracking-widest text-sm placeholder:normal-case placeholder:tracking-normal"
+                                                    disabled={couponLoading}
+                                                />
+                                            </div>
+                                            <button
+                                                type="button"
+                                                onClick={applyCoupon}
+                                                disabled={!couponInput.trim() || couponLoading}
+                                                className="px-5 py-3 rounded-lg bg-gradient-to-r from-violet-500 to-purple-600 text-white font-semibold text-sm hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed transition-all flex items-center gap-2 flex-shrink-0"
+                                            >
+                                                {couponLoading ? (
+                                                    <Loader2 className="w-4 h-4 animate-spin" />
+                                                ) : (
+                                                    'Aplicar'
+                                                )}
+                                            </button>
+                                        </div>
+                                        {couponError && (
+                                            <p className="text-sm text-red-400 flex items-center gap-1.5">
+                                                <X className="w-3.5 h-3.5 flex-shrink-0" />
+                                                {couponError}
+                                            </p>
+                                        )}
+                                        <p className="text-xs text-[hsl(var(--text-secondary))]">
+                                            Si tenés un cupón de descuento, ingresalo aquí antes de finalizar tu compra.
+                                        </p>
+                                    </div>
+                                )}
+                            </div>
+
                             {/* Error Message */}
                             {error && (
                                 <div className="p-4 rounded-lg bg-red-500/10 border border-red-500/20">
