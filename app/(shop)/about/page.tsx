@@ -1,293 +1,283 @@
-import { Zap, Shield, Sparkles, Target, Eye, Heart, ArrowRight, User } from "lucide-react";
+import {
+    Zap, Shield, Sparkles, Heart, ArrowRight,
+    HeadphonesIcon, Handshake, Building2, CheckCircle2,
+    MessageCircle, Clock, Star, Users
+} from "lucide-react";
 import Link from "next/link";
-import { getRandomContent, ABOUT_TITLES, ABOUT_SUBTITLES } from "@/lib/marketing-content";
 
 export const dynamic = 'force-dynamic';
 
 export default function AboutPage() {
     return (
         <div className="min-h-screen">
-            {/* Hero Section */}
-            <section className="relative h-[60vh] flex items-center justify-center overflow-hidden">
+
+            {/* ── Hero ──────────────────────────────────────────────────── */}
+            <section className="relative h-[65vh] flex items-center justify-center overflow-hidden">
                 <div className="absolute inset-0">
                     <img
                         src="/images/about/hero.png"
-                        alt="RTECH Hardware"
-                        className="w-full h-full object-cover opacity-40"
+                        alt="Rincón TECH"
+                        className="w-full h-full object-cover opacity-35"
                     />
                     <div className="absolute inset-0 bg-gradient-to-t from-[hsl(var(--bg-primary))] via-[hsl(var(--bg-primary))]/60 to-transparent" />
                 </div>
 
                 <div className="container relative z-10 text-center px-4 space-y-6">
                     <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card mb-4 animate-in fade-in slide-in-from-bottom-4 duration-700">
-                        <Sparkles className="w-4 h-4 text-[hsl(var(--accent-primary))]" />
-                        <span className="text-sm font-medium">Liderazgo en Hardware</span>
+                        <Heart className="w-4 h-4 text-[hsl(var(--accent-primary))] fill-[hsl(var(--accent-primary))]" />
+                        <span className="text-sm font-medium">Empresa de familia · Santa Fe, Argentina</span>
                     </div>
                     <h1 className="text-5xl md:text-7xl font-black tracking-tighter animate-in fade-in slide-in-from-bottom-6 duration-700">
-                        {getRandomContent(ABOUT_TITLES).split(' ').map((word, i, arr) => (
-                            <span key={i}>
-                                {i === arr.length - 1 ? <span className="gradient-text">{word}</span> : word}{' '}
-                            </span>
-                        ))}
+                        Tecnología con{' '}
+                        <span className="gradient-text">alma propia</span>
                     </h1>
                     <p className="text-xl text-[hsl(var(--text-secondary))] max-w-2xl mx-auto font-light animate-in fade-in slide-in-from-bottom-8 duration-700">
-                        {getRandomContent(ABOUT_SUBTITLES)}
+                        No somos solo una tienda. Somos el equipo que te acompaña antes, durante y después de cada compra.
                     </p>
                 </div>
             </section>
 
-            {/* Brand Story Section */}
+            {/* ── Historia familiar ──────────────────────────────────────── */}
             <section className="container py-24 px-4">
                 <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
                     <div className="space-y-8">
-                        <h2 className="text-4xl font-bold tracking-tight">Especialistas en la <span className="text-[hsl(var(--accent-primary))]">Próxima Gen</span></h2>
-                        <div className="space-y-4 text-lg text-[hsl(var(--text-secondary))] leading-relaxed">
+                        <div className="space-y-3">
+                            <p className="text-sm font-bold uppercase tracking-[0.3em] text-[hsl(var(--accent-primary))]">Quiénes somos</p>
+                            <h2 className="text-4xl font-bold tracking-tight">
+                                Una familia que vive y respira <span className="gradient-text">tecnología</span>
+                            </h2>
+                        </div>
+                        <div className="space-y-5 text-lg text-[hsl(var(--text-secondary))] leading-relaxed">
                             <p>
-                                RTECH nació de la pasión por los fierros. Entendemos que para proyectos ambiciosos, el hardware "estándar" no es suficiente. Por eso, nos especializamos exclusivamente en componentes de alto rendimiento.
+                                Rincón TECH nació de una idea simple: que comprar tecnología no debería ser una experiencia impersonal. Somos una empresa familiar de Santa Fe con algo que las grandes cadenas no pueden ofrecerte — el tiempo y la dedicación para escucharte de verdad.
                             </p>
                             <p>
-                                Somos distribuidores autorizados de las marcas líderes a nivel mundial, lo que nos permite ofrecer no solo los últimos lanzamientos, sino también la tranquilidad de una garantía oficial y soporte técnico directo.
+                                Antes de recomendarte cualquier producto, entendemos tus necesidades, tu presupuesto y cómo vas a usarlo. No queremos venderte algo; queremos que estés genuinamente satisfecho con lo que llevás a tu casa o a tu empresa.
                             </p>
                             <p>
-                                Ya sea que estés armando una workstation para renderizado, un servidor de datos local o la PC de gaming definitiva, nuestro equipo de expertos está aquí para asesorarte en cada elección técnica.
+                                Para nosotros cada cliente es una relación a largo plazo, no una transacción. Eso explica por qué muchos vuelven — y nos traen a sus conocidos.
                             </p>
                         </div>
-                        <div className="flex gap-4 pt-4">
-                            <Link href="/products" className="btn btn-primary">
-                                Ver Componentes
+                        <div className="flex gap-4 pt-2">
+                            <Link href="/contact" className="btn btn-primary">
+                                Hablar con nosotros
                                 <ArrowRight className="ml-2 w-4 h-4" />
+                            </Link>
+                            <Link href="/products" className="btn btn-secondary">
+                                Ver productos
                             </Link>
                         </div>
                     </div>
+
                     <div className="relative">
                         <div className="aspect-[4/3] rounded-3xl overflow-hidden glass-card border-white/20">
                             <img
                                 src="/images/about/commitment.png"
-                                alt="Hardware Commitment"
+                                alt="Rincón TECH — compromiso con el cliente"
                                 className="w-full h-full object-cover"
                             />
                         </div>
-                        {/* Stats Overlay */}
-                        <div className="absolute -bottom-8 -left-8 glass-card p-8 space-y-2 animate-float">
-                            <p className="text-4xl font-black gradient-text">100%</p>
-                            <p className="text-sm font-medium text-[hsl(var(--text-secondary))] uppercase tracking-widest">Componentes Originales</p>
+                        <div className="absolute -bottom-8 -left-8 glass-card p-6 space-y-1 animate-float">
+                            <p className="text-3xl font-black gradient-text">100%</p>
+                            <p className="text-xs font-semibold uppercase tracking-widest text-[hsl(var(--text-secondary))]">Atención personalizada</p>
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* Core Values Section */}
+            {/* ── Valor agregado ────────────────────────────────────────── */}
             <section className="bg-white/5 py-24">
                 <div className="container px-4">
                     <div className="text-center mb-16 space-y-4">
-                        <h2 className="text-4xl font-bold">Nuestra Propuesta de Valor</h2>
-                        <p className="text-[hsl(var(--text-secondary))] max-w-xl mx-auto text-lg leading-relaxed">
-                            Enfocados en proveer las mejores herramientas informáticas del mercado.
+                        <p className="text-sm font-bold uppercase tracking-[0.3em] text-[hsl(var(--accent-primary))]">Por qué elegirnos</p>
+                        <h2 className="text-4xl font-bold">
+                            Más que una venta — <span className="gradient-text">una experiencia completa</span>
+                        </h2>
+                        <p className="text-[hsl(var(--text-secondary))] max-w-2xl mx-auto text-lg leading-relaxed">
+                            Nuestro diferencial no está en el catálogo; está en la forma en que te tratamos a vos.
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {/* Card 1: Misión */}
-                        <div className="glass-card p-8 space-y-6 hover:border-[hsl(var(--accent-primary))]/50 transition-colors group">
-                            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[hsl(var(--accent-primary))] to-[hsl(var(--accent-secondary))] flex items-center justify-center group-hover:scale-110 transition-transform">
-                                <Target className="w-7 h-7 text-white" />
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                        {[
+                            {
+                                icon: <MessageCircle className="w-7 h-7 text-white" />,
+                                color: "from-blue-500 to-cyan-500",
+                                title: "Asesoramiento real",
+                                desc: "Te explicamos todo sin tecnicismos. Analizamos tu caso puntual y te recomendamos lo que realmente necesitás, no lo más caro del catálogo.",
+                            },
+                            {
+                                icon: <Clock className="w-7 h-7 text-white" />,
+                                color: "from-violet-500 to-purple-600",
+                                title: "Seguimiento post-venta",
+                                desc: "No desaparecemos después de la compra. Te acompañamos en la instalación, configuración y ante cualquier duda que surja.",
+                            },
+                            {
+                                icon: <Shield className="w-7 h-7 text-white" />,
+                                color: "from-[hsl(var(--accent-primary))] to-[hsl(var(--accent-secondary))]",
+                                title: "Confianza garantizada",
+                                desc: "Productos 100% originales con garantía oficial. Si algo falla, estamos acá — sin vueltas ni formularios interminables.",
+                            },
+                            {
+                                icon: <Star className="w-7 h-7 text-white" />,
+                                color: "from-amber-400 to-orange-500",
+                                title: "Relación duradera",
+                                desc: "La mayoría de nuestros clientes vuelven y nos recomiendan. Nos importa más tu satisfacción que cerrar una venta rápida.",
+                            },
+                        ].map((item, i) => (
+                            <div
+                                key={i}
+                                className="glass-card p-8 space-y-5 hover:border-[hsl(var(--accent-primary))]/50 transition-all duration-300 group hover:-translate-y-1"
+                            >
+                                <div className={`w-14 h-14 rounded-2xl bg-gradient-to-br ${item.color} flex items-center justify-center group-hover:scale-110 transition-transform duration-300`}>
+                                    {item.icon}
+                                </div>
+                                <h3 className="text-xl font-bold">{item.title}</h3>
+                                <p className="text-[hsl(var(--text-secondary))] leading-relaxed">
+                                    {item.desc}
+                                </p>
                             </div>
-                            <h3 className="text-2xl font-bold">Misión</h3>
-                            <p className="text-[hsl(var(--text-secondary))] leading-relaxed text-lg">
-                                Proveer hardware de computación de vanguardia, facilitando el acceso a tecnología que potencie la productividad y el entretenimiento de alto nivel.
-                            </p>
-                        </div>
-
-                        {/* Card 2: Visión */}
-                        <div className="glass-card p-8 space-y-6 hover:border-[hsl(var(--accent-primary))]/50 transition-colors group">
-                            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[hsl(var(--accent-primary))] to-[hsl(var(--accent-secondary))] flex items-center justify-center group-hover:scale-110 transition-transform">
-                                <Eye className="w-7 h-7 text-white" />
-                            </div>
-                            <h3 className="text-2xl font-bold">Visión</h3>
-                            <p className="text-[hsl(var(--text-secondary))] leading-relaxed text-lg">
-                                Liderar el mercado de hardware e informática premium en Argentina, siendo el referente de confianza para todo profesional tech.
-                            </p>
-                        </div>
-
-                        {/* Card 3: Valores */}
-                        <div className="glass-card p-8 space-y-6 hover:border-[hsl(var(--accent-primary))]/50 transition-colors group">
-                            <div className="w-14 h-14 rounded-2xl bg-gradient-to-br from-[hsl(var(--accent-primary))] to-[hsl(var(--accent-secondary))] flex items-center justify-center group-hover:scale-110 transition-transform">
-                                <Heart className="w-7 h-7 text-white" />
-                            </div>
-                            <h3 className="text-2xl font-bold">Valores</h3>
-                            <p className="text-[hsl(var(--text-secondary))] leading-relaxed text-lg">
-                                Autenticidad en cada producto, rigurosidad técnica en el asesoramiento y una dedicación absoluta a la calidad del hardware que entregamos.
-                            </p>
-                        </div>
+                        ))}
                     </div>
                 </div>
             </section>
 
-            {/* Founders Section */}
-            <section className="container py-24 px-4 overflow-hidden">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                    <div className="order-2 lg:order-1 relative">
-                        <div className="aspect-square rounded-3xl overflow-hidden glass-card border-white/20 shadow-2xl relative group">
-                            <img
-                                src="/images/about/founders.png"
-                                alt="Fundadores de Rincon Tech"
-                                className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-1000"
-                            />
-                            <div className="absolute inset-0 bg-gradient-to-t from-[hsl(var(--bg-primary))]/80 via-transparent to-transparent opacity-60" />
-                        </div>
-                        {/* Decorative Badge */}
-                        <div className="absolute -top-6 -right-6 glass-card p-6 rotate-12 animate-float">
-                            <Heart className="w-8 h-8 text-red-500 fill-red-500" />
-                        </div>
-                    </div>
-
-                    <div className="order-1 lg:order-2 space-y-8 animate-in fade-in slide-in-from-right-8 duration-1000">
-                        <div className="space-y-4">
-                            <h2 className="text-4xl font-bold tracking-tight">Detrás de <span className="gradient-text">Rincon Tech</span></h2>
-                            <h3 className="text-xl font-medium text-[hsl(var(--accent-primary))]">Un Proyecto de Familia</h3>
-                        </div>
-
-                        <div className="space-y-6 text-lg text-[hsl(var(--text-secondary))] leading-relaxed font-light">
-                            <p>
-                                Rincon Tech no es solo una tienda de hardware; es el resultado de un sueño compartido. Llevado adelante por nosotros, una pareja apasionada por la informática, junto a nuestro pequeño gran integrante que ya empieza a curiosear entre motherboards y placas de video.
-                            </p>
-                            <p>
-                                Para nosotros, cada cliente es más que una transacción. Entendemos que detrás de cada componente que nos piden hay un proyecto personal, un estudio de diseño, un sueño de streaming o el primer paso de un futuro programador.
-                            </p>
-                            <p>
-                                Humanizar la tecnología premium es nuestro norte. Por eso, nos esforzamos en brindar un asesoramiento de persona a persona, con la misma dedicación con la que armamos nuestro propio setup en casa. ¡Bienvenidos a la familia Rincon Tech!
-                            </p>
-                        </div>
-
-                        <div className="flex items-center gap-6 pt-4 border-t border-white/10">
-                            <div className="flex flex-col">
-                                <span className="text-sm font-bold text-[hsl(var(--text-primary))]">Fundadores</span>
-                                <span className="text-sm text-[hsl(var(--text-tertiary))]">Pasión & Tecnología</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </section>
-
-            {/* Team Organigram Section */}
-            <section className="bg-gradient-to-b from-transparent to-white/5 py-24">
-                <div className="container px-4">
+            {/* ── Proceso de compra ─────────────────────────────────────── */}
+            <section className="container py-24 px-4">
+                <div className="max-w-4xl mx-auto">
                     <div className="text-center mb-16 space-y-4">
-                        <h2 className="text-sm font-bold uppercase tracking-[0.3em] text-[color:var(--accent-primary)]">Estructura Organizativa</h2>
-                        <h3 className="text-4xl font-bold">Nuestro Equipo</h3>
-                        <p className="text-[hsl(var(--text-secondary))] max-w-xl mx-auto text-lg leading-relaxed">
-                            Profesionales apasionados trabajando para brindar la mejor experiencia en hardware del país.
+                        <p className="text-sm font-bold uppercase tracking-[0.3em] text-[hsl(var(--accent-primary))]">Cómo trabajamos</p>
+                        <h2 className="text-4xl font-bold">Tu compra, paso a paso</h2>
+                        <p className="text-[hsl(var(--text-secondary))] text-lg">
+                            Un proceso simple, transparente y con persona real al otro lado.
                         </p>
                     </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-                        {/* CEO: Bartolomé Ferreyra */}
-                        <div className="group glass-card overflow-hidden">
-                            <div className="aspect-[4/5] relative">
-                                <div className="absolute inset-0 bg-gradient-to-br from-[hsl(var(--accent-primary))]/20 to-transparent flex items-center justify-center">
-                                    <User size={80} className="text-[hsl(var(--accent-primary))]/30" />
+                    <div className="space-y-6">
+                        {[
+                            { step: "01", title: "Nos contás qué necesitás", desc: "Ya sea por WhatsApp, mail o nuestra tienda online — nos explicás tu proyecto y tu presupuesto sin compromisos." },
+                            { step: "02", title: "Te asesoramos sin apuro", desc: "Analizamos tu caso y te presentamos las opciones más adecuadas, explicando ventajas y diferencias de forma clara." },
+                            { step: "03", title: "Realizás tu compra con confianza", desc: "Tus datos y tu pago están 100% protegidos. Productos originales con garantía oficial en cada pedido." },
+                            { step: "04", title: "Te acompañamos después", desc: "Una vez que recibís tu pedido, seguimos disponibles para ayudarte con instalación, configuración o cualquier consulta." },
+                        ].map((item, i) => (
+                            <div key={i} className="glass-card p-6 flex gap-6 items-start hover:border-[hsl(var(--accent-primary))]/40 transition-colors group">
+                                <div className="flex-shrink-0 w-14 h-14 rounded-2xl bg-gradient-to-br from-[hsl(var(--accent-primary))]/20 to-[hsl(var(--accent-secondary))]/20 border border-[hsl(var(--accent-primary))]/30 flex items-center justify-center">
+                                    <span className="text-lg font-black gradient-text">{item.step}</span>
                                 </div>
-                                {/* Placeholder overlay until real image is provided */}
-                                <div className="absolute inset-0 flex items-center justify-center p-8 text-center bg-black/40 backdrop-blur-[2px]">
-                                    <span className="text-xs font-bold uppercase tracking-widest text-white/40">Foto Bartolomé Ferreyra</span>
+                                <div>
+                                    <h4 className="text-lg font-bold mb-1 group-hover:text-[hsl(var(--accent-primary))] transition-colors">{item.title}</h4>
+                                    <p className="text-[hsl(var(--text-secondary))] leading-relaxed">{item.desc}</p>
                                 </div>
                             </div>
-                            <div className="p-6 space-y-3 relative">
-                                <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-[hsl(var(--accent-primary))] to-transparent opacity-50" />
-                                <h4 className="text-xl font-bold text-white group-hover:text-[hsl(var(--accent-primary))] transition-colors">Bartolomé Ferreyra</h4>
-                                <p className="text-xs font-black uppercase text-[hsl(var(--accent-primary))] tracking-tighter">CEO / FUNDADOR</p>
-                                <p className="text-sm text-[hsl(var(--text-secondary))] leading-relaxed">
-                                    Liderazgo estratégico y visión técnica. Apasionado por la innovación en hardware de alto rendimiento y el crecimiento de Rincón Tech como referente nacional.
-                                </p>
+                        ))}
+                    </div>
+                </div>
+            </section>
+
+            {/* ── Sección Empresas ──────────────────────────────────────── */}
+            <section className="bg-gradient-to-b from-transparent via-white/5 to-transparent py-24">
+                <div className="container px-4">
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+
+                        <div className="space-y-8">
+                            <div className="space-y-3">
+                                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card">
+                                    <Building2 className="w-4 h-4 text-[hsl(var(--accent-primary))]" />
+                                    <span className="text-sm font-bold uppercase tracking-wider">Para empresas</span>
+                                </div>
+                                <h2 className="text-4xl font-bold tracking-tight">
+                                    Tu socio tecnológico de <span className="gradient-text">confianza</span>
+                                </h2>
                             </div>
+
+                            <p className="text-lg text-[hsl(var(--text-secondary))] leading-relaxed">
+                                Trabajamos con PyMEs, estudios profesionales, comercios y organizaciones que necesitan equipar o actualizar su infraestructura tecnológica de forma eficiente y confiable. Entendemos que en el entorno empresarial el tiempo es crítico — por eso ofrecemos respuesta rápida, precios competitivos y atención dedicada.
+                            </p>
+
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                {[
+                                    "Cotizaciones personalizadas sin cargo",
+                                    "Facturación A y B disponible",
+                                    "Compras por volumen con descuento",
+                                    "Soporte técnico post-entrega",
+                                    "Asesoramiento en infraestructura IT",
+                                    "Entregas coordinadas a medida",
+                                ].map((item, i) => (
+                                    <div key={i} className="flex items-center gap-3">
+                                        <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0" />
+                                        <span className="text-[hsl(var(--text-secondary))] text-sm">{item}</span>
+                                    </div>
+                                ))}
+                            </div>
+
+                            <Link href="/empresas" className="btn btn-primary inline-flex">
+                                Ver propuesta para empresas
+                                <ArrowRight className="ml-2 w-4 h-4" />
+                            </Link>
                         </div>
 
-                        {/* CORPORATE SALES: Sofia Petrosino */}
-                        <div className="group glass-card overflow-hidden">
-                            <div className="aspect-[4/5] relative">
-                                <div className="absolute inset-0 bg-gradient-to-br from-[hsl(var(--accent-secondary))]/20 to-transparent flex items-center justify-center">
-                                    <User size={80} className="text-[hsl(var(--accent-secondary))]/30" />
+                        {/* Stats grid */}
+                        <div className="grid grid-cols-2 gap-4">
+                            {[
+                                { icon: <Users className="w-6 h-6 text-[hsl(var(--accent-primary))]" />, value: "+200", label: "Clientes satisfechos" },
+                                { icon: <Handshake className="w-6 h-6 text-green-400" />, value: "+50", label: "Empresas atendidas" },
+                                { icon: <HeadphonesIcon className="w-6 h-6 text-violet-400" />, value: "24 hs", label: "Tiempo de respuesta" },
+                                { icon: <Star className="w-6 h-6 text-amber-400 fill-amber-400" />, value: "5★", label: "Valoración promedio" },
+                            ].map((item, i) => (
+                                <div
+                                    key={i}
+                                    className="glass-card p-8 text-center space-y-4 hover:border-[hsl(var(--accent-primary))]/50 transition-all hover:-translate-y-1 duration-300"
+                                >
+                                    <div className="flex justify-center">{item.icon}</div>
+                                    <p className="text-3xl font-black gradient-text">{item.value}</p>
+                                    <p className="text-sm text-[hsl(var(--text-secondary))] font-medium">{item.label}</p>
                                 </div>
-                                <div className="absolute inset-0 flex items-center justify-center p-8 text-center bg-black/40 backdrop-blur-[2px]">
-                                    <span className="text-xs font-bold uppercase tracking-widest text-white/40">Foto Sofia Petrosino</span>
-                                </div>
-                            </div>
-                            <div className="p-6 space-y-3 relative">
-                                <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-[hsl(var(--accent-secondary))] to-transparent opacity-50" />
-                                <h4 className="text-xl font-bold text-white group-hover:text-[hsl(var(--accent-secondary))] transition-colors">Sofia Petrosino</h4>
-                                <p className="text-xs font-black uppercase text-[hsl(var(--accent-secondary))] tracking-tighter">VENTAS CORPORATIVAS</p>
-                                <p className="text-sm text-[hsl(var(--text-secondary))] leading-relaxed">
-                                    Especialista en soluciones a medida para empresas. Coordinación de proyectos a gran escala y asesoramiento técnico especializado para el sector corporativo.
-                                </p>
-                            </div>
-                        </div>
-
-                        {/* MARKETING: Victoria Petrosino */}
-                        <div className="group glass-card overflow-hidden">
-                            <div className="aspect-[4/5] relative">
-                                <div className="absolute inset-0 bg-gradient-to-br from-[#f59e0b]/20 to-transparent flex items-center justify-center">
-                                    <User size={80} className="text-[#f59e0b]/30" />
-                                </div>
-                                <div className="absolute inset-0 flex items-center justify-center p-8 text-center bg-black/40 backdrop-blur-[2px]">
-                                    <span className="text-xs font-bold uppercase tracking-widest text-white/40">Foto Victoria Petrosino</span>
-                                </div>
-                            </div>
-                            <div className="p-6 space-y-3 relative">
-                                <div className="absolute top-0 left-0 w-1 h-full bg-gradient-to-b from-[#f59e0b] to-transparent opacity-50" />
-                                <h4 className="text-xl font-bold text-white group-hover:text-[#f59e0b] transition-colors">Victoria Petrosino</h4>
-                                <p className="text-xs font-black uppercase text-[#f59e0b] tracking-tighter">MARKETING</p>
-                                <p className="text-sm text-[hsl(var(--text-secondary))] leading-relaxed">
-                                    Creatividad y estrategia digital. Impulsando la marca Rincón Tech a través de experiencias visuales y comunicación centrada en la comunidad tech.
-                                </p>
-                            </div>
+                            ))}
                         </div>
                     </div>
                 </div>
             </section>
 
-            {/* Commitment Section (Features) */}
-            <section className="container py-24 px-4 overflow-hidden">
-                <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-                    <div className="text-center space-y-4">
-                        <div className="w-16 h-16 mx-auto rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
-                            <Zap className="w-8 h-8 text-[hsl(var(--accent-primary))]" />
+            {/* ── Pilares / Compromiso ──────────────────────────────────── */}
+            <section className="container py-16 px-4">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-10">
+                    {[
+                        { icon: <Zap className="w-8 h-8 text-[hsl(var(--accent-primary))]" />, title: "Productos originales", desc: "Todo nuestro stock es 100% original con garantía oficial. Sin imitaciones, sin sorpresas." },
+                        { icon: <Shield className="w-8 h-8 text-[hsl(var(--accent-primary))]" />, title: "Compra segura", desc: "Tus datos y tu pago están protegidos. Operamos con las plataformas de pago más confiables del mercado." },
+                        { icon: <Sparkles className="w-8 h-8 text-[hsl(var(--accent-primary))]" />, title: "Siempre disponibles", desc: "Cualquier duda antes o después de tu compra — estamos acá. Así de simple." },
+                    ].map((item, i) => (
+                        <div key={i} className="text-center space-y-4 group">
+                            <div className="w-16 h-16 mx-auto rounded-full bg-white/5 border border-white/10 flex items-center justify-center group-hover:border-[hsl(var(--accent-primary))]/40 transition-colors">
+                                {item.icon}
+                            </div>
+                            <h4 className="text-xl font-bold">{item.title}</h4>
+                            <p className="text-[hsl(var(--text-secondary))] leading-relaxed">{item.desc}</p>
                         </div>
-                        <h4 className="text-xl font-bold">Electrónica Pura</h4>
-                        <p className="text-[hsl(var(--text-secondary))]">Componentes testeados y aprobados para el máximo rendimiento.</p>
-                    </div>
-
-                    <div className="text-center space-y-4">
-                        <div className="w-16 h-16 mx-auto rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
-                            <Shield className="w-8 h-8 text-[hsl(var(--accent-primary))]" />
-                        </div>
-                        <h4 className="text-xl font-bold">Garantía Real</h4>
-                        <p className="text-[hsl(var(--text-secondary))]">Respaldo directo y oficial de fabricantes líderes en cada compra.</p>
-                    </div>
-
-                    <div className="text-center space-y-4">
-                        <div className="w-16 h-16 mx-auto rounded-full bg-white/5 border border-white/10 flex items-center justify-center">
-                            <Sparkles className="w-8 h-8 text-[hsl(var(--accent-primary))]" />
-                        </div>
-                        <h4 className="text-xl font-bold">Soporte Experto</h4>
-                        <p className="text-[hsl(var(--text-secondary))]">Asesoramiento especializado en compatibilidad y optimización de hardware.</p>
-                    </div>
+                    ))}
                 </div>
             </section>
 
-            {/* CTA Section */}
+            {/* ── CTA ───────────────────────────────────────────────────── */}
             <section className="container pb-24 px-4 text-center">
                 <div className="glass-card py-16 px-8 relative overflow-hidden group">
                     <div className="absolute inset-0 bg-gradient-to-r from-[hsl(var(--accent-primary))]/10 to-[hsl(var(--accent-secondary))]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-700" />
-                    <h2 className="text-4xl font-bold mb-6">¿Listo para el siguiente nivel?</h2>
+                    <Heart className="w-10 h-10 text-[hsl(var(--accent-primary))] fill-[hsl(var(--accent-primary))]/30 mx-auto mb-6" />
+                    <h2 className="text-4xl font-bold mb-4">¿Empezamos a trabajar juntos?</h2>
                     <p className="text-lg text-[hsl(var(--text-secondary))] mb-10 max-w-xl mx-auto">
-                        Únete a los miles de profesionales que ya han potenciado su flujo de trabajo con RTECH.
+                        Contactanos sin compromiso. Te respondemos rápido y te ayudamos a encontrar exactamente lo que necesitás.
                     </p>
-                    <Link href="/products" className="btn btn-primary h-14 px-10 text-lg group">
-                        Empezar Ahora
-                        <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
-                    </Link>
+                    <div className="flex flex-col sm:flex-row gap-4 justify-center">
+                        <Link href="/contact" className="btn btn-primary h-14 px-10 text-lg group">
+                            Escribirnos ahora
+                            <ArrowRight className="ml-2 group-hover:translate-x-1 transition-transform" />
+                        </Link>
+                        <Link href="/products" className="btn btn-secondary h-14 px-10 text-lg">
+                            Explorar productos
+                        </Link>
+                    </div>
                 </div>
             </section>
+
         </div>
     );
 }
