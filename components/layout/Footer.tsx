@@ -135,12 +135,12 @@ export function Footer() {
                             <li className="flex items-start gap-3 text-sm">
                                 <Phone size={16} className="text-[hsl(var(--accent-primary))] mt-0.5 flex-shrink-0" />
                                 <a
-                                    href="https://wa.me/5434259337"
+                                    href="https://wa.me/543425933763?text=Hola%2C%20me%20comunico%20desde%20la%20web%20de%20Rinc%C3%B3n%20TECH.%20Quisiera%20hacer%20una%20consulta."
                                     target="_blank"
                                     rel="noopener noreferrer"
                                     className="text-[hsl(var(--text-secondary))] hover:text-[hsl(var(--accent-primary))] transition-colors"
                                 >
-                                    +54 342 5933-7
+                                    +54 342 5933-763
                                 </a>
                             </li>
                             <li className="flex items-start gap-3 text-sm">
