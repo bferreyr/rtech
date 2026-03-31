@@ -4,6 +4,7 @@ import { Search, User, LogOut, LayoutDashboard, History, Coins, DollarSign, Buil
 import { useSession, signOut } from "next-auth/react";
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
+import { usePathname } from 'next/navigation';
 import { CartTrigger } from '@/components/cart/CartTrigger';
 import { SearchOverlay } from './SearchOverlay';
 import { getUserPoints } from '@/app/actions/users';
@@ -15,6 +16,8 @@ export function Navbar() {
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [livePoints, setLivePoints] = useState<number | null>(null);
+    const pathname = usePathname();
+    const isEmpresasPage = pathname === '/empresas';
     const { data: exchangeRateData, isLoading: isLoadingRate } = useExchangeRate(60000); // Update every minute
 
     useEffect(() => {
@@ -46,7 +49,12 @@ export function Navbar() {
                         </button>
 
                         {/* Logo - Centered on Mobile, Left on Desktop */}
-                        <Link href="/" className="flex items-center space-x-2 group">
+                        <Link href="/" className="flex items-center gap-2 group">
+                            {isEmpresasPage && (
+                                <span className="flex items-center justify-center w-8 h-8 rounded-lg bg-[hsl(var(--accent-primary))]/10 border border-[hsl(var(--accent-primary))]/25">
+                                    <Building2 size={18} className="text-[hsl(var(--accent-primary))]" />
+                                </span>
+                            )}
                             <span className="text-xl md:text-2xl font-black tracking-tighter gradient-text">RINCÓN TECH</span>
                         </Link>
 
@@ -64,8 +72,7 @@ export function Navbar() {
                             <Link href="/pc-builder" className="text-sm font-medium text-[hsl(var(--accent-primary))] bg-[hsl(var(--accent-primary))]/10 px-3 py-1.5 rounded-lg border border-[hsl(var(--accent-primary))]/20 hover:bg-[hsl(var(--accent-primary))]/20 transition-all">
                                 Armado de PC
                             </Link>
-                            <Link href="/empresas" className="flex items-center gap-1.5 text-sm font-medium text-[hsl(var(--text-secondary))] hover:text-[hsl(var(--accent-primary))] transition-colors">
-                                <Building2 size={15} />
+                            <Link href="/empresas" className="text-sm font-medium text-[hsl(var(--text-secondary))] hover:text-[hsl(var(--accent-primary))] transition-colors">
                                 Servicios IT
                             </Link>
                             <Link href="/about" className="text-sm font-medium text-[hsl(var(--text-secondary))] hover:text-[hsl(var(--accent-primary))] transition-colors">
@@ -207,8 +214,7 @@ export function Navbar() {
                                     <Link href="/electricista" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 rounded-xl bg-white/10 hover:bg-white/15 font-medium text-[#f59e0b] transition-colors">
                                         Electricidad
                                     </Link>
-                                    <Link href="/empresas" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/10 hover:bg-white/15 font-medium text-[hsl(var(--accent-primary))] transition-colors">
-                                        <Building2 size={18} />
+                                    <Link href="/empresas" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 rounded-xl bg-white/10 hover:bg-white/15 font-medium text-[hsl(var(--accent-primary))] transition-colors">
                                         Servicios IT (Empresas)
                                     </Link>
                                     <Link href="/pc-builder" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 rounded-xl bg-[hsl(var(--accent-primary))]/20 border border-[hsl(var(--accent-primary))]/40 font-medium text-[hsl(var(--accent-primary))] hover:bg-[hsl(var(--accent-primary))]/30 transition-colors">
