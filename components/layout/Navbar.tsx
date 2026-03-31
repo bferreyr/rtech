@@ -82,17 +82,19 @@ export function Navbar() {
 
                         {/* Actions */}
                         <div className="flex items-center space-x-3">
-                            {/* Dollar Rate Display - Compact */}
-                            <div className="hidden lg:flex items-center gap-1.5 px-2 py-1 rounded-lg bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/20">
-                                <DollarSign size={12} className="text-green-500" />
-                                {isLoadingRate ? (
-                                    <span className="text-xs font-black text-green-500 animate-pulse">...</span>
-                                ) : (
-                                    <span className="text-xs font-black text-green-500">
-                                        ${exchangeRateData?.rate.toFixed(0) || '---'}
-                                    </span>
-                                )}
-                            </div>
+                            {/* Dollar Rate Display - Compact (Solo Admin) */}
+                            {session?.user && (session.user as any).role === 'ADMIN' && (
+                                <div className="hidden lg:flex items-center gap-1.5 px-2 py-1 rounded-lg bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/20">
+                                    <DollarSign size={12} className="text-green-500" />
+                                    {isLoadingRate ? (
+                                        <span className="text-xs font-black text-green-500 animate-pulse">...</span>
+                                    ) : (
+                                        <span className="text-xs font-black text-green-500">
+                                            ${exchangeRateData?.rate.toFixed(0) || '---'}
+                                        </span>
+                                    )}
+                                </div>
+                            )}
 
                             <button
                                 onClick={() => setIsSearchOpen(true)}
