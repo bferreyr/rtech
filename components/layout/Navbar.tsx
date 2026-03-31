@@ -1,6 +1,6 @@
 'use client';
 
-import { Search, User, LogOut, LayoutDashboard, History, Coins, DollarSign } from 'lucide-react';
+import { Search, User, LogOut, LayoutDashboard, History, Coins, DollarSign, Building2 } from 'lucide-react';
 import { useSession, signOut } from "next-auth/react";
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
@@ -64,7 +64,8 @@ export function Navbar() {
                             <Link href="/pc-builder" className="text-sm font-medium text-[hsl(var(--accent-primary))] bg-[hsl(var(--accent-primary))]/10 px-3 py-1.5 rounded-lg border border-[hsl(var(--accent-primary))]/20 hover:bg-[hsl(var(--accent-primary))]/20 transition-all">
                                 Armado de PC
                             </Link>
-                            <Link href="/empresas" className="text-sm font-medium text-[hsl(var(--text-secondary))] hover:text-[hsl(var(--accent-primary))] transition-colors">
+                            <Link href="/empresas" className="flex items-center gap-1.5 text-sm font-medium text-[hsl(var(--text-secondary))] hover:text-[hsl(var(--accent-primary))] transition-colors">
+                                <Building2 size={15} />
                                 Servicios IT
                             </Link>
                             <Link href="/about" className="text-sm font-medium text-[hsl(var(--text-secondary))] hover:text-[hsl(var(--accent-primary))] transition-colors">
@@ -206,7 +207,8 @@ export function Navbar() {
                                     <Link href="/electricista" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 rounded-xl bg-white/10 hover:bg-white/15 font-medium text-[#f59e0b] transition-colors">
                                         Electricidad
                                     </Link>
-                                    <Link href="/empresas" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 rounded-xl bg-white/10 hover:bg-white/15 font-medium text-[hsl(var(--accent-primary))] transition-colors">
+                                    <Link href="/empresas" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/10 hover:bg-white/15 font-medium text-[hsl(var(--accent-primary))] transition-colors">
+                                        <Building2 size={18} />
                                         Servicios IT (Empresas)
                                     </Link>
                                     <Link href="/pc-builder" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 rounded-xl bg-[hsl(var(--accent-primary))]/20 border border-[hsl(var(--accent-primary))]/40 font-medium text-[hsl(var(--accent-primary))] hover:bg-[hsl(var(--accent-primary))]/30 transition-colors">

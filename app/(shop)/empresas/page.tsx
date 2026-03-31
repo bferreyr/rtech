@@ -109,22 +109,7 @@ const WA_LINK = `https://wa.me/${WA_NUMBER}?text=Hola%20Rincón%20TECH!%20Necesi
 
 export default function EmpresasPage() {
     return (
-        <main className={styles.page}>
-
-            {/* ── NAVBAR ── */}
-            <nav className={styles.navbar}>
-                <div className={styles.navInner}>
-                    <a href="/" className={styles.logo}>
-                        <span className={styles.logoIcon}>⚡</span>
-                        <span className={styles.logoText}>RINCÓN <span className={styles.logoAccent}>TECH</span></span>
-                    </a>
-                    <div className={styles.navActions}>
-                        <a href="#contacto" className={styles.navCta}>
-                            Solicitar presupuesto
-                        </a>
-                    </div>
-                </div>
-            </nav>
+        <div className={styles.page}>
 
             {/* ── HERO ── */}
             <section className={styles.hero} id="inicio">
@@ -295,26 +280,6 @@ export default function EmpresasPage() {
                 </div>
             </section>
 
-            {/* ── FOOTER ── */}
-            <footer className={styles.footer}>
-                <div className={styles.container}>
-                    <div className={styles.footerInner}>
-                        <div>
-                            <span className={styles.logoText}>RINCÓN <span className={styles.logoAccent}>TECH</span></span>
-                            <p className={styles.footerDesc}>Santa Fe, Argentina · Soluciones IT Profesionales</p>
-                        </div>
-                        <div className={styles.footerLinks}>
-                            <a href="/">Tienda Online</a>
-                            <a href="#servicios">Servicios</a>
-                            <a href="#contacto">Contacto</a>
-                        </div>
-                    </div>
-                    <div className={styles.footerBottom}>
-                        <p>© {new Date().getFullYear()} Rincón TECH — Todos los derechos reservados</p>
-                    </div>
-                </div>
-            </footer>
-
-        </main>
+        </div>
     );
 }
