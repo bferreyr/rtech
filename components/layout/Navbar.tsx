@@ -1,18 +1,16 @@
 'use client';
 
-import { Search, User, LogOut, LayoutDashboard, History, Coins, DollarSign, Building2 } from 'lucide-react';
+import { User, LogOut, LayoutDashboard, History, Coins, DollarSign, Building2 } from 'lucide-react';
 import { useSession, signOut } from "next-auth/react";
 import { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { CartTrigger } from '@/components/cart/CartTrigger';
-import { SearchOverlay } from './SearchOverlay';
 import { getUserPoints } from '@/app/actions/users';
 import { useExchangeRate } from '@/hooks/useExchangeRate';
 
 export function Navbar() {
     const { data: session } = useSession();
-    const [isSearchOpen, setIsSearchOpen] = useState(false);
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [livePoints, setLivePoints] = useState<number | null>(null);
@@ -95,13 +93,6 @@ export function Navbar() {
                                     )}
                                 </div>
                             )}
-
-                            <button
-                                onClick={() => setIsSearchOpen(true)}
-                                className="p-2 hover:bg-white/5 rounded-full transition-colors"
-                            >
-                                <Search size={20} className="text-[hsl(var(--text-secondary))]" />
-                            </button>
 
                             {/* Desktop User Menu */}
                             <div className="hidden md:block">
@@ -289,11 +280,6 @@ export function Navbar() {
                     </div>
                 </div>
             )}
-
-            <SearchOverlay
-                isOpen={isSearchOpen}
-                onClose={() => setIsSearchOpen(false)}
-            />
         </>
     );
 }
