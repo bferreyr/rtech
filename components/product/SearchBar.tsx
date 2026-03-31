@@ -1,22 +1,24 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Search, X, Clock } from 'lucide-react';
 import { useDebounce } from '@/hooks/useDebounce';
 
 interface SearchBarProps {
     onSearch: (query: string) => void;
     placeholder?: string;
+    initialQuery?: string;
 }
 
-export function SearchBar({ onSearch, placeholder = "Buscar productos, marcas, SKU..." }: SearchBarProps) {
-    const [query, setQuery] = useState('');
+export function SearchBar({ onSearch, placeholder = "Buscar productos, marcas, SKU...", initialQuery = '' }: SearchBarProps) {
+    const [query, setQuery] = useState(initialQuery);
     const [history, setHistory] = useState<string[]>([]);
     const [showHistory, setShowHistory] = useState(false);
+    const isFirstMount = useRef(true);
     const debouncedQuery = useDebounce(query, 300);
 
     // Load search history from localStorage on mount
-    useState(() => {
+    useEffect(() => {
         if (typeof window !== 'undefined') {
             const saved = localStorage.getItem('searchHistory');
             if (saved) {
@@ -27,14 +29,21 @@ export function SearchBar({ onSearch, placeholder = "Buscar productos, marcas, S
                 }
             }
         }
-    });
+    }, []);
 
     // Trigger search when debounced query changes
-    useState(() => {
-        if (debouncedQuery) {
-            onSearch(debouncedQuery);
+    useEffect(() => {
+        if (isFirstMount.current) {
+            isFirstMount.current = false;
+            return;
         }
-    });
+
+        // Ejecutamos la búsqueda con el string tipiado. Si está vacío, también buscará (y restablecerá).
+        onSearch(debouncedQuery);
+        
+        // Desactivado onSearch de dependencias para evitar renders infinitos
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [debouncedQuery]);
 
     const handleSearch = (searchQuery: string) => {
         setQuery(searchQuery);

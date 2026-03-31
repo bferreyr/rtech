@@ -148,6 +148,7 @@ export function StoreFront({ initialProducts, categories, pagination, availableF
                 {/* Search Bar */}
                 <div className="px-4">
                     <SearchBar
+                        initialQuery={searchQuery}
                         onSearch={handleSearch}
                         placeholder="Buscar productos, marcas, SKU..."
                     />
