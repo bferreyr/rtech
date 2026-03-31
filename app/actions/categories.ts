@@ -131,7 +131,7 @@ export async function getProducts(options?: {
     where.stock = { gt: 0 };
 
 
-    let orderBy: any = { createdAt: 'desc' };
+    let orderBy: any = { price: 'asc' };
     if (sortBy === 'price_asc') orderBy = { price: 'asc' };
     if (sortBy === 'price_desc') orderBy = { price: 'desc' };
     if (sortBy === 'name_asc') orderBy = { name: 'asc' };
