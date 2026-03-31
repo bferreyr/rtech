@@ -3,6 +3,7 @@
 const TRUSTED_COMPANIES = [
     { name: 'Concejo Santa Fe', logo: '/confian/concejosantafe.svg' },
     { name: 'Nostalgia', logo: '/confian/nostalgia.png' },
+    { name: 'JC Exclusivo', logo: '/confian/JC Exclusivo.png' },
 ];
 
 export function TrustSection() {
