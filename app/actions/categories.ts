@@ -92,7 +92,7 @@ export async function getProducts(options?: {
     minPrice?: number,
     maxPrice?: number,
     inStock?: boolean, // NEW: Toggle for stock availability
-    sortBy?: 'price_asc' | 'price_desc' | 'newest' | 'name_asc',
+    sortBy?: 'random' | 'price_asc' | 'price_desc' | 'newest' | 'name_asc',
     page?: number,
     limit?: number,
     search?: string
@@ -127,27 +127,56 @@ export async function getProducts(options?: {
     }
 
     // Stock filter - ALWAYS filter out products with no stock
-    // Out-of-stock products should never be shown in the store
     where.stock = { gt: 0 };
 
 
-    let orderBy: any = { price: 'asc' };
+    let orderBy: any = {};
     if (sortBy === 'price_asc') orderBy = { price: 'asc' };
-    if (sortBy === 'price_desc') orderBy = { price: 'desc' };
-    if (sortBy === 'name_asc') orderBy = { name: 'asc' };
-    if (sortBy === 'newest') orderBy = { createdAt: 'desc' };
+    else if (sortBy === 'price_desc') orderBy = { price: 'desc' };
+    else if (sortBy === 'name_asc') orderBy = { name: 'asc' };
+    else if (sortBy === 'newest') orderBy = { createdAt: 'desc' };
 
     const skip = (page - 1) * limit;
 
-    const [total, products] = await Promise.all([
-        prisma.product.count({ where }),
-        prisma.product.findMany({
-            where,
-            orderBy,
-            skip,
-            take: limit
-        })
-    ]);
+    let finalProducts;
+    let total;
+
+    if (sortBy === 'random' || !sortBy) {
+        // Ordenamiento pseudo-aleatorio basado en ventana de tiempo para que la paginación no se rompa
+        // La semilla cambia cada 15 minutos, garantizando productos mezclados pero paginación estable en sesión corta
+        const seed = Math.floor(Date.now() / (1000 * 60 * 15));
+        
+        const hashString = (str: string, seed: number) => {
+            let h = seed;
+            for(let i = 0; i < str.length; i++)
+                h = Math.imul(31, h) + str.charCodeAt(i) | 0;
+            return h;
+        };
+
+        const [count, allProducts] = await Promise.all([
+            prisma.product.count({ where }),
+            prisma.product.findMany({ where })
+        ]);
+        
+        total = count;
+        
+        // Mezclamos consistentemente con el hash
+        const shuffled = allProducts.sort((a, b) => hashString(a.id, seed) - hashString(b.id, seed));
+        
+        finalProducts = shuffled.slice(skip, skip + limit);
+    } else {
+        const [count, products] = await Promise.all([
+            prisma.product.count({ where }),
+            prisma.product.findMany({
+                where,
+                orderBy,
+                skip,
+                take: limit
+            })
+        ]);
+        total = count;
+        finalProducts = products;
+    }
 
     // Fetch global settings for runtime markup application
     const [rateData, globalMarkup] = await Promise.all([
@@ -158,7 +187,7 @@ export async function getProducts(options?: {
 
     const totalPages = Math.ceil(total / limit);
 
-    const serializedProducts = (products as any[]).map(p => {
+    const serializedProducts = (finalProducts as any[]).map(p => {
         // Runtime Price Calculation
         // 1. Identify Base Cost (prefer 'pvpUsd', then 'precio', fallback to 'price')
         const baseCost = p.pvpUsd ? Number(p.pvpUsd) : (p.precio ? Number(p.precio) : Number(p.price));

@@ -42,7 +42,7 @@ export function StoreFront({ initialProducts, categories, pagination, availableF
     }, [isCategoryMenuOpen, isFilterMenuOpen]);
 
     const activeCategory = searchParams.get('category');
-    const sortBy = searchParams.get('sort') || 'price_asc';
+    const sortBy = searchParams.get('sort') || 'random';
     const searchQuery = searchParams.get('search') || '';
 
     // Parse active filters from URL
@@ -308,6 +308,7 @@ export function StoreFront({ initialProducts, categories, pagination, availableF
                     <div className="flex items-center gap-4 w-full lg:w-auto pb-2 lg:pb-0 overflow-x-auto">
                         <div className="flex bg-white/5 p-1 rounded-xl border border-white/10">
                             {[
+                                { value: 'random', label: 'Aleatorio' },
                                 { value: 'newest', label: 'Los más nuevos' },
                                 { value: 'price_asc', label: 'Precio: bajo a alto' },
                                 { value: 'price_desc', label: 'Precio: alto a bajo' },
@@ -348,7 +349,7 @@ export function StoreFront({ initialProducts, categories, pagination, availableF
                             <h2 className="text-2xl font-bold mb-2">No hay productos</h2>
                             <p className="text-[hsl(var(--text-secondary))]">Intenta con otros filtros o categoría.</p>
                             <button
-                                onClick={() => updateParams({ category: null, sort: 'price_asc', page: '1' })}
+                                onClick={() => updateParams({ category: null, sort: 'random', page: '1' })}
                                 className="mt-6 btn btn-outline btn-sm"
                             >
                                 Limpiar filtros
