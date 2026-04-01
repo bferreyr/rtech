@@ -5,6 +5,7 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import * as XLSX from 'xlsx';
 import { auth } from "@/auth";
+import { getGlobalMarkup } from "@/app/actions/settings";
 
 export async function createProduct(formData: FormData) {
     const session = await auth();
@@ -290,7 +291,7 @@ export async function getAvailableFilters(categoryId?: string) {
 function serializeProduct(p: any) {
     return {
         ...p,
-        price: p.pvpUsd ? Number(p.pvpUsd) : Number(p.price),
+        price: Number(p.price),
         precio: Number(p.precio),
         peso: p.peso ? Number(p.peso) : null,
         weight: p.weight ? Number(p.weight) : null,
@@ -422,6 +423,9 @@ export async function bulkUploadProducts(formData: FormData) {
     const provider = (formData.get('provider') as string) || 'ELIT';
 
     if (!file) throw new Error('No se subió ningún archivo');
+
+    const globalMarkup = await getGlobalMarkup();
+    const markupMultiplier = 1 + (globalMarkup / 100);
 
     const buffer = await file.arrayBuffer();
     const workbook = XLSX.read(new Uint8Array(buffer), { type: 'array' });
@@ -593,6 +597,11 @@ export async function bulkUploadProducts(formData: FormData) {
                     stockVal = parseNum(rawStock) || 0;
                 }
                 const priceVal = parseNum(getVal(['Precio (DOLAR (U$S))', 'Precio', 'precio', 'price', 'Precio Venta', 'Precio U$S', 'Precio Usd'])) || 0;
+                const pvpUsdExcel = parseNum(getVal(['pvp_usd', 'Pvp Usd', 'PVP USD', 'Pvp_usd', 'PVP_USD', 'pvp usd'])) || priceVal;
+                
+                // Calculate final price with markup
+                const baseToMarkup = pvpUsdExcel > 0 ? pvpUsdExcel : priceVal;
+                const finalPrice = baseToMarkup > 0 ? baseToMarkup * markupMultiplier : 0;
 
                 // Prepare base data (scalars)
                 const baseData = {
@@ -615,8 +624,9 @@ export async function bulkUploadProducts(formData: FormData) {
                     moneda: 'USD',
 
                     // Dynamic Calculation
-                    markup: null,
+                    markup: globalMarkup,
                     cotizacion: null,
+                    pvpUsd: pvpUsdExcel > 0 ? pvpUsdExcel : null,
 
                     // Physical Properties
                     peso: parseNum(getVal(['Peso', 'peso', 'weight'])),
@@ -649,7 +659,7 @@ export async function bulkUploadProducts(formData: FormData) {
                     })(),
 
                     // Legacy fields
-                    price: priceVal,
+                    price: finalPrice > 0 ? finalPrice : priceVal,
                     stock: stockVal,
                     imageUrl: getVal(['Imagen', 'imagen', 'image', 'imageUrl']) ? String(getVal(['Imagen', 'imagen', 'image', 'imageUrl'])) : null,
                     weight: parseNum(getVal(['Peso', 'peso', 'weight'])),

@@ -161,9 +161,9 @@ export default async function ProductPage({ params }: Props) {
                             {/* Actions Group - Horizontal Alignment */}
                             <div className="flex flex-wrap items-center gap-4 pt-2">
                                 <AddToCartButton product={product} />
-                                <WhatsAppProductButton 
-                                    productName={product.name} 
-                                    sku={product.sku} 
+                                <WhatsAppProductButton
+                                    productName={product.name}
+                                    sku={product.sku}
                                 />
                             </div>
                         </div>
@@ -214,11 +214,10 @@ export default async function ProductPage({ params }: Props) {
 
                                     <div>
                                         <span className="block text-xs text-[color:var(--text-tertiary)] uppercase tracking-wider mb-2">Disponibilidad de Stock</span>
-                                        <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold border ${
-                                            product.stock > 0 
-                                                ? 'bg-blue-500/10 text-blue-400 border-blue-500/20' 
+                                        <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold border ${product.stock > 0
+                                                ? 'bg-blue-500/10 text-blue-400 border-blue-500/20'
                                                 : 'bg-red-500/10 text-red-400 border-red-500/20'
-                                        }`}>
+                                            }`}>
                                             <div className={`w-2 h-2 rounded-full ${product.stock > 0 ? 'bg-blue-400' : 'bg-red-400'}`} />
                                             {product.stock > 0 ? `ENTREGA INMEDIATA: ${product.stock} UNI.` : 'SIN STOCK DISPONIBLE'}
                                         </div>
