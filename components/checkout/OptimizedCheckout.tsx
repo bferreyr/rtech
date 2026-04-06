@@ -36,7 +36,7 @@ export function OptimizedCheckout({ items, cartTotal, onClearCart }: OptimizedCh
     const [couponCode, setCouponCode] = useState('');
     const [couponInput, setCouponInput] = useState('');
     const [couponId, setCouponId] = useState<string | null>(null);
-    const [discountAmountARS, setDiscountAmountARS] = useState(0);
+    const [couponDiscountARS, setCouponDiscountARS] = useState(0);
     const [couponMessage, setCouponMessage] = useState<string | null>(null);
     const [couponError, setCouponError] = useState<string | null>(null);
     const [couponLoading, setCouponLoading] = useState(false);
@@ -65,6 +65,13 @@ export function OptimizedCheckout({ items, cartTotal, onClearCart }: OptimizedCh
     const shippingCost = 0; // El envío se discrimina en ARS, no afecta el total USD
     const total = cartTotal;
 
+    // Transfer discount (10% auto-applied when paying by bank transfer)
+    const TRANSFER_DISCOUNT_RATE = 0.10;
+    const transferDiscountARS = paymentMethod === 'transferencia' ? Math.round(toARS(cartTotal) * TRANSFER_DISCOUNT_RATE) : 0;
+
+    // Combined discount (transfer + coupon)
+    const discountAmountARS = couponDiscountARS + transferDiscountARS;
+
     // Apply coupon
     const applyCoupon = async () => {
         if (!couponInput.trim()) return;
@@ -78,14 +85,14 @@ export function OptimizedCheckout({ items, cartTotal, onClearCart }: OptimizedCh
             if (result.valid) {
                 setCouponCode(couponInput.trim().toUpperCase());
                 setCouponId(result.couponId);
-                setDiscountAmountARS(result.discountAmount);
+                setCouponDiscountARS(result.discountAmount);
                 setCouponMessage(result.message);
                 setCouponError(null);
             } else {
                 setCouponError(result.error);
                 setCouponCode('');
                 setCouponId(null);
-                setDiscountAmountARS(0);
+                setCouponDiscountARS(0);
             }
         } catch {
             setCouponError('Error al validar el cupón');
@@ -98,7 +105,7 @@ export function OptimizedCheckout({ items, cartTotal, onClearCart }: OptimizedCh
         setCouponCode('');
         setCouponId(null);
         setCouponInput('');
-        setDiscountAmountARS(0);
+        setCouponDiscountARS(0);
         setCouponMessage(null);
         setCouponError(null);
     };
@@ -166,6 +173,8 @@ export function OptimizedCheckout({ items, cartTotal, onClearCart }: OptimizedCh
                 paymentReceiptUrl: receiptUrl,
                 couponCode: couponCode || null,
                 couponId: couponId || null,
+                transferDiscountARS: transferDiscountARS || 0,
+                couponDiscountARS: couponDiscountARS || 0,
                 discountAmountARS: discountAmountARS || 0,
                 items: items.map(item => ({
                     productId: item.id,
@@ -367,8 +376,8 @@ export function OptimizedCheckout({ items, cartTotal, onClearCart }: OptimizedCh
                                     <div
                                         onClick={() => setValue('paymentMethod', 'transferencia', { shouldValidate: true })}
                                         className={`p-4 rounded-lg border-2 cursor-pointer transition-all ${paymentMethod === 'transferencia'
-                                            ? 'border-[hsl(var(--accent-primary))] bg-[hsl(var(--accent-primary))]/10'
-                                            : 'border-[hsl(var(--border-color))] hover:border-[hsl(var(--accent-primary))]/50'
+                                            ? 'border-green-500 bg-green-500/10'
+                                            : 'border-[hsl(var(--border-color))] hover:border-green-500/50'
                                             }`}
                                     >
                                         <div className="flex items-center gap-3">
@@ -380,7 +389,12 @@ export function OptimizedCheckout({ items, cartTotal, onClearCart }: OptimizedCh
                                                 className="w-4 h-4"
                                             />
                                             <div className="flex-1">
-                                                <p className="font-medium">Transferencia Bancaria</p>
+                                                <div className="flex items-center gap-2">
+                                                    <p className="font-medium">Transferencia Bancaria</p>
+                                                    <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-green-500/20 text-green-400 border border-green-500/30">
+                                                        10% OFF
+                                                    </span>
+                                                </div>
                                                 <p className="text-sm text-[hsl(var(--text-secondary))]">Realizá la transferencia y subí el comprobante</p>
                                             </div>
                                         </div>
@@ -527,7 +541,8 @@ export function OptimizedCheckout({ items, cartTotal, onClearCart }: OptimizedCh
                                 shippingCostARS={shippingCostARS}
                                 isFreeShipping={isFreeShipping}
                                 total={total}
-                                discountAmountARS={discountAmountARS}
+                                discountAmountARS={couponDiscountARS}
+                                transferDiscountARS={transferDiscountARS}
                                 couponCode={couponCode}
                                 onCheckout={handleSubmit(onSubmit)}
                                 checkoutDisabled={!isValid || (paymentMethod === 'transferencia' && !receiptFile)}
