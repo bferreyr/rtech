@@ -6,6 +6,8 @@ interface WhatsAppButtonsProps {
     phone: string;
     customerName: string;
     orderId: string;
+    orderTotal?: number;
+    paymentMethod?: string | null;
 }
 
 function cleanPhone(raw: string): string {
@@ -23,12 +25,33 @@ function buildWaUrl(phone: string, text: string): string {
     return `https://wa.me/${cleaned}?text=${encodeURIComponent(text)}`;
 }
 
-export function WhatsAppButtons({ phone, customerName, orderId }: WhatsAppButtonsProps) {
-    // Short order ID for display (last 8 chars)  
+export function WhatsAppButtons({ phone, customerName, orderId, orderTotal, paymentMethod }: WhatsAppButtonsProps) {
+    // Short order ID for display (last 8 chars)
     const shortId = orderId.slice(-8).toUpperCase();
     const firstName = customerName.split(' ')[0];
 
+    // Build payment method hint for the incentive message
+    const paymentHint = paymentMethod === 'transferencia'
+        ? `Si preferis pagar por *transferencia bancaria*, te paso el alias: *bartu.ferreyra* (Santander). Ademas tenes un *10% de descuento* pagando por este medio! 🎁`
+        : paymentMethod === 'mercadopago'
+        ? `Podes completar el pago facilmente con *Mercado Pago* con tarjeta, dinero en cuenta o cuotas sin interes.`
+        : `Podes pagar por *transferencia bancaria* (con 10% OFF) o por *Mercado Pago*. El que mas te convenga!`;
+
+    const totalText = orderTotal ? ` por un total de *USD ${orderTotal.toFixed(2)}*` : '';
+
     const messages = [
+        {
+            id: 'payment_incentive',
+            label: 'Incentivar pago 💳',
+            color: 'bg-amber-600 hover:bg-amber-500 border-amber-500/40',
+            text:
+                `Hola ${firstName}! 👋\n\n` +
+                `Te escribo desde *Rincon TECH* porque notamos que tu pedido *N° ${shortId}*${totalText} aun no fue abonado.\n\n` +
+                `Queria consultar si tenes alguna duda sobre los productos, el envio o el proceso de pago, estoy disponible para ayudarte en lo que necesites! 😊\n\n` +
+                `${paymentHint}\n\n` +
+                `Si ya realizaste el pago y no lo registramos, avisame y lo verificamos enseguida. De lo contrario, cuando quieras te ayudo a finalizar la compra.\n\n` +
+                `*Muchas gracias y quedamos a tu disposicion!* 🙌`,
+        },
         {
             id: 'paid',
             label: 'Pago recibido ✅',

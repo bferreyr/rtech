@@ -287,6 +287,8 @@ export default async function OrderDetailPage({ params }: Props) {
                                     phone={order.customerPhone}
                                     customerName={order.customerName || 'Cliente'}
                                     orderId={order.id}
+                                    orderTotal={Number(order.total)}
+                                    paymentMethod={order.paymentMethod}
                                 />
                             </div>
                         )}
