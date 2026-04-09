@@ -60,7 +60,15 @@ export function OptimizedCheckout({ items, cartTotal, onClearCart }: OptimizedCh
 
     // Costo de envío fijo en ARS
     const SHIPPING_COST_ARS = 15000;
-    const isFreeShipping = shippingType === SHIPPING_TYPES.PICKUP || isFreeShippingZone(city, province);
+
+    // Envío gratis por volumen: 5+ artículos Y todos ≤ $20.000 ARS cada uno
+    const BULK_FREE_SHIPPING_MIN_ITEMS = 5;
+    const BULK_FREE_SHIPPING_MAX_PRICE_ARS = 20000;
+    const totalItemCount = items.reduce((sum, item) => sum + item.quantity, 0);
+    const allItemsCheapEnough = items.every(item => toARS(item.price) <= BULK_FREE_SHIPPING_MAX_PRICE_ARS);
+    const isBulkFreeShipping = totalItemCount >= BULK_FREE_SHIPPING_MIN_ITEMS && allItemsCheapEnough;
+
+    const isFreeShipping = shippingType === SHIPPING_TYPES.PICKUP || isFreeShippingZone(city, province) || isBulkFreeShipping;
     const shippingCostARS = isFreeShipping ? 0 : SHIPPING_COST_ARS;
     const shippingCost = 0; // El envío se discrimina en ARS, no afecta el total USD
     const total = cartTotal;
@@ -540,6 +548,7 @@ export function OptimizedCheckout({ items, cartTotal, onClearCart }: OptimizedCh
                                 shippingCost={shippingCost}
                                 shippingCostARS={shippingCostARS}
                                 isFreeShipping={isFreeShipping}
+                                isBulkFreeShipping={isBulkFreeShipping}
                                 total={total}
                                 discountAmountARS={couponDiscountARS}
                                 transferDiscountARS={transferDiscountARS}

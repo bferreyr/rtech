@@ -12,6 +12,7 @@ interface OrderSummaryProps {
     shippingCost: number;
     shippingCostARS?: number;
     isFreeShipping?: boolean;
+    isBulkFreeShipping?: boolean;
     total: number;
     discountAmountARS?: number;
     transferDiscountARS?: number;
@@ -27,6 +28,7 @@ export function OrderSummary({
     shippingCost,
     shippingCostARS = 0,
     isFreeShipping = false,
+    isBulkFreeShipping = false,
     total,
     discountAmountARS = 0,
     transferDiscountARS = 0,
@@ -114,6 +116,11 @@ export function OrderSummary({
                     <span className="flex items-center gap-1.5 text-[hsl(var(--text-secondary))]">
                         <Truck className="w-3.5 h-3.5" />
                         Costo de envío
+                        {isBulkFreeShipping && (
+                            <span className="ml-1 px-1.5 py-0.5 rounded-full text-xs font-bold bg-purple-500/20 text-purple-300 border border-purple-500/30">
+                                Promo 5x20 🎉
+                            </span>
+                        )}
                     </span>
                     <span className="font-medium">
                         {isFreeShipping || shippingCostARS === 0 ? (
@@ -125,6 +132,13 @@ export function OrderSummary({
                         )}
                     </span>
                 </div>
+
+                {isBulkFreeShipping && (
+                    <div className="flex items-start gap-2 px-3 py-2 rounded-lg bg-purple-500/10 border border-purple-500/20 text-xs text-purple-300">
+                        <span className="text-base leading-none mt-0.5">🎁</span>
+                        <span>¡Compraste 5 o más artículos de bajo valor! Disfrutás envío <strong>gratis</strong> automáticamente.</span>
+                    </div>
+                )}
 
                 <div className="pt-3 border-t border-white/10">
                     <div className="flex justify-between items-baseline">
