@@ -126,71 +126,72 @@ export function AnnouncementBar() {
 
     return (
         <>
-            {/* Spacer that pushes main content down by the bar's height */}
-            <div className={`w-full transition-all duration-300 ${isVisible ? 'h-10' : 'h-0'}`} aria-hidden="true" />
+            {/* Spacer — mobile puede ser más alto si el texto hace wrap */}
+            <div className={`w-full transition-all duration-300 ${isVisible ? 'h-10 sm:h-10' : 'h-0'}`} aria-hidden="true" />
 
-            {/* The fixed bar itself, sits below the fixed navbar (top-16 = 64px) */}
+            {/* The fixed bar, below the fixed navbar (top-16 = 64px) */}
             <div
-                className={`fixed left-0 right-0 z-40 bg-gradient-to-r ${config.bg} border-b ${config.border} backdrop-blur-sm shadow-md transition-all duration-300 ease-in-out ${isVisible ? 'top-16 opacity-100' : '-top-10 opacity-0'}`}
+                className={`fixed left-0 right-0 z-40 bg-gradient-to-r ${config.bg} border-b ${config.border} backdrop-blur-sm shadow-md transition-all duration-300 ease-in-out ${isVisible ? 'top-16 opacity-100' : '-top-20 opacity-0'}`}
                 role="banner"
                 aria-label="Anuncio"
             >
                 {/* shimmer */}
                 <div className="absolute inset-0 bg-gradient-to-r from-white/0 via-white/[0.04] to-white/0 pointer-events-none" />
 
-                <div className="relative max-w-7xl mx-auto px-4 py-2 flex items-center justify-between gap-2">
+                <div className="relative max-w-7xl mx-auto px-3 sm:px-4 py-2 flex items-center gap-2">
 
-                    {/* Prev */}
+                    {/* Badge tipo — solo desktop */}
+                    <span className={`hidden sm:flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider shrink-0 ${config.badge}`}>
+                        <Icon size={10} />
+                        {config.label}
+                    </span>
+
+                    {/* Prev — solo desktop */}
                     {announcements.length > 1 && (
-                        <button onClick={goPrev} className={`shrink-0 p-1 rounded-full hover:bg-black/10 transition-colors ${config.text} opacity-70 hover:opacity-100`} aria-label="Anterior">
+                        <button onClick={goPrev} className={`hidden sm:flex shrink-0 p-1 rounded-full hover:bg-black/10 transition-colors ${config.text} opacity-70 hover:opacity-100`} aria-label="Anterior">
                             <ChevronLeft size={15} />
                         </button>
                     )}
 
-                    {/* Content */}
-                    <div className={`flex items-center gap-3 flex-1 justify-center min-w-0 transition-all duration-200 ${isTransitioning ? 'opacity-0 translate-y-0.5' : 'opacity-100 translate-y-0'}`}>
-                        {/* Badge — desktop */}
-                        <span className={`hidden sm:flex items-center gap-1 px-2.5 py-0.5 rounded-full text-[10px] font-bold tracking-wider shrink-0 ${config.badge}`}>
-                            <Icon size={10} />
-                            {config.label}
-                        </span>
-                        {/* Icon — mobile */}
-                        <Icon size={15} className={`sm:hidden shrink-0 ${config.text}`} />
-
-                        <div className={`flex items-center gap-2 min-w-0 ${config.text}`}>
-                            <p className="text-sm font-semibold truncate leading-tight">{ann.title}</p>
+                    {/* Content — ocupa todo el ancho disponible, texto puede wrappear */}
+                    <div className={`flex-1 transition-all duration-200 ${isTransitioning ? 'opacity-0 translate-y-0.5' : 'opacity-100 translate-y-0'}`}>
+                        <p className={`text-sm font-semibold leading-snug text-center sm:text-left ${config.text}`}>
+                            {ann.title}
                             {ann.subtitle && (
-                                <>
-                                    <span className="opacity-40 hidden sm:inline">·</span>
-                                    <p className="text-xs opacity-75 hidden sm:block truncate">{ann.subtitle}</p>
-                                </>
+                                <span className={`hidden sm:inline opacity-75 font-normal text-xs ml-2`}>· {ann.subtitle}</span>
                             )}
-                        </div>
+                        </p>
+                        {/* Subtítulo en mobile: segunda línea si existe */}
+                        {ann.subtitle && (
+                            <p className={`sm:hidden text-xs text-center opacity-75 leading-tight mt-0.5 ${config.text}`}>
+                                {ann.subtitle}
+                            </p>
+                        )}
                     </div>
 
-                    {/* Dots + Next + Close */}
-                    <div className="flex items-center gap-1.5 shrink-0">
-                        {announcements.length > 1 && (
-                            <>
-                                <div className="hidden sm:flex items-center gap-1 mr-1">
-                                    {announcements.map((_, i) => (
-                                        <button
-                                            key={i}
-                                            onClick={() => goTo(i)}
-                                            className={`rounded-full transition-all duration-200 ${config.text} ${i === current ? 'w-3 h-1.5 opacity-100' : 'w-1.5 h-1.5 opacity-35 hover:opacity-60'} bg-current`}
-                                            aria-label={`Ir al anuncio ${i + 1}`}
-                                        />
-                                    ))}
-                                </div>
-                                <button onClick={goNext} className={`p-1 rounded-full hover:bg-black/10 transition-colors ${config.text} opacity-70 hover:opacity-100`} aria-label="Siguiente">
-                                    <ChevronRight size={15} />
-                                </button>
-                            </>
-                        )}
-                        <button onClick={handleDismiss} className={`p-1 rounded-full hover:bg-black/15 transition-colors ${config.text} opacity-55 hover:opacity-90`} aria-label="Cerrar">
-                            <X size={14} />
-                        </button>
-                    </div>
+                    {/* Next + Dots — solo desktop */}
+                    {announcements.length > 1 && (
+                        <>
+                            <div className="hidden sm:flex items-center gap-1">
+                                {announcements.map((_, i) => (
+                                    <button
+                                        key={i}
+                                        onClick={() => goTo(i)}
+                                        className={`rounded-full transition-all duration-200 ${config.text} ${i === current ? 'w-3 h-1.5 opacity-100' : 'w-1.5 h-1.5 opacity-35 hover:opacity-60'} bg-current`}
+                                        aria-label={`Ir al anuncio ${i + 1}`}
+                                    />
+                                ))}
+                            </div>
+                            <button onClick={goNext} className={`hidden sm:flex p-1 rounded-full hover:bg-black/10 transition-colors ${config.text} opacity-70 hover:opacity-100`} aria-label="Siguiente">
+                                <ChevronRight size={15} />
+                            </button>
+                        </>
+                    )}
+
+                    {/* Close — siempre visible pero compacto en mobile */}
+                    <button onClick={handleDismiss} className={`shrink-0 p-1 rounded-full hover:bg-black/15 transition-colors ${config.text} opacity-55 hover:opacity-90`} aria-label="Cerrar">
+                        <X size={14} />
+                    </button>
                 </div>
             </div>
         </>
