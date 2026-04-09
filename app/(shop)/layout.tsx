@@ -11,8 +11,8 @@ export default function ShopLayout({
 }>) {
     return (
         <CartProvider>
-            <AnnouncementBar />
             <Navbar />
+            <AnnouncementBar />
             <CartSidebar />
             <main className="pt-16">{children}</main>
             <Footer />
