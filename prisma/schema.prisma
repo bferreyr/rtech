@@ -311,10 +311,10 @@ model CarouselSlide {
 
 enum AnnouncementType {
   DISCOUNT // 🏷️ Descuento
-  NEW      // ✨ Nuevo producto
-  OFFER    // 🔥 Oferta
-  INFO     // ℹ️ Información
-  URGENT   // ⚡ Urgente
+  NEW // ✨ Nuevo producto
+  OFFER // 🔥 Oferta
+  INFO // ℹ️ Información
+  URGENT // ⚡ Urgente
 }
 
 model Announcement {
@@ -330,3 +330,38 @@ model Announcement {
   updatedAt DateTime         @updatedAt
 }
 
+// ─── Warranty (RMA) ────────────────────────────────────────────────────────
+enum WarrantyType {
+  DOA
+  WARRANTY
+}
+
+enum WarrantyStatus {
+  PENDING
+  IN_PROGRESS
+  RESOLVED
+  REJECTED
+}
+
+model WarrantyRequest {
+  id           String       @id @default(cuid())
+  contactName  String
+  contactEmail String
+  contactPhone String
+  type         WarrantyType
+
+  // Product info
+  productSku         String
+  serialNumber       String
+  problemDescription String @db.Text
+
+  // Specific for DOA
+  invoiceDate DateTime?
+
+  // Internal admin
+  status WarrantyStatus @default(PENDING)
+  notes  String?        @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
