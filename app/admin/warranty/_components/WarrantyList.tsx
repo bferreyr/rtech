@@ -3,8 +3,6 @@
 import { useState } from 'react';
 import { updateWarrantyStatus } from '@/app/actions/warranty';
 import { WarrantyRequest, WarrantyStatus } from '@prisma/client';
-import { format } from 'date-fns';
-import { es } from 'date-fns/locale';
 
 interface Props {
     warranties: WarrantyRequest[];
@@ -65,7 +63,7 @@ export function WarrantyList({ warranties: initialWarranties }: Props) {
                                 <tr key={warranty.id} className="hover:bg-white/[0.02] transition-colors">
                                     <td className="p-4 align-top">
                                         <div className="text-sm font-medium">
-                                            {format(new Date(warranty.createdAt), 'dd MMM yyyy', { locale: es })}
+                                            {new Date(warranty.createdAt).toLocaleDateString('es-ES', { day: '2-digit', month: 'short', year: 'numeric' })}
                                         </div>
                                         <div className="text-xs text-[hsl(var(--text-secondary))] mt-1">
                                             #{warranty.id.slice(-6)}
@@ -90,7 +88,7 @@ export function WarrantyList({ warranties: initialWarranties }: Props) {
                                         <div className="text-xs text-[hsl(var(--text-secondary))]">SN: {warranty.serialNumber}</div>
                                         {warranty.type === 'DOA' && warranty.invoiceDate && (
                                             <div className="text-xs text-orange-400 mt-1">
-                                                Fac: {format(new Date(warranty.invoiceDate), 'dd/MM/yyyy')}
+                                                Fac: {new Date(warranty.invoiceDate).toLocaleDateString('es-ES', { day: '2-digit', month: '2-digit', year: 'numeric' })}
                                             </div>
                                         )}
                                     </td>
