@@ -1,7 +1,6 @@
 'use client';
 
 import { useState } from 'react';
-import { useForm } from 'react-form'; // Wait, let's just use normal state to reduce dependencies if they don't have react-hook-form
 import { createWarrantyRequest, WarrantyInput } from '@/app/actions/warranty';
 import { CheckCircle2, HelpCircle, Loader2 } from 'lucide-react';
 import Link from 'next/link';
