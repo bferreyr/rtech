@@ -1,8 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { createWarrantyRequest, WarrantyInput } from '@/app/actions/warranty';
-import { CheckCircle2, HelpCircle, Loader2 } from 'lucide-react';
+import { createWarrantyRequest, getWarrantyPolicies, WarrantyInput } from '@/app/actions/warranty';
+import { CheckCircle2, HelpCircle, Loader2, FileText, X } from 'lucide-react';
 import Link from 'next/link';
 
 export default function WarrantyPage() {
@@ -21,6 +21,19 @@ export default function WarrantyPage() {
     const [invoiceDate, setInvoiceDate] = useState('');
 
     const [showSkuHelp, setShowSkuHelp] = useState(false);
+    
+    // Policies
+    const [showPolicies, setShowPolicies] = useState(false);
+    const [policiesText, setPoliciesText] = useState('');
+    const [loadingPolicies, setLoadingPolicies] = useState(false);
+
+    const handleFetchPolicies = async () => {
+        setLoadingPolicies(true);
+        setShowPolicies(true);
+        const text = await getWarrantyPolicies();
+        setPoliciesText(text);
+        setLoadingPolicies(false);
+    };
 
     const handleSubmit = async (e: React.FormEvent) => {
         e.preventDefault();
@@ -63,12 +76,51 @@ export default function WarrantyPage() {
     }
 
     return (
-        <div className="container mx-auto px-4 py-12 max-w-3xl">
-            <div className="mb-8 text-center">
+        <div className="container mx-auto px-4 py-12 max-w-3xl relative">
+            {/* Policies Modal */}
+            {showPolicies && (
+                <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-sm">
+                    <div className="bg-[hsl(var(--bg-secondary))] border border-white/10 rounded-2xl w-full max-w-4xl max-h-[85vh] flex flex-col shadow-2xl relative overflow-hidden">
+                        <div className="flex justify-between items-center p-6 border-b border-white/10 bg-black/20">
+                            <h2 className="text-2xl font-black flex items-center gap-2">
+                                <FileText className="text-[hsl(var(--accent-primary))]" />
+                                Políticas de Garantías
+                            </h2>
+                            <button 
+                                onClick={() => setShowPolicies(false)}
+                                className="p-2 bg-white/5 hover:bg-white/10 rounded-lg transition-colors text-[hsl(var(--text-secondary))] hover:text-white"
+                            >
+                                <X size={24} />
+                            </button>
+                        </div>
+                        <div className="p-6 overflow-y-auto flex-1">
+                            {loadingPolicies ? (
+                                <div className="flex flex-col items-center justify-center h-40 text-[hsl(var(--text-secondary))]">
+                                    <Loader2 className="animate-spin w-8 h-8 mb-4 text-[hsl(var(--accent-primary))]" />
+                                    Cargando políticas...
+                                </div>
+                            ) : (
+                                <div className="whitespace-pre-wrap text-sm text-[hsl(var(--text-secondary))] font-mono leading-relaxed bg-[hsl(var(--bg-primary))] p-4 sm:p-6 rounded-xl border border-white/5">
+                                    {policiesText}
+                                </div>
+                            )}
+                        </div>
+                    </div>
+                </div>
+            )}
+
+            <div className="mb-8 text-center flex flex-col items-center">
                 <h1 className="text-4xl font-black mb-4 gradient-text">Gestión de Garantías y RMA</h1>
-                <p className="text-[hsl(var(--text-secondary))] text-lg">
+                <p className="text-[hsl(var(--text-secondary))] text-lg mb-6 max-w-xl">
                     Completa el siguiente formulario para procesar tu solicitud de garantía o reemplazo por defecto de fábrica (DOA).
                 </p>
+                <button 
+                    onClick={handleFetchPolicies}
+                    className="flex items-center gap-2 px-4 py-2 bg-white/5 hover:bg-white/10 text-[hsl(var(--text-primary))] rounded-lg transition-colors text-sm font-bold border border-white/10 hover:border-white/20"
+                >
+                    <FileText size={16} className="text-[hsl(var(--accent-primary))]" />
+                    Ver Políticas de Garantías
+                </button>
             </div>
 
             <form onSubmit={handleSubmit} className="bg-[hsl(var(--bg-secondary))] p-6 md:p-8 rounded-2xl border border-white/10 shadow-xl space-y-8">

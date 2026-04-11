@@ -3,6 +3,8 @@
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
 import { WarrantyType, WarrantyStatus } from '@prisma/client';
+import fs from 'fs';
+import path from 'path';
 
 export type WarrantyInput = {
     contactName: string;
@@ -70,5 +72,16 @@ export async function updateWarrantyStatus(id: string, status: WarrantyStatus, n
     } catch (error) {
         console.error('Error updating warranty status:', error);
         return { success: false, error: 'Hubo un error al actualizar el estado.' };
+    }
+}
+
+export async function getWarrantyPolicies(): Promise<string> {
+    try {
+        const filePath = path.join(process.cwd(), 'docs', 'politicas_de_garantias.txt');
+        const content = fs.readFileSync(filePath, 'utf8');
+        return content;
+    } catch (error) {
+        console.error('Error reading warranty policies:', error);
+        return 'Las políticas no están disponibles en este momento.';
     }
 }
