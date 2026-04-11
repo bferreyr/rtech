@@ -2,7 +2,7 @@
 
 import { User, LogOut, LayoutDashboard, History, Coins, DollarSign, Building2 } from 'lucide-react';
 import { useSession, signOut } from "next-auth/react";
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import Link from 'next/link';
 import { usePathname } from 'next/navigation';
 import { CartTrigger } from '@/components/cart/CartTrigger';
@@ -12,6 +12,7 @@ import { useExchangeRate } from '@/hooks/useExchangeRate';
 export function Navbar() {
     const { data: session } = useSession();
     const [isUserMenuOpen, setIsUserMenuOpen] = useState(false);
+    const userMenuRef = useRef<HTMLDivElement>(null);
     const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
     const [livePoints, setLivePoints] = useState<number | null>(null);
     const pathname = usePathname();
@@ -23,6 +24,23 @@ export function Navbar() {
             getUserPoints((session.user as any).id).then(setLivePoints);
         }
     }, [session?.user?.id, isUserMenuOpen]);
+
+    // Close user menu when clicking outside
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (userMenuRef.current && !userMenuRef.current.contains(event.target as Node)) {
+                setIsUserMenuOpen(false);
+            }
+        };
+
+        if (isUserMenuOpen) {
+            document.addEventListener('mousedown', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('mousedown', handleClickOutside);
+        };
+    }, [isUserMenuOpen]);
 
     // Prevent scrolling when mobile menu is open
     useEffect(() => {
@@ -97,7 +115,7 @@ export function Navbar() {
                             {/* Desktop User Menu */}
                             <div className="hidden md:block">
                                 {session ? (
-                                    <div className="relative">
+                                    <div className="relative" ref={userMenuRef}>
                                         <button
                                             onClick={() => setIsUserMenuOpen(!isUserMenuOpen)}
                                             className="flex items-center gap-2 p-2 rounded-lg hover:bg-white/5 transition-colors"
