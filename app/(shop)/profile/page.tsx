@@ -77,6 +77,15 @@ export default function ProfilePage() {
         fetchData()
     }, [session])
 
+    useEffect(() => {
+        if (typeof window !== 'undefined' && window.location.search.includes('edit=true')) {
+            setIsEditProfileModalOpen(true)
+            const url = new URL(window.location.href)
+            url.searchParams.delete('edit')
+            window.history.replaceState({}, '', url.toString())
+        }
+    }, [])
+
     const handleWarrantySubmit = (e: React.FormEvent) => {
         e.preventDefault()
         startTransition(async () => {
@@ -450,15 +459,7 @@ export default function ProfilePage() {
                 </div>
             )}
 
-            {/* Account Settings / Actions */}
-            <div className="flex flex-col items-center pt-12 border-t border-white/10">
-                <div className="glass-card p-8 space-y-4 border-white/5 hover:border-[hsl(var(--accent-primary))]/30 transition-all w-full max-w-md">
-                    <UserIcon className="text-[hsl(var(--accent-primary))]" />
-                    <h4 className="text-xl font-bold">Mi Cuenta</h4>
-                    <p className="text-sm text-[hsl(var(--text-secondary))]">Actualizá tus datos personales y dirección de envío.</p>
-                    <button onClick={() => setIsEditProfileModalOpen(true)} className="text-xs font-bold uppercase tracking-widest hover:text-[hsl(var(--accent-primary))] transition-colors">Editar Perfil</button>
-                </div>
-            </div>
+
 
             {/* Success Notification */}
             {submitSuccess && (

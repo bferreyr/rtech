@@ -134,7 +134,7 @@ export function Navbar() {
                                                 </Link>
 
                                                 <Link
-                                                    href="/profile"
+                                                    href="/profile?edit=true"
                                                     className="flex items-center gap-3 px-3 py-2 text-sm rounded-lg hover:bg-white/5 transition-colors group"
                                                     onClick={() => setIsUserMenuOpen(false)}
                                                 >
@@ -259,7 +259,7 @@ export function Navbar() {
                                             Mis Pedidos
                                         </Link>
 
-                                        <Link href="/profile" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/10 hover:bg-white/15 transition-colors">
+                                        <Link href="/profile?edit=true" onClick={() => setIsMobileMenuOpen(false)} className="flex items-center gap-3 px-4 py-3 rounded-xl bg-white/10 hover:bg-white/15 transition-colors">
                                             <User size={18} />
                                             Editar Perfil
                                         </Link>
