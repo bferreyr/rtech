@@ -451,27 +451,13 @@ export default function ProfilePage() {
             )}
 
             {/* Account Settings / Actions */}
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-8 pt-12 border-t border-white/10">
-                <div className="glass-card p-8 space-y-4 border-white/5 hover:border-[hsl(var(--accent-primary))]/30 transition-all">
-                    <ShieldCheck className="text-[hsl(var(--accent-primary))]" />
-                    <h4 className="text-xl font-bold">Garantías</h4>
-                    <p className="text-sm text-[hsl(var(--text-secondary))]">Consultá el estado de garantía de tus componentes adquiridos.</p>
-                    <button onClick={() => setIsWarrantyModalOpen(true)} className="text-xs font-bold uppercase tracking-widest hover:text-[hsl(var(--accent-primary))] transition-colors">Solicitar Reclamo</button>
-                </div>
-                <div className="glass-card p-8 space-y-4 border-white/5 hover:border-[hsl(var(--accent-primary))]/30 transition-all">
-                    <RotateCcw className="text-[hsl(var(--accent-primary))]" />
-                    <h4 className="text-xl font-bold">Devoluciones</h4>
-                    <p className="text-sm text-[hsl(var(--text-secondary))]">Iniciá o seguí el estado de una devolución de producto.</p>
-                    <button onClick={() => setIsReturnModalOpen(true)} className="text-xs font-bold uppercase tracking-widest hover:text-[hsl(var(--accent-primary))] transition-colors">Solicitar Devolución</button>
-                </div>
-                <div className="glass-card p-8 space-y-4 border-white/5 hover:border-[hsl(var(--accent-primary))]/30 transition-all">
+            <div className="flex flex-col items-center pt-12 border-t border-white/10">
+                <div className="glass-card p-8 space-y-4 border-white/5 hover:border-[hsl(var(--accent-primary))]/30 transition-all w-full max-w-md">
                     <UserIcon className="text-[hsl(var(--accent-primary))]" />
                     <h4 className="text-xl font-bold">Mi Cuenta</h4>
                     <p className="text-sm text-[hsl(var(--text-secondary))]">Actualizá tus datos personales y dirección de envío.</p>
                     <button onClick={() => setIsEditProfileModalOpen(true)} className="text-xs font-bold uppercase tracking-widest hover:text-[hsl(var(--accent-primary))] transition-colors">Editar Perfil</button>
                 </div>
-
-
             </div>
 
             {/* Success Notification */}
