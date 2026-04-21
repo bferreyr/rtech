@@ -7,6 +7,7 @@ import { Metadata } from "next";
 import { getExchangeRate, getGlobalMarkup } from "@/app/actions/settings";
 import { ShieldCheck } from "lucide-react";
 import { ReviewsSection } from "@/components/product/ReviewsSection";
+import { ProductImageGallery } from "@/components/product/ProductImageGallery";
 
 // Force dynamic rendering to ensure fresh data
 export const dynamic = 'force-dynamic';
@@ -21,6 +22,7 @@ interface Props {
 async function getProduct(id: string) {
     const product = await prisma.product.findUnique({
         where: { id },
+        include: { images: { orderBy: { order: 'asc' } } },
     });
 
     if (!product) return null;
@@ -124,20 +126,12 @@ export default async function ProductPage({ params }: Props) {
             </header>
 
             <main className="grid grid-cols-1 md:grid-cols-2 gap-12">
-                {/* Image Section */}
-                <section aria-label="Galería de imágenes" className="aspect-square bg-[color:var(--bg-secondary)] rounded-xl overflow-hidden border border-[color:var(--border-color)]">
-                    {product.imageUrl ? (
-                        <img
-                            src={product.imageUrl}
-                            alt={`Vista detallada de ${product.name}`}
-                            className="object-cover w-full h-full"
-                        />
-                    ) : (
-                        <div className="w-full h-full flex items-center justify-center text-[color:var(--text-tertiary)]">
-                            No hay imagen disponible
-                        </div>
-                    )}
-                </section>
+                {/* Image Gallery Section */}
+                <ProductImageGallery
+                    mainImageUrl={product.imageUrl ?? null}
+                    images={(product as any).images ?? []}
+                    productName={product.name}
+                />
 
                 {/* Info Section */}
                 <section className="space-y-8">

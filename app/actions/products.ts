@@ -21,8 +21,9 @@ export async function createProduct(formData: FormData) {
     const stock = parseInt(formData.get('stock') as string);
     const imageUrl = formData.get('imageUrl') as string;
     const categoryId = formData.get('categoryId') as string || null;
+    const additionalImages = formData.getAll('additionalImages[]') as string[];
 
-    await prisma.product.create({
+    const product = await prisma.product.create({
         data: {
             sku,
             name,
@@ -39,6 +40,18 @@ export async function createProduct(formData: FormData) {
             codigoProducto: sku,
         }
     });
+
+    // Save additional images
+    const validImages = additionalImages.filter(url => url && url.trim() !== '');
+    if (validImages.length > 0) {
+        await prisma.productImage.createMany({
+            data: validImages.map((url, index) => ({
+                productId: product.id,
+                url: url.trim(),
+                order: index,
+            }))
+        });
+    }
 
     revalidatePath('/admin/products');
     revalidatePath('/products');
@@ -60,6 +73,7 @@ export async function updateProduct(id: string, formData: FormData) {
     const stock = parseInt(formData.get('stock') as string);
     const imageUrl = formData.get('imageUrl') as string;
     const categoryId = formData.get('categoryId') as string || null;
+    const additionalImages = formData.getAll('additionalImages[]') as string[];
 
     await prisma.product.update({
         where: { id },
@@ -80,11 +94,25 @@ export async function updateProduct(id: string, formData: FormData) {
         }
     });
 
+    // Replace additional images: delete existing, recreate from form
+    await prisma.productImage.deleteMany({ where: { productId: id } });
+    const validImages = additionalImages.filter(url => url && url.trim() !== '');
+    if (validImages.length > 0) {
+        await prisma.productImage.createMany({
+            data: validImages.map((url, index) => ({
+                productId: id,
+                url: url.trim(),
+                order: index,
+            }))
+        });
+    }
+
     revalidatePath(`/admin/products/${id}`);
     revalidatePath('/admin/products');
     revalidatePath('/products');
     redirect('/admin/products');
 }
+
 
 export async function deleteProduct(id: string) {
     const session = await auth();

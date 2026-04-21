@@ -14,9 +14,10 @@ interface Props {
 export default async function EditProductPage({ params }: Props) {
     const { id } = await params;
 
-    // Fetch product to edit
+    // Fetch product to edit, including additional images
     const product = await prisma.product.findUnique({
-        where: { id }
+        where: { id },
+        include: { images: { orderBy: { order: 'asc' } } }
     });
 
     if (!product) {
@@ -52,7 +53,8 @@ export default async function EditProductPage({ params }: Props) {
                     price: Number(product.price),
                     stock: product.stock,
                     imageUrl: product.imageUrl,
-                    categoryId: product.categoryId
+                    categoryId: product.categoryId,
+                    additionalImages: product.images.map(img => ({ url: img.url })),
                 }}
             />
         </div>
