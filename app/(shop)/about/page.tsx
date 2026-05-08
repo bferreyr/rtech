@@ -39,48 +39,32 @@ export default function AboutPage() {
 
             {/* ── Historia familiar ──────────────────────────────────────── */}
             <section className="container py-24 px-4">
-                <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-                    <div className="space-y-8">
-                        <div className="space-y-3">
-                            <p className="text-sm font-bold uppercase tracking-[0.3em] text-[hsl(var(--accent-primary))]">Quiénes somos</p>
-                            <h2 className="text-4xl font-bold tracking-tight">
-                                Una familia que vive y respira <span className="gradient-text">tecnología</span>
-                            </h2>
-                        </div>
-                        <div className="space-y-5 text-lg text-[hsl(var(--text-secondary))] leading-relaxed">
-                            <p>
-                                Rincón TECH nació de una idea simple: que comprar tecnología no debería ser una experiencia impersonal. Somos una empresa familiar de Santa Fe con algo que las grandes cadenas no pueden ofrecerte — el tiempo y la dedicación para escucharte de verdad.
-                            </p>
-                            <p>
-                                Antes de recomendarte cualquier producto, entendemos tus necesidades, tu presupuesto y cómo vas a usarlo. No queremos venderte algo; queremos que estés genuinamente satisfecho con lo que llevás a tu casa o a tu empresa.
-                            </p>
-                            <p>
-                                Para nosotros cada cliente es una relación a largo plazo, no una transacción. Eso explica por qué muchos vuelven — y nos traen a sus conocidos.
-                            </p>
-                        </div>
-                        <div className="flex gap-4 pt-2">
-                            <Link href="/contact" className="btn btn-primary">
-                                Hablar con nosotros
-                                <ArrowRight className="ml-2 w-4 h-4" />
-                            </Link>
-                            <Link href="/products" className="btn btn-secondary">
-                                Ver productos
-                            </Link>
-                        </div>
+                <div className="max-w-4xl mx-auto space-y-8">
+                    <div className="space-y-3 text-center">
+                        <p className="text-sm font-bold uppercase tracking-[0.3em] text-[hsl(var(--accent-primary))]">Quiénes somos</p>
+                        <h2 className="text-4xl font-bold tracking-tight">
+                            Una familia que vive y respira <span className="gradient-text">tecnología</span>
+                        </h2>
                     </div>
-
-                    <div className="relative">
-                        <div className="aspect-[4/3] rounded-3xl overflow-hidden glass-card border-white/20">
-                            <img
-                                src="/images/about/commitment.png"
-                                alt="Rincón TECH — compromiso con el cliente"
-                                className="w-full h-full object-cover"
-                            />
-                        </div>
-                        <div className="absolute -bottom-8 -left-8 glass-card p-6 space-y-1 animate-float">
-                            <p className="text-3xl font-black gradient-text">100%</p>
-                            <p className="text-xs font-semibold uppercase tracking-widest text-[hsl(var(--text-secondary))]">Atención personalizada</p>
-                        </div>
+                    <div className="space-y-5 text-lg text-[hsl(var(--text-secondary))] leading-relaxed">
+                        <p>
+                            Rincón TECH nació de una idea simple: que comprar tecnología no debería ser una experiencia impersonal. Somos una empresa familiar de Santa Fe con algo que las grandes cadenas no pueden ofrecerte — el tiempo y la dedicación para escucharte de verdad.
+                        </p>
+                        <p>
+                            Antes de recomendarte cualquier producto, entendemos tus necesidades, tu presupuesto y cómo vas a usarlo. No queremos venderte algo; queremos que estés genuinamente satisfecho con lo que llevás a tu casa o a tu empresa.
+                        </p>
+                        <p>
+                            Para nosotros cada cliente es una relación a largo plazo, no una transacción. Eso explica por qué muchos vuelven — y nos traen a sus conocidos.
+                        </p>
+                    </div>
+                    <div className="flex justify-center gap-4 pt-4">
+                        <Link href="/contact" className="btn btn-primary">
+                            Hablar con nosotros
+                            <ArrowRight className="ml-2 w-4 h-4" />
+                        </Link>
+                        <Link href="/products" className="btn btn-secondary">
+                            Ver productos
+                        </Link>
                     </div>
                 </div>
             </section>
