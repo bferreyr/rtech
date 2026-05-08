@@ -36,10 +36,23 @@ export async function createCategory(formData: FormData) {
     const slug = name.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
     const parentId = formData.get('parentId') as string;
 
-    // @ts-ignore
-    await prisma.category.create({
-        data: { name, slug, parentId: parentId || null }
-    });
+    let isDuplicate = false;
+    try {
+        // @ts-ignore
+        await prisma.category.create({
+            data: { name, slug, parentId: parentId || null }
+        });
+    } catch (error: any) {
+        if (error.code === 'P2002') {
+            isDuplicate = true;
+        } else {
+            throw error;
+        }
+    }
+
+    if (isDuplicate) {
+        redirect('/admin/categories/new?error=duplicate');
+    }
 
     revalidatePath('/', 'layout');
     redirect('/admin/categories');
@@ -50,11 +63,24 @@ export async function updateCategory(id: string, formData: FormData) {
     const slug = name.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
     const parentId = formData.get('parentId') as string;
 
-    // @ts-ignore
-    await prisma.category.update({
-        where: { id },
-        data: { name, slug, parentId: parentId || null }
-    });
+    let isDuplicate = false;
+    try {
+        // @ts-ignore
+        await prisma.category.update({
+            where: { id },
+            data: { name, slug, parentId: parentId || null }
+        });
+    } catch (error: any) {
+        if (error.code === 'P2002') {
+            isDuplicate = true;
+        } else {
+            throw error;
+        }
+    }
+
+    if (isDuplicate) {
+        redirect(`/admin/categories/${id}/edit?error=duplicate`);
+    }
 
     revalidatePath('/', 'layout');
     redirect('/admin/categories');

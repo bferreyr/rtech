@@ -5,7 +5,10 @@ import { ArrowLeft, Save } from "lucide-react";
 
 export const dynamic = 'force-dynamic';
 
-export default async function NewCategoryPage() {
+export default async function NewCategoryPage(props: { searchParams?: Promise<{ [key: string]: string | string[] | undefined }> }) {
+    const searchParams = props.searchParams ? await props.searchParams : {};
+    const isError = searchParams?.error === 'duplicate';
+
     const categories = await prisma.category.findMany({
         where: { parentId: null },
         orderBy: { name: 'asc' }
@@ -24,6 +27,11 @@ export default async function NewCategoryPage() {
             </div>
 
             <form action={createCategory} className="glass-card p-8 space-y-6">
+                {isError && (
+                    <div className="p-4 bg-red-500/10 border border-red-500/20 rounded-lg text-red-500 text-sm">
+                        Ya existe una categoría con ese nombre. Por favor, elige uno diferente.
+                    </div>
+                )}
                 <div className="space-y-2">
                     <label htmlFor="name" className="text-sm font-medium">Nombre de la Categoría</label>
                     <input
