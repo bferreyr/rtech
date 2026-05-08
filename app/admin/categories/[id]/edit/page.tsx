@@ -6,9 +6,15 @@ import { notFound } from "next/navigation";
 
 export default async function EditCategoryPage({ params }: { params: Promise<{ id: string }> }) {
     const { id } = await params;
-    const category = await prisma.category.findUnique({
-        where: { id }
-    });
+    const [category, categories] = await Promise.all([
+        prisma.category.findUnique({
+            where: { id }
+        }),
+        prisma.category.findMany({
+            where: { parentId: null, id: { not: id } },
+            orderBy: { name: 'asc' }
+        })
+    ]);
 
     if (!category) notFound();
 
@@ -40,6 +46,21 @@ export default async function EditCategoryPage({ params }: { params: Promise<{ i
                         <span className="text-xs text-[color:var(--text-tertiary)] uppercase font-bold tracking-widest">Slug Actual:</span>
                         <code className="text-xs bg-white/5 px-2 py-0.5 rounded text-[color:var(--accent-primary)]">{category.slug}</code>
                     </div>
+                </div>
+
+                <div className="space-y-2">
+                    <label htmlFor="parentId" className="text-sm font-medium">Categoría Padre (Opcional)</label>
+                    <select
+                        name="parentId"
+                        id="parentId"
+                        defaultValue={category.parentId || ""}
+                        className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-2.5 focus:outline-none focus:border-[color:var(--accent-primary)] transition-colors text-white [&>option]:bg-[#111] [&>option]:text-white"
+                    >
+                        <option value="">Ninguna (Categoría Principal)</option>
+                        {categories.map((c: any) => (
+                            <option key={c.id} value={c.id}>{c.name}</option>
+                        ))}
+                    </select>
                 </div>
 
                 <div className="flex justify-end gap-4 pt-4">

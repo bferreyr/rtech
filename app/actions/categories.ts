@@ -34,33 +34,29 @@ export async function getCategories() {
 export async function createCategory(formData: FormData) {
     const name = formData.get('name') as string;
     const slug = name.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
+    const parentId = formData.get('parentId') as string;
 
     // @ts-ignore
     await prisma.category.create({
-        data: { name, slug }
+        data: { name, slug, parentId: parentId || null }
     });
 
-    revalidatePath('/admin/categories');
-    revalidatePath('/admin/products');
-    revalidatePath('/products');
-    revalidatePath('/');
+    revalidatePath('/', 'layout');
     redirect('/admin/categories');
 }
 
 export async function updateCategory(id: string, formData: FormData) {
     const name = formData.get('name') as string;
     const slug = name.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
+    const parentId = formData.get('parentId') as string;
 
     // @ts-ignore
     await prisma.category.update({
         where: { id },
-        data: { name, slug }
+        data: { name, slug, parentId: parentId || null }
     });
 
-    revalidatePath('/admin/categories');
-    revalidatePath('/admin/products');
-    revalidatePath('/products');
-    revalidatePath('/');
+    revalidatePath('/', 'layout');
     redirect('/admin/categories');
 }
 
@@ -70,20 +66,14 @@ export async function deleteCategory(id: string) {
         where: { id }
     });
 
-    revalidatePath('/admin/categories');
-    revalidatePath('/admin/products');
-    revalidatePath('/products');
-    revalidatePath('/');
+    revalidatePath('/', 'layout');
 }
 
 export async function deleteAllCategories() {
     // @ts-ignore
     await prisma.category.deleteMany({});
 
-    revalidatePath('/admin/categories');
-    revalidatePath('/admin/products');
-    revalidatePath('/products');
-    revalidatePath('/');
+    revalidatePath('/', 'layout');
 }
 
 export async function getProducts(options?: {

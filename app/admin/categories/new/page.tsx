@@ -1,8 +1,14 @@
 import { createCategory } from "@/app/actions/categories";
+import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { ArrowLeft, Save } from "lucide-react";
 
-export default function NewCategoryPage() {
+export default async function NewCategoryPage() {
+    const categories = await prisma.category.findMany({
+        where: { parentId: null },
+        orderBy: { name: 'asc' }
+    });
+
     return (
         <div className="max-w-2xl mx-auto space-y-8">
             <div className="flex items-center gap-4">
@@ -29,6 +35,20 @@ export default function NewCategoryPage() {
                     <p className="text-xs text-[color:var(--text-tertiary)]">
                         El slug se generará automáticamente a partir del nombre.
                     </p>
+                </div>
+
+                <div className="space-y-2">
+                    <label htmlFor="parentId" className="text-sm font-medium">Categoría Padre (Opcional)</label>
+                    <select
+                        name="parentId"
+                        id="parentId"
+                        className="w-full bg-black/20 border border-white/10 rounded-lg px-4 py-2.5 focus:outline-none focus:border-[color:var(--accent-primary)] transition-colors text-white [&>option]:bg-[#111] [&>option]:text-white"
+                    >
+                        <option value="">Ninguna (Categoría Principal)</option>
+                        {categories.map((c: any) => (
+                            <option key={c.id} value={c.id}>{c.name}</option>
+                        ))}
+                    </select>
                 </div>
 
                 <div className="flex justify-end gap-4 pt-4">
