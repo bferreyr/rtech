@@ -3,6 +3,8 @@ import Link from "next/link";
 import Image from "next/image";
 import { Plus, Trash2, Eye, EyeOff, Edit, Move } from "lucide-react";
 
+export const dynamic = 'force-dynamic';
+
 export default async function OffersPage() {
     const slides = await getCarouselSlides();
 

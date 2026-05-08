@@ -3,6 +3,8 @@ import { prisma } from "@/lib/prisma";
 import Link from "next/link";
 import { ArrowLeft, Save } from "lucide-react";
 
+export const dynamic = 'force-dynamic';
+
 export default async function NewCategoryPage() {
     const categories = await prisma.category.findMany({
         where: { parentId: null },
