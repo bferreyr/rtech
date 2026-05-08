@@ -77,11 +77,7 @@ export function Footer() {
                                     Nosotros
                                 </Link>
                             </li>
-                            <li>
-                                <Link href="/empresas" className="text-[hsl(var(--text-secondary))] hover:text-[hsl(var(--accent-primary))] transition-colors text-sm">
-                                    Servicios IT
-                                </Link>
-                            </li>
+
                             <li>
                                 <Link href="/contact" className="text-[hsl(var(--text-secondary))] hover:text-[hsl(var(--accent-primary))] transition-colors text-sm">
                                     Contacto

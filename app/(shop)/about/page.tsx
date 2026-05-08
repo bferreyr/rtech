@@ -174,69 +174,7 @@ export default function AboutPage() {
                 </div>
             </section>
 
-            {/* ── Sección Empresas ──────────────────────────────────────── */}
-            <section className="bg-gradient-to-b from-transparent via-white/5 to-transparent py-24">
-                <div className="container px-4">
-                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
 
-                        <div className="space-y-8">
-                            <div className="space-y-3">
-                                <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full glass-card">
-                                    <Building2 className="w-4 h-4 text-[hsl(var(--accent-primary))]" />
-                                    <span className="text-sm font-bold uppercase tracking-wider">Para empresas</span>
-                                </div>
-                                <h2 className="text-4xl font-bold tracking-tight">
-                                    Tu socio tecnológico de <span className="gradient-text">confianza</span>
-                                </h2>
-                            </div>
-
-                            <p className="text-lg text-[hsl(var(--text-secondary))] leading-relaxed">
-                                Trabajamos con PyMEs, estudios profesionales, comercios y organizaciones que necesitan equipar o actualizar su infraestructura tecnológica de forma eficiente y confiable. Entendemos que en el entorno empresarial el tiempo es crítico — por eso ofrecemos respuesta rápida, precios competitivos y atención dedicada.
-                            </p>
-
-                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                                {[
-                                    "Cotizaciones personalizadas sin cargo",
-                                    "Facturación A y B disponible",
-                                    "Compras por volumen con descuento",
-                                    "Soporte técnico post-entrega",
-                                    "Asesoramiento en infraestructura IT",
-                                    "Entregas coordinadas a medida",
-                                ].map((item, i) => (
-                                    <div key={i} className="flex items-center gap-3">
-                                        <CheckCircle2 className="w-5 h-5 text-green-400 flex-shrink-0" />
-                                        <span className="text-[hsl(var(--text-secondary))] text-sm">{item}</span>
-                                    </div>
-                                ))}
-                            </div>
-
-                            <Link href="/empresas" className="btn btn-primary inline-flex">
-                                Ver propuesta para empresas
-                                <ArrowRight className="ml-2 w-4 h-4" />
-                            </Link>
-                        </div>
-
-                        {/* Stats grid */}
-                        <div className="grid grid-cols-2 gap-4">
-                            {[
-                                { icon: <Users className="w-6 h-6 text-[hsl(var(--accent-primary))]" />, value: "+200", label: "Clientes satisfechos" },
-                                { icon: <Handshake className="w-6 h-6 text-green-400" />, value: "+50", label: "Empresas atendidas" },
-                                { icon: <HeadphonesIcon className="w-6 h-6 text-violet-400" />, value: "24 hs", label: "Tiempo de respuesta" },
-                                { icon: <Star className="w-6 h-6 text-amber-400 fill-amber-400" />, value: "5★", label: "Valoración promedio" },
-                            ].map((item, i) => (
-                                <div
-                                    key={i}
-                                    className="glass-card p-8 text-center space-y-4 hover:border-[hsl(var(--accent-primary))]/50 transition-all hover:-translate-y-1 duration-300"
-                                >
-                                    <div className="flex justify-center">{item.icon}</div>
-                                    <p className="text-3xl font-black gradient-text">{item.value}</p>
-                                    <p className="text-sm text-[hsl(var(--text-secondary))] font-medium">{item.label}</p>
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </div>
-            </section>
 
             {/* ── Pilares / Compromiso ──────────────────────────────────── */}
             <section className="container py-16 px-4">
