@@ -19,7 +19,6 @@ const menuItems = [
     { icon: Users, label: 'Usuarios', href: '/admin/users' },
     { icon: MessageSquare, label: 'Reseñas', href: '/admin/reviews' },
     { icon: ShieldAlert, label: 'RMA', href: '/admin/warranty' },
-    { icon: Box, label: '3D', href: '/admin/3d-printing' },
     { icon: Settings, label: 'Config', href: '/admin/settings' },
 ];
 
