@@ -64,6 +64,8 @@ model Product {
   miniatura            String?
   atributos            String?
   gamer                Boolean?        @default(false)
+  descripcionDetallada String?         @db.Text
+  descripcionLarga     String?         @db.Text
   price                Decimal
   stock                Int
   imageUrl             String?

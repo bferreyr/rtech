@@ -624,23 +624,34 @@ export async function bulkUploadProducts(formData: FormData) {
                 } else {
                     stockVal = parseNum(rawStock) || 0;
                 }
-                const priceVal = parseNum(getVal(['Precio (DOLAR (U$S))', 'Precio', 'precio', 'price', 'Precio Venta', 'Precio U$S', 'Precio Usd'])) || 0;
+                // MOBE uses "Precio c/IVA (DOLAR (U$S))" as the main price column
+                const priceVal = parseNum(getVal([
+                    'Precio c/IVA (DOLAR (U$S))',
+                    'Precio c/IVA (DOLAR)',
+                    'Precio c/IVA',
+                    'Precio (DOLAR (U$S))',
+                    'Precio', 'precio', 'price', 'Precio Venta', 'Precio U$S', 'Precio Usd'
+                ])) || 0;
                 const pvpUsdExcel = parseNum(getVal(['pvp_usd', 'Pvp Usd', 'PVP USD', 'Pvp_usd', 'PVP_USD', 'pvp usd'])) || priceVal;
-                
-                // Calculate final price with markup
+
+                // Calculate final price with markup applied over MOBE price
                 const baseToMarkup = pvpUsdExcel > 0 ? pvpUsdExcel : priceVal;
                 const finalPrice = baseToMarkup > 0 ? baseToMarkup * markupMultiplier : 0;
+
+                // MOBE-specific description fields
+                const rawDescDetallada = getVal(['Descripción Detallada', 'Descripcion Detallada', 'Desc. Detallada', 'descripcionDetallada']);
+                const rawDescLarga = getVal(['Descripción Larga', 'Descripcion Larga', 'Desc. Larga', 'descripcionLarga']);
 
                 // Prepare base data (scalars)
                 const baseData = {
                     // Product Identification
                     sku: String(sku || `PROD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`),
-                    codigoAlfa: getVal(['Cód. Fab.', 'Cód Fab', 'codigo_alfa']) ? String(getVal(['Cód. Fab.', 'Cód Fab', 'codigo_alfa'])) : null,
+                    codigoAlfa: getVal(['Cód. Fab.', 'Cód Fab', 'Cod. Fab.', 'codigo_alfa']) ? String(getVal(['Cód. Fab.', 'Cód Fab', 'Cod. Fab.', 'codigo_alfa'])) : null,
                     codigoProducto: sku ? String(sku) : null,
 
                     // Basic Information
                     name: fixEncoding(String(name || '')),
-                    description: fixEncoding(String(getVal(['Descripción Detallada', 'Descripcion Detallada', 'description', 'Description']) || getVal(['Descripción Larga', 'Descripcion Larga']) || '')),
+                    description: fixEncoding(String(rawDescDetallada || rawDescLarga || getVal(['description', 'Description']) || '')),
                     categoria: catName ? fixEncoding(String(catName)) : null,
                     subCategoria: null,
                     marca: getVal(['Marca', 'brand', 'marca']) ? fixEncoding(String(getVal(['Marca', 'brand', 'marca']))) : null,
@@ -654,7 +665,7 @@ export async function bulkUploadProducts(formData: FormData) {
                     // Dynamic Calculation
                     markup: globalMarkup,
                     cotizacion: null,
-                    pvpUsd: pvpUsdExcel > 0 ? pvpUsdExcel : null,
+                    pvpUsd: baseToMarkup > 0 ? baseToMarkup : null,
 
                     // Physical Properties
                     peso: parseNum(getVal(['Peso', 'peso', 'weight'])),
@@ -662,7 +673,7 @@ export async function bulkUploadProducts(formData: FormData) {
 
                     // Stock Management
                     nivelStock: null,
-                    stockTotal: stockVal, // Ensure valid integer
+                    stockTotal: stockVal,
                     stockDepositoCliente: 0,
                     stockDepositoCd: 0,
 
@@ -685,6 +696,10 @@ export async function bulkUploadProducts(formData: FormData) {
                         }
                         return false;
                     })(),
+
+                    // MOBE extended descriptions
+                    descripcionDetallada: rawDescDetallada ? fixEncoding(String(rawDescDetallada)) : null,
+                    descripcionLarga: rawDescLarga ? fixEncoding(String(rawDescLarga)) : null,
 
                     // Legacy fields
                     price: finalPrice > 0 ? finalPrice : priceVal,
@@ -738,5 +753,51 @@ export async function bulkUploadProducts(formData: FormData) {
         count: successCount,
         errors: errorCount > 0 ? errors : undefined,
         message: `Procesados ${successCount} productos correctamente. ${errorCount > 0 ? `${errorCount} errores.` : ''}`
+    };
+}
+
+// ─── Extranet: public MOBE catalog ───────────────────────────────────────────
+
+export async function getMobeProducts({
+    page = 1,
+    limit = 50,
+    search = '',
+}: {
+    page?: number;
+    limit?: number;
+    search?: string;
+} = {}) {
+    const skip = (page - 1) * limit;
+
+    const where: any = { provider: 'MOBE' };
+
+    if (search) {
+        where.OR = [
+            { name: { contains: search, mode: 'insensitive' } },
+            { sku: { contains: search, mode: 'insensitive' } },
+            { marca: { contains: search, mode: 'insensitive' } },
+            { codigoAlfa: { contains: search, mode: 'insensitive' } },
+            { categoria: { contains: search, mode: 'insensitive' } },
+        ];
+    }
+
+    const [products, total] = await Promise.all([
+        prisma.product.findMany({
+            where,
+            skip,
+            take: limit,
+            orderBy: { name: 'asc' },
+        }),
+        prisma.product.count({ where }),
+    ]);
+
+    return {
+        products: products.map(serializeProduct),
+        pagination: {
+            total,
+            totalPages: Math.ceil(total / limit),
+            currentPage: page,
+            limit,
+        },
     };
 }
