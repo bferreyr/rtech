@@ -278,19 +278,25 @@
     padding: 1.5rem;
 }
 
-/* Search */
-.extranet-search-bar {
+/* Toolbar (search + filters) */
+.extranet-toolbar {
     display: flex;
     align-items: center;
-    gap: 1rem;
+    gap: 0.75rem;
     margin-bottom: 1rem;
+    flex-wrap: wrap;
+}
+.extranet-filters {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
     flex-wrap: wrap;
 }
 
 .extranet-search-wrapper {
     position: relative;
     flex: 1;
-    min-width: 260px;
+    min-width: 220px;
 }
 
 .extranet-search-icon {
@@ -306,12 +312,12 @@
 
 .extranet-search-input {
     width: 100%;
-    padding: 0.625rem 1rem 0.625rem 2.5rem;
+    padding: 0.5625rem 2.25rem 0.5625rem 2.25rem;
     background: rgba(255,255,255,0.05);
     border: 1px solid var(--rt-border2);
     border-radius: 0.625rem;
     color: var(--rt-text);
-    font-size: 0.875rem;
+    font-size: 0.8125rem;
     outline: none;
     transition: border-color 0.2s, box-shadow 0.2s;
 }
@@ -325,6 +331,135 @@
     color: var(--rt-dimmed);
 }
 
+.extranet-search-clear {
+    position: absolute;
+    right: 0.625rem;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    color: var(--rt-muted);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    padding: 0.125rem;
+    border-radius: 0.25rem;
+    transition: color 0.15s;
+}
+.extranet-search-clear:hover { color: var(--rt-text); }
+
+/* Filter dropdown button */
+.extranet-filter-wrap {
+    position: relative;
+}
+.extranet-filter-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.375rem;
+    padding: 0.4375rem 0.75rem;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid var(--rt-border2);
+    border-radius: 0.5rem;
+    color: var(--rt-muted);
+    font-size: 0.75rem;
+    font-weight: 600;
+    cursor: pointer;
+    white-space: nowrap;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.extranet-filter-btn:hover {
+    border-color: var(--rt-blue);
+    color: var(--rt-blue);
+}
+.extranet-filter-btn--active {
+    border-color: var(--rt-cyan);
+    color: var(--rt-cyan);
+    background: rgba(6,182,212,0.08);
+}
+.extranet-filter-selected {
+    max-width: 100px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.extranet-clear-all {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    padding: 0.375rem 0.625rem;
+    background: none;
+    border: 1px solid rgba(239,68,68,0.25);
+    border-radius: 0.5rem;
+    color: #f87171;
+    font-size: 0.7rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: background 0.15s;
+}
+.extranet-clear-all:hover { background: rgba(239,68,68,0.08); }
+
+/* Dropdown panel */
+.extranet-dropdown {
+    position: absolute;
+    top: calc(100% + 0.375rem);
+    left: 0;
+    z-index: 50;
+    background: #0d1320;
+    border: 1px solid var(--rt-border2);
+    border-radius: 0.75rem;
+    min-width: 200px;
+    max-width: 280px;
+    box-shadow: 0 16px 40px rgba(0,0,0,0.5);
+    overflow: hidden;
+}
+.extranet-dropdown-search {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 0.75rem;
+    border-bottom: 1px solid rgba(255,255,255,0.06);
+}
+.extranet-dropdown-input {
+    flex: 1;
+    background: none;
+    border: none;
+    outline: none;
+    color: var(--rt-text);
+    font-size: 0.8125rem;
+}
+.extranet-dropdown-input::placeholder { color: var(--rt-dimmed); }
+.extranet-dropdown-list {
+    max-height: 220px;
+    overflow-y: auto;
+    padding: 0.375rem 0;
+}
+.extranet-dropdown-empty {
+    padding: 0.75rem 1rem;
+    font-size: 0.75rem;
+    color: var(--rt-muted);
+    text-align: center;
+}
+.extranet-dropdown-item {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 0.5rem 0.875rem;
+    font-size: 0.8125rem;
+    color: var(--rt-text);
+    background: none;
+    border: none;
+    cursor: pointer;
+    transition: background 0.12s;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.extranet-dropdown-item:hover { background: rgba(255,255,255,0.05); }
+.extranet-dropdown-item--active {
+    color: var(--rt-cyan);
+    background: rgba(6,182,212,0.08);
+}
+
 .extranet-count {
     font-size: 0.75rem;
     color: var(--rt-muted);
@@ -332,27 +467,13 @@
     font-weight: 500;
 }
 
-/* Table */
+/* Table — full width, no horizontal scroll */
 .extranet-table-wrapper {
-    overflow-x: auto;
+    overflow-x: hidden;
     border-radius: 0.875rem;
     border: 1px solid var(--rt-border2);
     background: var(--rt-bg2);
-    scrollbar-width: thin;
-    scrollbar-color: rgba(14, 165, 233, 0.3) rgba(255,255,255,0.05);
-}
-
-.extranet-table-wrapper::-webkit-scrollbar {
-    height: 6px;
-}
-
-.extranet-table-wrapper::-webkit-scrollbar-track {
-    background: rgba(255,255,255,0.04);
-}
-
-.extranet-table-wrapper::-webkit-scrollbar-thumb {
-    background: rgba(14, 165, 233, 0.3);
-    border-radius: 99px;
+    width: 100%;
 }
 
 .extranet-table {
@@ -362,7 +483,7 @@
 }
 
 .extranet-th {
-    padding: 0.75rem 1rem;
+    padding: 0.625rem 0.875rem;
     text-align: left;
     font-size: 0.6875rem;
     font-weight: 600;
@@ -375,54 +496,15 @@
     cursor: pointer;
     user-select: none;
     transition: color 0.15s;
-}
-
-.extranet-th:hover {
-    color: var(--rt-blue);
-}
-
-.extranet-th {
-    display: table-cell;
-}
-
-/* Override: th needs flex for icon alignment */
-.extranet-table thead tr th {
-    position: relative;
-}
-
-.extranet-th span {
-    display: inline;
-}
-
-/* Quick hack: th with sorticon — use flex inside */
-.extranet-table thead tr th {
     vertical-align: middle;
 }
+.extranet-th:hover { color: var(--rt-blue); }
 
-/* Apply flex via wrapping text + icon */
-.extranet-th {
-    padding: 0.75rem 1rem;
-    text-align: left;
-    font-size: 0.6875rem;
-    font-weight: 600;
-    text-transform: uppercase;
-    letter-spacing: 0.07em;
-    color: var(--rt-muted);
-    border-bottom: 1px solid var(--rt-border2);
-    background: rgba(255,255,255,0.02);
-    white-space: nowrap;
-    cursor: pointer;
-    user-select: none;
-    transition: color 0.15s;
-}
+/* Grow column takes all remaining width */
+.extranet-th-grow { width: 100%; }
 
-.extranet-th-right {
-    text-align: right;
-}
-
-.extranet-th-code {
-    min-width: 100px;
-}
+/* Right-aligned numeric columns */
+.extranet-th-num { text-align: right; white-space: nowrap; }
 
 .extranet-row {
     border-bottom: 1px solid rgba(255,255,255,0.04);
@@ -439,34 +521,31 @@
 }
 
 .extranet-td {
-    padding: 0.6875rem 1rem;
+    padding: 0.5625rem 0.875rem;
     color: var(--rt-text);
     vertical-align: middle;
     white-space: nowrap;
+    font-size: 0.8125rem;
 }
-
 .extranet-td-name {
-    min-width: 260px;
-    max-width: 360px;
+    width: 100%;
     white-space: normal;
     word-break: break-word;
 }
-
 .extranet-product-name {
+    display: block;
     font-weight: 500;
     color: var(--rt-text);
     line-height: 1.35;
 }
-
-.extranet-td-code {
-    color: var(--rt-muted);
+.extranet-product-sku {
+    display: block;
+    font-size: 0.7rem;
+    color: var(--rt-dimmed);
     font-family: monospace;
-    font-size: 0.75rem;
+    margin-top: 0.1rem;
 }
-
-.extranet-td-right {
-    text-align: right;
-}
+.extranet-td-num { text-align: right; font-variant-numeric: tabular-nums; }
 
 .extranet-stock {
     display: inline-block;
@@ -784,11 +863,13 @@
     border-top: 1px solid rgba(255,255,255,0.07);
     display: flex;
     justify-content: flex-end;
+    align-items: center;
+    gap: 0.75rem;
     flex-shrink: 0;
 }
 
 .extranet-modal-btn-close {
-    padding: 0.5rem 1.5rem;
+    padding: 0.5rem 1.25rem;
     border-radius: 0.625rem;
     background: rgba(255,255,255,0.07);
     border: 1px solid rgba(255,255,255,0.12);
@@ -798,8 +879,94 @@
     cursor: pointer;
     transition: background 0.15s, border-color 0.15s;
 }
-
 .extranet-modal-btn-close:hover {
     background: rgba(255,255,255,0.12);
     border-color: rgba(255,255,255,0.2);
+}
+
+/* WhatsApp button */
+.extranet-modal-btn-wa {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1.25rem;
+    border-radius: 0.625rem;
+    background: linear-gradient(135deg, #25d366, #128c7e);
+    color: #fff;
+    font-size: 0.875rem;
+    font-weight: 700;
+    cursor: pointer;
+    text-decoration: none;
+    box-shadow: 0 4px 14px rgba(37,211,102,0.3);
+    transition: box-shadow 0.2s, transform 0.15s;
+}
+.extranet-modal-btn-wa:hover {
+    box-shadow: 0 6px 20px rgba(37,211,102,0.45);
+    transform: translateY(-1px);
+}
+
+/* Pagination */
+.extranet-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    flex-wrap: wrap;
+    margin-top: 1.25rem;
+    padding: 0.75rem 0;
+}
+.extranet-page-btn {
+    padding: 0.4375rem 0.875rem;
+    border-radius: 0.5rem;
+    border: 1px solid var(--rt-border2);
+    background: rgba(255,255,255,0.04);
+    color: var(--rt-muted);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.extranet-page-btn:hover:not(:disabled) {
+    border-color: var(--rt-blue);
+    color: var(--rt-blue);
+    background: rgba(14,165,233,0.08);
+}
+.extranet-page-btn:disabled {
+    opacity: 0.35;
+    cursor: default;
+}
+.extranet-page-numbers {
+    display: flex;
+    align-items: center;
+    gap: 0.25rem;
+}
+.extranet-page-num {
+    width: 2rem;
+    height: 2rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 0.5rem;
+    border: 1px solid transparent;
+    background: none;
+    color: var(--rt-muted);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: border-color 0.15s, color 0.15s, background 0.15s;
+}
+.extranet-page-num:hover:not(.extranet-page-num--active) {
+    border-color: var(--rt-border2);
+    color: var(--rt-text);
+    background: rgba(255,255,255,0.04);
+}
+.extranet-page-num--active {
+    border-color: var(--rt-cyan);
+    background: rgba(6,182,212,0.12);
+    color: var(--rt-cyan);
+}
+.extranet-page-info {
+    font-size: 0.7rem;
+    color: var(--rt-dimmed);
+    margin-left: 0.25rem;
 }

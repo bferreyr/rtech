@@ -115,7 +115,10 @@ export async function getProducts(options?: {
 }) {
     const { categoryId, brands, minPrice, maxPrice, inStock, sortBy, page = 1, limit = 12, search } = options || {};
 
-    const where: any = {};
+    const where: any = {
+        // Exclude MOBE products — they belong exclusively to /extranet
+        provider: { not: 'MOBE' }
+    };
 
     // Category filter
     if (categoryId) where.categoryId = categoryId;

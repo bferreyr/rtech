@@ -12,14 +12,26 @@ export const metadata: Metadata = {
     robots: { index: false, follow: false },
 };
 
+// WhatsApp number (without + or spaces)
+const WA_NUMBER = '5493424660089';
+
 export default async function ExtranetPage() {
     const [{ products, pagination }, globalMarkup, rateData] = await Promise.all([
-        getMobeProducts({ limit: 2000 }), // Load all for client-side filtering
+        getMobeProducts({ limit: 5000 }), // Load all for client-side filtering & pagination
         getGlobalMarkup(),
         getExchangeRate(),
     ]);
 
     const exchangeRate = rateData.rate;
+
+    // Build unique filter lists from all products
+    const allRubros = Array.from(new Set(
+        (products as any[]).map((p: any) => p.categoria).filter(Boolean)
+    )).sort() as string[];
+
+    const allMarcas = Array.from(new Set(
+        (products as any[]).map((p: any) => p.marca).filter(Boolean)
+    )).sort() as string[];
 
     return (
         <div className="extranet-page">
@@ -32,22 +44,8 @@ export default async function ExtranetPage() {
                     <div>
                         <h1 className="extranet-header-title">Extranet — Catálogo MOBE</h1>
                         <p className="extranet-header-sub">
-                            Rincón TECH · Precios en USD y ARS actualizados.
-                            TC hoy: <strong>${exchangeRate.toLocaleString('es-AR')}</strong>
+                            Rincón TECH · {pagination.total} productos disponibles
                         </p>
-                    </div>
-
-                    <div className="extranet-header-badges">
-                        <div className="extranet-rate-badge">
-                            <span className="extranet-rate-label">USD/ARS</span>
-                            <span className="extranet-rate-value">
-                                ${exchangeRate.toLocaleString('es-AR', { minimumFractionDigits: 2 })}
-                            </span>
-                        </div>
-                        <div className="extranet-markup-badge">
-                            <span className="extranet-rate-label">Markup</span>
-                            <span className="extranet-rate-value">{globalMarkup}%</span>
-                        </div>
                     </div>
                 </div>
             </div>
@@ -59,6 +57,9 @@ export default async function ExtranetPage() {
                     globalMarkup={globalMarkup}
                     exchangeRate={exchangeRate}
                     total={pagination.total}
+                    allRubros={allRubros}
+                    allMarcas={allMarcas}
+                    waNumber={WA_NUMBER}
                 />
             </div>
         </div>
