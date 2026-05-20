@@ -13,7 +13,7 @@ export const metadata: Metadata = {
 };
 
 // WhatsApp number (without + or spaces)
-const WA_NUMBER = '5493424660089';
+const WA_NUMBER = '543425933763';
 
 export default async function ExtranetPage() {
     const [{ products, pagination }, globalMarkup, rateData] = await Promise.all([

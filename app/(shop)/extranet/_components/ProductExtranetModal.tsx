@@ -73,10 +73,10 @@ export function ProductExtranetModal({ product, onClose, globalMarkup, exchangeR
     // Build WhatsApp message
     const waMessage = encodeURIComponent(
         `Hola! Estoy interesado en el siguiente producto del catálogo:\n\n` +
-        `📦 *${product.name}*\n` +
-        `🔖 Cód: ${product.sku}${product.codigoAlfa ? ` | Fab: ${product.codigoAlfa}` : ''}\n` +
-        `${product.marca ? `🏷️ Marca: ${product.marca}\n` : ''}` +
-        `${product.categoria ? `📂 Rubro: ${product.categoria}\n` : ''}` +
+        `${product.name}\n` +
+        `Cód: ${product.sku}${product.codigoAlfa ? ` | Fab: ${product.codigoAlfa}` : ''}\n` +
+        `${product.marca ? `Marca: ${product.marca}\n` : ''}` +
+        `${product.categoria ? `Rubro: ${product.categoria}\n` : ''}` +
         `\nPor favor, ¿podrían brindarme más información y disponibilidad?`
     );
     const waUrl = `https://wa.me/${waNumber}?text=${waMessage}`;
