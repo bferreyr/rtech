@@ -222,8 +222,11 @@ export async function getFullSearchResults(query: string) {
 }
 
 // New: Get available filters for the current product set
-export async function getAvailableFilters(categoryId?: string) {
-    const where: any = categoryId ? { categoryId } : {};
+export async function getAvailableFilters(options: { categoryId?: string, excludeProvider?: string } = {}) {
+    const { categoryId, excludeProvider } = options;
+    const where: any = {};
+    if (categoryId) where.categoryId = categoryId;
+    if (excludeProvider) where.provider = { not: excludeProvider };
 
     const [brands, priceRange, allCategories] = await Promise.all([
         // Get unique brands with product count
@@ -245,7 +248,11 @@ export async function getAvailableFilters(categoryId?: string) {
         // @ts-ignore
         prisma.category.findMany({
             include: {
-                _count: { select: { products: true } },
+                _count: { 
+                    select: { 
+                        products: excludeProvider ? { where: { provider: { not: excludeProvider } } } : true 
+                    } 
+                },
             },
             orderBy: { name: 'asc' },
         }),

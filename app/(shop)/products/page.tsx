@@ -30,8 +30,8 @@ export default async function ProductsPage(props: {
             maxPrice: priceMax,
             inStock
         }),
-        getCategories(),
-        getAvailableFilters(categoryId)
+        getCategories({ excludeProvider: 'MOBE' }),
+        getAvailableFilters({ categoryId, excludeProvider: 'MOBE' })
     ]);
 
     return (

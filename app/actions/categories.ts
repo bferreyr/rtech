@@ -5,14 +5,24 @@ import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { getExchangeRate, getGlobalMarkup } from "@/app/actions/settings";
 
-export async function getCategories() {
+export async function getCategories(options?: { excludeProvider?: string }) {
+    const { excludeProvider } = options || {};
+
+    let whereClause: any = {
+        parentId: null
+    };
+
+    if (excludeProvider) {
+        whereClause.OR = [
+            { products: { some: { provider: { not: excludeProvider } } } },
+            { children: { some: { products: { some: { provider: { not: excludeProvider } } } } } }
+        ];
+    }
+
     try {
         // @ts-ignore - Fallback if client generation is lagging
         return await prisma.category.findMany({
-            where: {
-                // @ts-ignore
-                parentId: null
-            },
+            where: whereClause,
             orderBy: { name: 'asc' },
             include: {
                 _count: {
@@ -20,6 +30,9 @@ export async function getCategories() {
                 },
                 // @ts-ignore
                 children: {
+                    where: excludeProvider ? {
+                        products: { some: { provider: { not: excludeProvider } } }
+                    } : undefined,
                     orderBy: { name: 'asc' }
                 }
             }

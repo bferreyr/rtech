@@ -32,8 +32,8 @@ export default async function Home(props: {
             maxPrice: priceMax,
             inStock
         }),
-        getCategories(),
-        getAvailableFilters(categoryId),
+        getCategories({ excludeProvider: 'MOBE' }),
+        getAvailableFilters({ categoryId, excludeProvider: 'MOBE' }),
         getCarouselSlides()
     ]);
 
