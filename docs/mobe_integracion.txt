@@ -1,0 +1,92 @@
+El Sistema GitExtranet le permite al Reseller o Revendedor colocar un link de acceso desde su propia Página Oficial. Éstos mecanismos para insertar GitExtranet en su sitio web le permiten ingresar tanto Usuarios Institucionales como Usuarios Hijos.
+
+A continuación se explica como utilizar los mecanismos con un ejemplo.
+
+Con un usuario Institucional:
+En ésta sección se muestra como crear la página contenedora y el link correspondiente.
+Primero debemos crear una página html con el siguiente código:
+
+<html>
+<head>
+<title>Nombre De la Empresa Del Resellers</title>
+<style type="text/css">
+body {
+margin: 0;
+padding: 0;
+}
+iframe {
+width: 100%;
+height: 100%;
+border: 0;
+margin: 0;
+padding: 0;
+}
+</style>
+</head>
+<body>
+<iframe src="https://www.gitextranet.com.ar/login?login=1&user_name=GENERICO&password=GENERICO"/>
+</body>
+</html>
+
+En éste ejemplo la vamos a guardar a la página con el nombre mi_gitextranet.html
+
+DESCARGAR: mi_gitextranet.html
+
+Crear los link a la Página Contenedora:
+Luego de haber creado mi_gitextranet.html, el paso a seguir es crear en nuestra Página Oficial un link que apunte a la página contenedora de GitExtranet (que en el ejemplo sería "mi_gitextranet.html").
+Estos link se puede generar de las dos formas siguientes:
+
+<a href="mi_gitextranet.html"> Ingreso al Sistema de Ventas </a>
+
+DESCARGAR: href_gitextranet.html
+
+Y la otra opción sería:
+
+<FORM ACTION="mi_gitextranet.html" METHOD="POST">
+<INPUT TYPE="submit" NAME="login" VALUE="Ingresar">
+</FORM>
+
+DESCARGAR: form_action_gitextranet.html
+
+Nota: El usuario "GENERICO" es un Usuario Institucional generado para el ejemplo. Cada Reseller o Revendedor puede generar su propio Usuario Institucional y utilizarlo. Cabe recordar que un Usuario Institucional solo puede ingresar y observar todos los Artículos Disponibles, pero no puede hacer ningún pedido o modificar su clave.
+
+Con el nuevo sistema de Login:
+Con este código podrás tener tu propio logo en el login, usar siempre el URL de tu sitio y además, que al desloguearse los usuarios, vuelvan a ver nuevamente tu logo sin que los usuarios tengan acceso a ningún dato de GitExtranet, y siempre vean tu página con tu logo.
+
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html>
+<head>
+<title>Mi Extranet</title>
+<script type="text/javascript" src="https://www.gitextranet.com.ar/static/javascript/embed.js"></script>
+</head>
+<body>
+<div id="extranet_container"></div>
+<script type="text/javascript">
+new Extranet(1);
+</script>
+</body>
+</html>
+
+En éste ejemplo vamos a guardar a la página con el nombre gitextranet_embebido.html.
+
+DESCARGAR: gitextranet_embebido.html
+
+Aclaración: En la sección del código, en donde dice "new Extranet(1);", usted deberá reemplazar el número 1 por el "Código de publicación de Extranet" que le fue asignado. Para averiguarlo, debe dirigirse a Gestión de Usuarios y en la parte inferior derecha figura su número de identificación. Como se ve a continuación:
+
+ecom-img
+
+También éste mecanismo le permite hacer login automático, para ello solo debe reemplazar "new Extranet(1);" por "new Extranet(1, {'username': 'usuarioejemplo', 'password': 'passejemplo'});". De ésta manera, el cliente al presionar el link ingresará de manera automática a la página. Puede crear por ejemplo un usuario genérico el cuál pueda ver precios y productos, y sin la posibilidad de realizar pedidos.
+
+Crear los link a la Página Contenedora:
+Luego de haber creado gitextranet_embebido.html, el paso a seguir es crear en nuestro sitio oficial un link que apunte a la página contenedora de GitExtranet (que en el ejemplo sería "gitextranet_embebido.html").
+Éste link se puede hacer:
+
+<a href="gitextranet_embebido.html"> Ingreso al Sistema de Ventas </a>
+
+DESCARGAR: href_gitextranet_embebido.html
+
+Aclaración: si bien su página oficial va a estar en un sitio http (sin encriptación), la comunicación entre el cliente (usuario hijo) y el servidor de GitExtranet se hace vía https (ssl), aunque el cliente no lo vea por estar GitExtranet embebido en un frame en su sitio. Y con estos sencillos pasos podemos crear un enlace directo desde nuestro sitio oficial a GitExtranet. De ésta manera tus clientes podrían ingresar a tu Extranet directamente desde tu sitio.
+
+← Anterior | Siguiente →
+
+Sacate todas las dudas, escríbenos y nos pondremos en contacto a la brevedad.

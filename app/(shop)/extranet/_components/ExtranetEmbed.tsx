@@ -1,31 +1,18 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-import Script from 'next/script';
+
 
 export default function ExtranetEmbed() {
-    const initialized = useRef(false);
-
-    useEffect(() => {
-        if (!initialized.current && typeof window !== 'undefined' && (window as any).Extranet) {
-            new (window as any).Extranet(8335, { username: 'RINCON', password: 'amircito' });
-            initialized.current = true;
-        }
-    }, []);
+    const iframeUrl = "https://www.gitextranet.com.ar/login?login=1&embedded=8335&user_name=RINCON&password=amircito";
 
     return (
-        <>
-            <Script 
-                src="https://www.gitextranet.com.ar/static/javascript/embed.js" 
-                strategy="afterInteractive"
-                onLoad={() => {
-                    if (!initialized.current && typeof window !== 'undefined' && (window as any).Extranet) {
-                        new (window as any).Extranet(8335, { username: 'RINCON', password: 'amircito' });
-                        initialized.current = true;
-                    }
-                }}
+        <div className="w-full h-[calc(100vh-80px)] overflow-hidden">
+            <iframe 
+                src={iframeUrl}
+                className="w-full h-full border-0"
+                title="Mayorista Rincón TECH"
+                sandbox="allow-same-origin allow-scripts allow-forms allow-popups"
             />
-            <div id="extranet_container" className="w-full min-h-[80vh]"></div>
-        </>
+        </div>
     );
 }
