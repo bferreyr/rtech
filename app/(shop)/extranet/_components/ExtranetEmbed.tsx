@@ -8,7 +8,7 @@ export default function ExtranetEmbed() {
 
     useEffect(() => {
         if (!initialized.current && typeof window !== 'undefined' && (window as any).Extranet) {
-            new (window as any).Extranet(1, { username: 'RINCON', password: 'amircito' });
+            new (window as any).Extranet(8335, { username: 'RINCON', password: 'amircito' });
             initialized.current = true;
         }
     }, []);
@@ -20,7 +20,7 @@ export default function ExtranetEmbed() {
                 strategy="afterInteractive"
                 onLoad={() => {
                     if (!initialized.current && typeof window !== 'undefined' && (window as any).Extranet) {
-                        new (window as any).Extranet(1, { username: 'RINCON', password: 'amircito' });
+                        new (window as any).Extranet(8335, { username: 'RINCON', password: 'amircito' });
                         initialized.current = true;
                     }
                 }}
