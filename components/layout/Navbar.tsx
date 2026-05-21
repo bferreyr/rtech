@@ -75,6 +75,9 @@ export function Navbar() {
                             <Link href="/products" className="text-sm font-medium text-[hsl(var(--text-secondary))] hover:text-[hsl(var(--accent-primary))] transition-colors">
                                 Productos
                             </Link>
+                            <Link href="/extranet" className="text-sm font-medium text-[hsl(var(--text-secondary))] hover:text-[hsl(var(--accent-primary))] transition-colors">
+                                Mayorista
+                            </Link>
                             <Link href="/pc-builder" className="text-sm font-medium text-[hsl(var(--accent-primary))] bg-[hsl(var(--accent-primary))]/10 px-3 py-1.5 rounded-lg border border-[hsl(var(--accent-primary))]/20 hover:bg-[hsl(var(--accent-primary))]/20 transition-all">
                                 Armado de PC
                             </Link>
@@ -215,6 +218,9 @@ export function Navbar() {
                                 <nav className="flex flex-col space-y-2">
                                     <Link href="/products" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 rounded-xl bg-white/10 hover:bg-white/15 font-medium transition-colors">
                                         Productos
+                                    </Link>
+                                    <Link href="/extranet" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 rounded-xl bg-white/10 hover:bg-white/15 font-medium transition-colors">
+                                        Mayorista
                                     </Link>
 
                                     <Link href="/pc-builder" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 rounded-xl bg-[hsl(var(--accent-primary))]/20 border border-[hsl(var(--accent-primary))]/40 font-medium text-[hsl(var(--accent-primary))] hover:bg-[hsl(var(--accent-primary))]/30 transition-colors">
