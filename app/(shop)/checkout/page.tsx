@@ -4,9 +4,20 @@ import { useCart } from "@/context/CartContext";
 import { ShoppingBag } from "lucide-react";
 import Link from "next/link";
 import { OptimizedCheckout } from "@/components/checkout/OptimizedCheckout";
+import { useEffect, useState } from "react";
+import { getTransferDiscount } from "@/app/actions/settings";
 
 export default function CheckoutPage() {
     const { items, cartTotal, clearCart } = useCart();
+    const [transferDiscountRate, setTransferDiscountRate] = useState<number>(10);
+
+    useEffect(() => {
+        const fetchDiscount = async () => {
+            const discount = await getTransferDiscount();
+            setTransferDiscountRate(discount);
+        };
+        fetchDiscount();
+    }, []);
 
     if (items.length === 0) {
         return (
@@ -32,6 +43,7 @@ export default function CheckoutPage() {
             items={items}
             cartTotal={cartTotal}
             onClearCart={clearCart}
+            transferDiscountRate={transferDiscountRate}
         />
     );
 }

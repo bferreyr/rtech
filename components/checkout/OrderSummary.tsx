@@ -16,6 +16,7 @@ interface OrderSummaryProps {
     total: number;
     discountAmountARS?: number;
     transferDiscountARS?: number;
+    transferDiscountRate?: number;
     couponCode?: string;
     onCheckout?: () => void;
     checkoutDisabled?: boolean;
@@ -32,6 +33,7 @@ export function OrderSummary({
     total,
     discountAmountARS = 0,
     transferDiscountARS = 0,
+    transferDiscountRate = 10,
     couponCode,
     onCheckout,
     checkoutDisabled,
@@ -106,7 +108,9 @@ export function OrderSummary({
                         <span className="flex items-center gap-1.5 text-green-400">
                             <svg className="w-3.5 h-3.5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" /></svg>
                             Descuento por transferencia
-                            <span className="px-1.5 py-0.5 rounded-full text-xs font-bold bg-green-500/20 border border-green-500/30">10% OFF</span>
+                            {transferDiscountRate > 0 && (
+                                <span className="px-1.5 py-0.5 rounded-full text-xs font-bold bg-green-500/20 border border-green-500/30">{transferDiscountRate}% OFF</span>
+                            )}
                         </span>
                         <span className="font-medium text-green-400">-{formatARSDirect(transferDiscountARS)}</span>
                     </div>

@@ -22,9 +22,10 @@ interface OptimizedCheckoutProps {
     items: CartItem[];
     cartTotal: number;
     onClearCart: () => void;
+    transferDiscountRate?: number;
 }
 
-export function OptimizedCheckout({ items, cartTotal, onClearCart }: OptimizedCheckoutProps) {
+export function OptimizedCheckout({ items, cartTotal, onClearCart, transferDiscountRate = 10 }: OptimizedCheckoutProps) {
     const router = useRouter();
     const { toARS } = useCurrency();
     const [isSubmitting, setIsSubmitting] = useState(false);
@@ -73,9 +74,9 @@ export function OptimizedCheckout({ items, cartTotal, onClearCart }: OptimizedCh
     const shippingCost = 0; // El envío se discrimina en ARS, no afecta el total USD
     const total = cartTotal;
 
-    // Transfer discount (10% auto-applied when paying by bank transfer)
-    const TRANSFER_DISCOUNT_RATE = 0.10;
-    const transferDiscountARS = paymentMethod === 'transferencia' ? Math.round(toARS(cartTotal) * TRANSFER_DISCOUNT_RATE) : 0;
+    // Transfer discount (auto-applied when paying by bank transfer)
+    const discountRateDecimal = transferDiscountRate / 100;
+    const transferDiscountARS = paymentMethod === 'transferencia' ? Math.round(toARS(cartTotal) * discountRateDecimal) : 0;
 
     // Combined discount (transfer + coupon)
     const discountAmountARS = couponDiscountARS + transferDiscountARS;
@@ -399,9 +400,11 @@ export function OptimizedCheckout({ items, cartTotal, onClearCart }: OptimizedCh
                                             <div className="flex-1">
                                                 <div className="flex items-center gap-2">
                                                     <p className="font-medium">Transferencia Bancaria</p>
-                                                    <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-green-500/20 text-green-400 border border-green-500/30">
-                                                        10% OFF
-                                                    </span>
+                                                    {transferDiscountRate > 0 && (
+                                                        <span className="px-2 py-0.5 rounded-full text-xs font-bold bg-green-500/20 text-green-400 border border-green-500/30">
+                                                            {transferDiscountRate}% OFF
+                                                        </span>
+                                                    )}
                                                 </div>
                                                 <p className="text-sm text-[hsl(var(--text-secondary))]">Realizá la transferencia y subí el comprobante</p>
                                             </div>
@@ -552,6 +555,7 @@ export function OptimizedCheckout({ items, cartTotal, onClearCart }: OptimizedCh
                                 total={total}
                                 discountAmountARS={couponDiscountARS}
                                 transferDiscountARS={transferDiscountARS}
+                                transferDiscountRate={transferDiscountRate}
                                 couponCode={couponCode}
                                 onCheckout={handleSubmit(onSubmit)}
                                 checkoutDisabled={!isValid || (paymentMethod === 'transferencia' && !receiptFile)}

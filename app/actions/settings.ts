@@ -175,3 +175,39 @@ export async function updateMPSettings(publicKey: string, accessToken: string) {
         return { success: false, error: "Failed to update MP settings" };
     }
 }
+
+const TRANSFER_DISCOUNT_KEY = "TRANSFER_DISCOUNT_PERCENTAGE";
+
+export async function getTransferDiscount() {
+    try {
+        const setting = await prisma.setting.findUnique({
+            where: { key: TRANSFER_DISCOUNT_KEY }
+        });
+        // Default transfer discount is 10% if not set
+        return setting ? parseFloat(setting.value) : 10;
+    } catch (error) {
+        console.error("Error getting transfer discount:", error);
+        return 10;
+    }
+}
+
+export async function updateTransferDiscount(percentage: number) {
+    try {
+        await prisma.setting.upsert({
+            where: { key: TRANSFER_DISCOUNT_KEY },
+            update: { value: percentage.toString() },
+            create: {
+                key: TRANSFER_DISCOUNT_KEY,
+                value: percentage.toString(),
+                description: "Porcentaje de descuento por transferencia bancaria",
+            },
+        });
+
+        revalidatePath("/admin/settings");
+        revalidatePath("/checkout");
+        return { success: true };
+    } catch (error) {
+        console.error("Error updating transfer discount:", error);
+        return { success: false, error: "Failed to update transfer discount" };
+    }
+}

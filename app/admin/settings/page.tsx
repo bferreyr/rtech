@@ -1,8 +1,8 @@
 'use client';
 
 import { useState, useTransition, useEffect } from "react";
-import { getExchangeRate, updateExchangeRate, getGlobalMarkup, updateGlobalMarkup, getExternalDollarRate, getMPSettings, updateMPSettings } from "@/app/actions/settings";
-import { DollarSign, RefreshCw, Save, Loader2, Info, TrendingUp, CreditCard, Wallet, Truck } from "lucide-react";
+import { getExchangeRate, updateExchangeRate, getGlobalMarkup, updateGlobalMarkup, getExternalDollarRate, getMPSettings, updateMPSettings, getTransferDiscount, updateTransferDiscount } from "@/app/actions/settings";
+import { DollarSign, RefreshCw, Save, Loader2, Info, TrendingUp, CreditCard, Wallet, Truck, Percent } from "lucide-react";
 
 export default function AdminSettingsPage() {
     const [rate, setRate] = useState<number>(1000);
@@ -13,6 +13,9 @@ export default function AdminSettingsPage() {
     const [mpPublicKey, setMpPublicKey] = useState<string>("");
     const [mpAccessToken, setMpAccessToken] = useState<string>("");
 
+    // Transfer Discount Settings
+    const [transferDiscount, setTransferDiscount] = useState<number>(10);
+
     const [autoUpdate, setAutoUpdate] = useState<boolean>(true);
     const [lastUpdated, setLastUpdated] = useState<Date | null>(null);
     const [isPending, startTransition] = useTransition();
@@ -20,11 +23,12 @@ export default function AdminSettingsPage() {
 
     useEffect(() => {
         async function loadSettings() {
-            const [rateData, markupData, apiData, mpData] = await Promise.all([
+            const [rateData, markupData, apiData, mpData, discountData] = await Promise.all([
                 getExchangeRate(),
                 getGlobalMarkup(),
                 getExternalDollarRate(),
-                getMPSettings()
+                getMPSettings(),
+                getTransferDiscount()
             ]);
             setRate(rateData.rate);
             setAutoUpdate(rateData.isAutoUpdate);
@@ -33,6 +37,7 @@ export default function AdminSettingsPage() {
             setApiRate(apiData);
             setMpPublicKey(mpData.publicKey);
             setMpAccessToken(mpData.accessToken);
+            setTransferDiscount(discountData);
         }
         loadSettings();
     }, []);
@@ -41,19 +46,20 @@ export default function AdminSettingsPage() {
         e.preventDefault();
         setStatus(null);
         startTransition(async () => {
-            const [rateResult, markupResult, mpResult] = await Promise.all([
+            const [rateResult, markupResult, mpResult, discountResult] = await Promise.all([
                 updateExchangeRate(rate, autoUpdate),
                 updateGlobalMarkup(markup),
-                updateMPSettings(mpPublicKey, mpAccessToken)
+                updateMPSettings(mpPublicKey, mpAccessToken),
+                updateTransferDiscount(transferDiscount)
             ]);
 
-            if (rateResult.success && markupResult.success && mpResult.success) {
+            if (rateResult.success && markupResult.success && mpResult.success && discountResult.success) {
                 setStatus({ message: "Configuración guardada correctamente", type: 'success' });
                 // Reload settings to get updated lastUpdated time
                 const data = await getExchangeRate();
                 setLastUpdated(data.lastUpdated);
             } else {
-                setStatus({ message: rateResult.error || markupResult.error || mpResult.error || "Error al guardar", type: 'error' });
+                setStatus({ message: rateResult.error || markupResult.error || mpResult.error || discountResult.error || "Error al guardar", type: 'error' });
             }
         });
     };
@@ -244,6 +250,45 @@ export default function AdminSettingsPage() {
                             </div>
                             <p className="mt-2 text-xs text-[hsl(var(--text-tertiary))]">
                                 Estas credenciales se utilizan para generar preferencias de pago y validar transacciones.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Transfer Discount Card */}
+                <div className="glass-card p-8">
+                    <div className="flex items-center gap-3 mb-6">
+                        <div className="w-10 h-10 rounded-lg bg-gradient-to-br from-green-400 to-emerald-600 flex items-center justify-center">
+                            <Percent className="w-5 h-5 text-white" />
+                        </div>
+                        <div>
+                            <h2 className="text-xl font-bold">Descuento por Transferencia</h2>
+                            <p className="text-xs text-[hsl(var(--text-secondary))]">Configura el porcentaje de descuento que se aplica al pagar con transferencia bancaria.</p>
+                        </div>
+                    </div>
+
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 items-center">
+                        <div>
+                            <label className="block text-sm font-medium mb-2 text-[hsl(var(--text-secondary))]">
+                                Porcentaje de Descuento (%)
+                            </label>
+                            <div className="relative">
+                                <input
+                                    type="number"
+                                    step="0.1"
+                                    min="0"
+                                    max="100"
+                                    value={transferDiscount}
+                                    onChange={(e) => setTransferDiscount(parseFloat(e.target.value))}
+                                    disabled={isPending}
+                                    className="w-full pl-4 pr-12 py-3 rounded-xl bg-[hsl(var(--bg-primary))] border border-[hsl(var(--border-color))] focus:border-[hsl(var(--accent-primary))] focus:outline-none focus:ring-2 focus:ring-[hsl(var(--accent-primary))]/20 transition-all disabled:opacity-50 font-bold text-xl"
+                                />
+                                <div className="absolute inset-y-0 right-0 pr-4 flex items-center pointer-events-none">
+                                    <span className="text-[hsl(var(--text-tertiary))] font-bold">%</span>
+                                </div>
+                            </div>
+                            <p className="mt-2 text-xs text-[hsl(var(--text-tertiary))]">
+                                Ejemplo: Un pedido de $10.000 con 10% de descuento quedará en $9.000.
                             </p>
                         </div>
                     </div>
