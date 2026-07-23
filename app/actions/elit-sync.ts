@@ -45,7 +45,7 @@ export async function syncElitProducts() {
         const globalMarkup = await getGlobalMarkup();
         const markupMultiplier = 1 + (globalMarkup / 100);
 
-        let offset = 0;
+        let offset = 1;
         const limit = 100;
         let total = 0;
         let fetched = 0;
@@ -189,7 +189,7 @@ export async function syncElitProducts() {
             fetched += items.length;
             offset += limit;
 
-        } while (offset < total);
+        } while (offset <= total);
 
         // Delete obsoleted products
         if (processedSkus.length > 0) {
