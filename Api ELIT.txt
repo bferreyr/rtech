@@ -1,0 +1,198 @@
+Autenticación
+Todos los endpoints requieren user_id y token. Los POST los reciben en el body JSON. Los DELETE como query params.
+
+Credenciales
+user_id: 15169
+token: chmasqzn7a9
+No expongas estas credenciales en código del lado del cliente.
+
+Body (POST)
+
+{
+  "user_id": 15169,
+  "token": "chmasqzn7a9"
+}
+Query params (DELETE)
+
+?user_id=15169&token=chmasqzn7a9
+
+Errores posibles
+
+400 - Invalid user_id - El user_id no es un número válido
+400 - Bad Credentials - El token no coincide con el user_id
+400 - Cliente Deshabilitado - La cuenta no está activa
+400 - API is disabled - API deshabilitada. Contactá soporte@elit.com.ar
+
+Productos
+Obtené el catálogo completo con precios, stock y atributos. Límite máximo: 100 items por llamada. Usá offset para paginar.
+
+POST
+https://clientes.elit.com.ar/v1/api/productos
+Devuelve el listado de productos con sus precios calculados según tu lista, stock por depósito, imágenes y atributos técnicos.
+
+Query parameters
+
+limit
+number - Cantidad de resultados. Máximo 100
+offset
+number - Índice desde el que empezar. Útil para paginar
+id
+number - Código único de producto Elit
+codigo_alfa
+string - Código alfanumérico Elit
+codigo_producto
+string - Código de producto o SKU
+nombre
+string - Nombre o título del producto
+marca
+string - Marca del producto
+categoria
+string - Categoría
+sub_categoria
+string - Subcategoría
+actualizacion
+date - AAAA-MM-DD HH:MM — Solo productos modificados desde esa fecha. Ideal para sincronizaciones incrementales
+store
+string - Depósito: all · cd · suc · cordoba · cba. Default: all
+
+Body (JSON)
+user_id
+number req. - Tu ID de cliente Elit
+token
+string req. - Tu token de API
+
+
+Campos de respuesta
+id - number - Código único Elit
+codigo_alfa - string - Código alfanumérico
+codigo_producto - string - SKU del fabricante
+nombre - string - Nombre del producto
+marca - string - Marca
+categoria - string - Categoría
+sub_categoria - string - Subcategoría
+precio - number - Precio de costo sin impuestos
+iva - number - IVA (%)
+impuesto_interno - number - Impuesto interno
+moneda - number - 1 = Pesos · 2 = Dólares
+cotizacion - number - Cotización del dólar actual
+pvp_usd - number - Precio de venta sugerido en USD
+pvp_ars - number - Precio de venta sugerido en ARS
+markup - number - Tu markup configurado
+nivel_stock - string - bajo · alto
+stock_total - number - Stock total en todos los depósitos
+stock_deposito_cliente - number - Stock en tu depósito asignado
+stock_deposito_cd - number - Stock en centro de distribución
+ean - string - Código EAN/barras
+peso - number - Peso en kg
+garantia - string - Garantía del producto
+imagenes - array - URLs de imágenes en alta resolución
+miniaturas - array - URLs de miniaturas
+atributos - array - Especificaciones técnicas [{nombre, valor}]
+link - string - URL del producto en elit.com.ar
+gamer - boolean - Indica si el producto es gamer
+creado - date - Fecha de creación
+actualizado - date - Fecha de última actualización
+
+
+CURL
+curl -X POST \
+  'https://clientes.elit.com.ar/v1/api/productos?limit=10' \
+  -H 'Content-Type: application/json' \
+  -d '{
+    "user_id": 15169,
+  "token": "chmasqzn7a9"
+}'
+Respuesta
+
+{
+  "codigo": 200,
+  "paginador": {
+    "total": 4820,
+    "limit": 10,
+    "offset": 0
+  },
+  "resultado": [
+    {
+      "id": 12345,
+      "nombre": "Notebook Lenovo IdeaPad 3",
+      "marca": "Lenovo",
+      "pvp_ars": 850000,
+      "pvp_usd": 680,
+      "nivel_stock": "alto",
+      "stock_total": 14
+    }
+  ]
+}
+
+JavaScript
+const res = await fetch(
+  'https://clientes.elit.com.ar/v1/api/productos?limit=10',
+  {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      user_id: 15169,
+      token: 'chmasqzn7a9',
+    }),
+  }
+);
+const data = await res.json();
+Respuesta
+
+{
+  "codigo": 200,
+  "paginador": {
+    "total": 4820,
+    "limit": 10,
+    "offset": 0
+  },
+  "resultado": [
+    {
+      "id": 12345,
+      "nombre": "Notebook Lenovo IdeaPad 3",
+      "marca": "Lenovo",
+      "pvp_ars": 850000,
+      "pvp_usd": 680,
+      "nivel_stock": "alto",
+      "stock_total": 14
+    }
+  ]
+}
+
+PHP
+$response = file_get_contents(
+  'https://clientes.elit.com.ar/v1/api/productos?limit=10',
+  false,
+  stream_context_create([
+    'http' => [
+      'method' => 'POST',
+      'header' => 'Content-Type: application/json',
+      'content' => json_encode([
+        'user_id' => 15169,
+        'token' => 'chmasqzn7a9',
+      ]),
+    ],
+  ])
+);
+$data = json_decode($response, true);
+Respuesta
+
+{
+  "codigo": 200,
+  "paginador": {
+    "total": 4820,
+    "limit": 10,
+    "offset": 0
+  },
+  "resultado": [
+    {
+      "id": 12345,
+      "nombre": "Notebook Lenovo IdeaPad 3",
+      "marca": "Lenovo",
+      "pvp_ars": 850000,
+      "pvp_usd": 680,
+      "nivel_stock": "alto",
+      "stock_total": 14
+    }
+  ]
+}

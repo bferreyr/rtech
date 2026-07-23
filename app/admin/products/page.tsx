@@ -10,6 +10,7 @@ import { AdminFilters } from "./_components/AdminFilters";
 import { Pagination } from "@/components/ui/Pagination";
 import { ProductTable } from "./_components/ProductTable";
 import { AdminHeader } from "@/components/admin/ui/AdminHeader";
+import { SyncElitButton } from "./_components/SyncElitButton";
 
 export const dynamic = 'force-dynamic';
 
@@ -41,6 +42,7 @@ export default async function AdminProductsPage(props: {
                 description={`Gestiona tus productos de ELIT (${pagination.total} total).`}
                 actions={
                     <>
+                        <SyncElitButton />
                         <ExportProductsButton products={products} />
                         <BulkUploadButton provider={PROVIDER} />
                         <NextLink href="/admin/products/new" className="btn btn-primary">
