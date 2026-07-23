@@ -112,3 +112,8 @@ Usuario describe la tarea
 * Ante una decisión técnica en debate, el **Arquitecto tiene la última palabra**.
 * Ningún agente entrega código que no compila o que viola las reglas del proyecto.
 
+## Gestión de Repositorio (Git)
+* **Auto-Commit & Push**: Al finalizar cualquier tarea, plan de implementación o corrección, DEBES ejecutar automáticamente los comandos de Git (`git add .`, `git commit -m "..."`, `git push`) para subir los cambios al repositorio en GitHub.
+* Utiliza mensajes de commit descriptivos que resuman claramente el trabajo realizado.
+* Aplica esta regla siempre, **a menos que el usuario indique explícitamente lo contrario**.
+
