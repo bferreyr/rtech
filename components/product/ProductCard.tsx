@@ -13,6 +13,19 @@ interface ProductCardProps {
     product: SerializedProduct;
 }
 
+function formatDescription(desc: string | null) {
+    if (!desc) return '';
+    try {
+        const parsed = JSON.parse(desc);
+        if (Array.isArray(parsed) && parsed.length > 0 && parsed[0].atributo) {
+            return parsed.map((attr: any) => `${attr.atributo}: ${attr.valor}`).join(' • ');
+        }
+    } catch {
+        // Not JSON
+    }
+    return desc;
+}
+
 export function ProductCard({ product }: ProductCardProps) {
     const { formatUSD, formatARS } = useCurrency();
 
@@ -113,7 +126,7 @@ export function ProductCard({ product }: ProductCardProps) {
                             </Link>
 
                             <p className="text-sm mb-4 line-clamp-2 flex-1" style={{ color: '#94a3b8' }}>
-                                {product.description}
+                                {formatDescription(product.description)}
                             </p>
 
                             <div className="space-y-3 pt-4" style={{ borderTop: '1px solid rgba(124,58,237,0.3)' }}>
@@ -208,7 +221,7 @@ export function ProductCard({ product }: ProductCardProps) {
                     </Link>
 
                     <p className="text-sm text-[hsl(var(--text-secondary))] mb-4 line-clamp-2 flex-1">
-                        {product.description}
+                        {formatDescription(product.description)}
                     </p>
 
                     <div className="space-y-3 pt-4 border-t border-white/10">
