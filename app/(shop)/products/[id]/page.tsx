@@ -8,6 +8,7 @@ import { getExchangeRate, getGlobalMarkup } from "@/app/actions/settings";
 import { ShieldCheck } from "lucide-react";
 import { ReviewsSection } from "@/components/product/ReviewsSection";
 import { ProductImageGallery } from "@/components/product/ProductImageGallery";
+import { ProductDescription } from "@/components/product/ProductDescription";
 
 // Force dynamic rendering to ensure fresh data
 export const dynamic = 'force-dynamic';
@@ -226,10 +227,8 @@ export default async function ProductPage({ params }: Props) {
 
             {/* Description Section - Moved below main product info for better visibility of long texts */}
             <section className="mt-16 border-t border-[color:var(--border-color)] pt-12">
-                <h2 className="text-2xl font-bold mb-6">Descripción del Producto</h2>
-                <div className="prose prose-invert max-w-none text-[color:var(--text-secondary)] leading-relaxed whitespace-pre-wrap">
-                    {product.description}
-                </div>
+                <h2 className="text-2xl font-bold mb-6">Especificaciones Detalladas</h2>
+                <ProductDescription description={product.description} />
             </section>
 
             {/* Reviews Section */}
