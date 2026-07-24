@@ -33,33 +33,54 @@ export async function GET(request: Request) {
         const isGamer = product.categoria?.toLowerCase().includes('gamer') || product.name.toLowerCase().includes('gamer');
         const lowStock = (product.stockTotal || 0) < 5 && (product.stockTotal || 0) > 0;
         
+        // Split product name into two lines for better centering and no overflow
+        const name = product.name;
+        let line1 = name;
+        let line2 = '';
+        if (name.length > 38) {
+            const splitIndex = name.lastIndexOf(' ', 38);
+            if (splitIndex > -1) {
+                line1 = name.substring(0, splitIndex);
+                line2 = name.substring(splitIndex + 1);
+            } else {
+                line1 = name.substring(0, 38);
+                line2 = name.substring(38);
+            }
+            if (line2.length > 38) line2 = line2.substring(0, 35) + '...';
+        }
+
         // Create an SVG overlay
+        // Layout designed dynamically from the bottom up to ensure 0 overlaps.
         const svg = `
             <svg width="${width}" height="${height}">
                 <style>
-                    .title { font-family: 'Outfit', sans-serif; font-size: 34px; fill: white; font-weight: bold; }
-                    .price { font-family: 'Outfit', sans-serif; font-size: 60px; fill: #10b981; font-weight: bold; }
+                    .title { font-family: 'Outfit', sans-serif; font-size: 36px; fill: white; font-weight: bold; }
+                    .price { font-family: 'Outfit', sans-serif; font-size: 70px; fill: #10b981; font-weight: bold; }
                     .badge { font-family: 'Outfit', sans-serif; font-size: 20px; fill: white; font-weight: bold; }
-                    .cta { font-family: 'Outfit', sans-serif; font-size: 24px; fill: white; font-weight: bold; }
+                    .cta { font-family: 'Outfit', sans-serif; font-size: 26px; fill: white; font-weight: bold; }
                     .info { font-family: 'Outfit', sans-serif; font-size: 24px; fill: #e5e7eb; }
-                    .alert { font-family: 'Outfit', sans-serif; font-size: 24px; fill: #ef4444; font-weight: bold; }
+                    .cuotas { font-family: 'Outfit', sans-serif; font-size: 26px; fill: #60a5fa; font-weight: bold; }
+                    .alert { font-family: 'Outfit', sans-serif; font-size: 22px; fill: #ef4444; font-weight: bold; }
                 </style>
-                <rect x="50" y="${height - 350}" width="${width - 100}" height="300" rx="20" fill="rgba(15, 23, 42, 0.85)" stroke="rgba(255,255,255,0.1)" stroke-width="2" />
+                <rect x="50" y="${height - 540}" width="${width - 100}" height="500" rx="24" fill="rgba(15, 23, 42, 0.90)" stroke="rgba(255,255,255,0.15)" stroke-width="2" />
                 
-                ${isGamer ? `<rect x="${(width/2) - 75}" y="${height - 320}" width="150" height="36" rx="8" fill="#8b5cf6" />
-                             <text x="50%" y="${height - 295}" class="badge" text-anchor="middle">🎮 GAMER</text>` : ''}
+                ${isGamer ? `<rect x="${(width/2) - 75}" y="${height - 510}" width="150" height="36" rx="8" fill="#8b5cf6" />
+                             <text x="50%" y="${height - 485}" class="badge" text-anchor="middle">🎮 GAMER</text>` : ''}
                 
-                <text x="50%" y="${height - 240}" class="title" text-anchor="middle">${escapeXml(product.name).substring(0, 50)}${product.name.length > 50 ? '...' : ''}</text>
+                <text x="50%" y="${height - 425}" class="title" text-anchor="middle">${escapeXml(line1)}</text>
+                ${line2 ? `<text x="50%" y="${height - 385}" class="title" text-anchor="middle">${escapeXml(line2)}</text>` : ''}
                 
-                <text x="50%" y="${height - 160}" class="price" text-anchor="middle">${price}</text>
+                <text x="50%" y="${height - 280}" class="price" text-anchor="middle">${price}</text>
                 
-                ${lowStock ? `<text x="50%" y="${height - 110}" class="alert" text-anchor="middle">⚠️ ¡Quedan pocos! No te quedes sin el tuyo</text>` : ''}
+                <text x="50%" y="${height - 215}" class="cuotas" text-anchor="middle">💳 Hasta 24 cuotas fijas</text>
                 
-                <text x="50%" y="${height - 70}" class="info" text-anchor="middle">🚚 Envíos a todo el país</text>
+                <text x="50%" y="${height - 175}" class="info" text-anchor="middle">🚚 Envíos a todo el país</text>
                 
-                <!-- CTA Button at bottom center if no low stock, or just float it -->
-                <rect x="${(width/2) - 120}" y="${lowStock ? height - 60 : height - 120}" width="240" height="40" rx="20" fill="#3b82f6" opacity="${lowStock ? 0 : 1}" />
-                <text x="50%" y="${lowStock ? height - 30 : height - 92}" class="cta" text-anchor="middle" opacity="${lowStock ? 0 : 1}">Link en la BIO</text>
+                ${lowStock ? `<text x="50%" y="${height - 135}" class="alert" text-anchor="middle">⚠️ ¡Quedan pocos! No te quedes sin el tuyo</text>` : ''}
+                
+                <!-- CTA Button -->
+                <rect x="${(width/2) - 140}" y="${height - 110}" width="280" height="48" rx="24" fill="#3b82f6" />
+                <text x="50%" y="${height - 76}" class="cta" text-anchor="middle">🔗 Link en la BIO</text>
             </svg>
         `;
 
