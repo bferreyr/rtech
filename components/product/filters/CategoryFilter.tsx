@@ -107,7 +107,11 @@ export function CategoryFilter({ categories, selected, onChange }: CategoryFilte
                     `}
                     style={{ paddingLeft: `${(level * 12) + 8}px` }}
                     onClick={() => {
-                        onChange(isSelected ? null : category.id);
+                        if (isSelected && !hasChildren) {
+                            onChange(null);
+                        } else if (!isSelected) {
+                            onChange(category.id);
+                        }
                         if (hasChildren) toggleExpanded(category.id);
                     }}
                 >
