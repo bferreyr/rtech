@@ -134,7 +134,28 @@ export async function getProducts(options?: {
     };
 
     // Category filter
-    if (categoryId) where.categoryId = categoryId;
+    if (categoryId) {
+        const allCategories = await prisma.category.findMany({ select: { id: true, parentId: true } });
+        
+        const descendantIds = new Set<string>();
+        descendantIds.add(categoryId);
+
+        let currentLevel = [categoryId];
+        while (currentLevel.length > 0) {
+            const nextLevel: string[] = [];
+            for (const cat of allCategories) {
+                if (cat.parentId && currentLevel.includes(cat.parentId)) {
+                    if (!descendantIds.has(cat.id)) {
+                        descendantIds.add(cat.id);
+                        nextLevel.push(cat.id);
+                    }
+                }
+            }
+            currentLevel = nextLevel;
+        }
+
+        where.categoryId = { in: Array.from(descendantIds) };
+    }
 
     // Brand filter (multiple selection)
     if (brands && brands.length > 0) {
