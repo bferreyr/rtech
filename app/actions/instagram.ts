@@ -114,13 +114,14 @@ Reglas:
                 }
             }
 
-            const creationId = await createMediaContainer(product.imageUrl, caption, false);
+            const feedImageUrl = `${SITE_URL}/api/instagram/generate-image?format=feed&productId=${product.id}`;
+            const creationId = await createMediaContainer(feedImageUrl, caption, false);
             const postId = await publishMediaContainer(creationId);
             postIds.push(postId);
         }
 
         if (type === 'STORY' || type === 'BOTH') {
-            const storyImageUrl = `${SITE_URL}/api/instagram/generate-story-image?productId=${product.id}`;
+            const storyImageUrl = `${SITE_URL}/api/instagram/generate-image?format=story&productId=${product.id}`;
             const creationId = await createMediaContainer(storyImageUrl, '', true);
             const postId = await publishMediaContainer(creationId);
             postIds.push(postId);
