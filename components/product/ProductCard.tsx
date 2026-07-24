@@ -107,7 +107,7 @@ export function ProductCard({ product }: ProductCardProps) {
                                         </div>
                                     ) : (
                                         <div className="h-6 px-3 rounded-full bg-[#ef4444] shadow-lg shadow-red-900/20 border border-red-400/20 flex items-center justify-center">
-                                            <span className="text-[10px] font-bold text-white uppercase tracking-wider">Agotado</span>
+                                            <span className="text-[10px] font-bold text-white uppercase tracking-wider">SIN STOCK</span>
                                         </div>
                                     )}
                                 </div>
@@ -205,7 +205,7 @@ export function ProductCard({ product }: ProductCardProps) {
                                 </div>
                             ) : (
                                 <div className="h-6 px-3 rounded-full bg-[#ef4444] shadow-lg shadow-red-900/20 border border-red-400/20 flex items-center justify-center">
-                                    <span className="text-[10px] font-bold text-white uppercase tracking-wider">Agotado</span>
+                                    <span className="text-[10px] font-bold text-white uppercase tracking-wider">SIN STOCK</span>
                                 </div>
                             )}
                         </div>

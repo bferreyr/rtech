@@ -158,8 +158,12 @@ export async function getProducts(options?: {
         ];
     }
 
-    // Stock filter - ALWAYS filter out products with no stock
-    where.stock = { gt: 0 };
+    // Stock filter
+    if (inStock === true) {
+        where.stock = { gt: 0 };
+    } else if (inStock === false) {
+        where.stock = { lte: 0 };
+    }
 
 
     let orderBy: any = {};

@@ -106,7 +106,10 @@ export function CategoryFilter({ categories, selected, onChange }: CategoryFilte
                         ${isSelected ? 'bg-[hsl(var(--accent-primary))]/10' : 'hover:bg-white/5'}
                     `}
                     style={{ paddingLeft: `${(level * 12) + 8}px` }}
-                    onClick={() => onChange(isSelected ? null : category.id)}
+                    onClick={() => {
+                        onChange(isSelected ? null : category.id);
+                        if (hasChildren) toggleExpanded(category.id);
+                    }}
                 >
                     {/* Expand/Collapse Button */}
                     <div
