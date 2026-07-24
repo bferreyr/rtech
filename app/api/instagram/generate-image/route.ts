@@ -2,6 +2,8 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import sharp from 'sharp';
 
+import { getExchangeRate } from '@/app/actions/settings';
+
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
     const productId = searchParams.get('productId');
@@ -23,8 +25,10 @@ export async function GET(request: Request) {
         let width = 1080;
         let height = format === 'feed' ? 1080 : 1920;
         
+        const settings = await getExchangeRate();
         const formatter = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' });
-        const price = formatter.format(Number(product.price));
+        const finalPriceInARS = Number(product.price) * settings.rate;
+        const price = formatter.format(finalPriceInARS);
         
         const isGamer = product.categoria?.toLowerCase().includes('gamer') || product.name.toLowerCase().includes('gamer');
         const lowStock = (product.stockTotal || 0) < 5 && (product.stockTotal || 0) > 0;
