@@ -36,6 +36,7 @@ model PointHistory {
 model Product {
   id                   String          @id @default(cuid())
   sku                  String          @unique
+  slug                 String          @unique @default(cuid())
   codigoAlfa           String?
   codigoProducto       String?         @unique
   name                 String

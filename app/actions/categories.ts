@@ -258,6 +258,7 @@ export async function getProducts(options?: {
 
         return {
             ...p,
+            slug: p.slug || p.id,
             // Convert all Decimal fields to numbers for Client Component serialization
             // OVERRIDE price with calculated markup price for Frontend Display
             price: Number(finalPvpUsd.toFixed(2)),

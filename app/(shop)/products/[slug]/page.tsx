@@ -15,14 +15,19 @@ export const dynamic = 'force-dynamic';
 
 interface Props {
     params: Promise<{
-        id: string;
+        slug: string;
     }>;
 }
 
 // Helper to fetch product
-async function getProduct(id: string) {
-    const product = await prisma.product.findUnique({
-        where: { id },
+async function getProduct(identifier: string) {
+    const product = await prisma.product.findFirst({
+        where: {
+            OR: [
+                { slug: identifier },
+                { id: identifier }
+            ]
+        },
         include: { images: { orderBy: { order: 'asc' } } },
     });
 
@@ -46,8 +51,8 @@ async function getProduct(id: string) {
 
 // SEO: Generate dynamic metadata
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
-    const { id } = await params;
-    const product = await getProduct(id);
+    const { slug } = await params;
+    const product = await getProduct(slug);
 
     if (!product) return { title: "Producto no encontrado" };
 
@@ -61,9 +66,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 }
 
 export default async function ProductPage({ params }: Props) {
-    const { id } = await params;
+    const { slug } = await params;
     const [productData, { rate }, globalMarkup] = await Promise.all([
-        getProduct(id),
+        getProduct(slug),
         getExchangeRate(),
         getGlobalMarkup()
     ]);

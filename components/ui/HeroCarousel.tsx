@@ -188,7 +188,7 @@ export function HeroCarousel({ slides }: HeroCarouselProps) {
                         {/* CTA Button */}
                         <div className="flex gap-3 pt-1">
                             <Link
-                                href={`/products/${product.id}`}
+                                href={`/products/${(product as any).slug || product.id}`}
                                 className="btn btn-primary px-6 py-3.5 text-base rounded-xl flex items-center gap-2.5 shadow-[0_0_20px_rgba(var(--accent-primary-rgb),0.3)] hover:shadow-[0_0_35px_rgba(var(--accent-primary-rgb),0.5)] transition-all font-bold"
                             >
                                 <ShoppingCart className="w-5 h-5" />

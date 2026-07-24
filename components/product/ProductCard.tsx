@@ -67,7 +67,7 @@ export function ProductCard({ product }: ProductCardProps) {
                         <div className="absolute bottom-2 right-2 w-4 h-4 border-b-2 border-r-2 border-purple-400 rounded-br-md opacity-80 pointer-events-none" />
 
                         {/* Image Container */}
-                        <Link href={`/products/${product.id}`} className="block">
+                        <Link href={`/products/${(product as any).slug || product.id}`} className="block">
                             <div className="relative aspect-square overflow-hidden">
                                 {product.imageUrl ? (
                                     <img
@@ -116,7 +116,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
                         {/* Content */}
                         <div className="flex-1 flex flex-col p-6">
-                            <Link href={`/products/${product.id}`}>
+                            <Link href={`/products/${(product as any).slug || product.id}`}>
                                 <h3 className="font-bold text-lg mb-2 transition-colors"
                                     style={{ color: '#e2d9ff' }}
                                     onMouseEnter={e => (e.currentTarget.style.backgroundImage = 'linear-gradient(90deg,#a78bfa,#67e8f9)', e.currentTarget.style.webkitBackgroundClip = 'text', e.currentTarget.style.webkitTextFillColor = 'transparent')}
@@ -180,7 +180,7 @@ export function ProductCard({ product }: ProductCardProps) {
             <div className="relative h-full flex flex-col backdrop-blur-xl border rounded-2xl overflow-hidden transition-all duration-500 hover:-translate-y-1 bg-gradient-to-br from-white/[0.08] to-white/[0.03] border-white/10 hover:border-white/20 hover:shadow-2xl hover:shadow-[hsl(var(--accent-primary))]/10">
 
                 {/* Image Container */}
-                <Link href={`/products/${product.id}`} className="block">
+                <Link href={`/products/${(product as any).slug || product.id}`} className="block">
                     <div className="relative aspect-square overflow-hidden bg-gradient-to-br from-white/5 to-transparent">
                         {product.imageUrl ? (
                             <img
@@ -214,7 +214,7 @@ export function ProductCard({ product }: ProductCardProps) {
 
                 {/* Content */}
                 <div className="flex-1 flex flex-col p-6">
-                    <Link href={`/products/${product.id}`}>
+                    <Link href={`/products/${(product as any).slug || product.id}`}>
                         <h3 className="font-bold text-lg mb-2 group-hover:text-[hsl(var(--accent-primary))] transition-colors">
                             {product.name}
                         </h3>

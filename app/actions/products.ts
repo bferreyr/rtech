@@ -23,9 +23,13 @@ export async function createProduct(formData: FormData) {
     const categoryId = formData.get('categoryId') as string || null;
     const additionalImages = formData.getAll('additionalImages[]') as string[];
 
+    let baseSlug = name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+    const slug = baseSlug ? `${baseSlug}-${sku.toLowerCase().replace(/[^a-z0-9]+/g, '-')}` : sku;
+
     const product = await prisma.product.create({
         data: {
             sku,
+            slug,
             name,
             description,
             price,
@@ -75,10 +79,14 @@ export async function updateProduct(id: string, formData: FormData) {
     const categoryId = formData.get('categoryId') as string || null;
     const additionalImages = formData.getAll('additionalImages[]') as string[];
 
+    let baseSlug = name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+    const slug = baseSlug ? `${baseSlug}-${sku.toLowerCase().replace(/[^a-z0-9]+/g, '-')}` : sku;
+
     await prisma.product.update({
         where: { id },
         data: {
             sku,
+            slug,
             name,
             description,
             price,
@@ -326,6 +334,7 @@ export async function getAvailableFilters(options: { categoryId?: string, exclud
 function serializeProduct(p: any) {
     return {
         ...p,
+        slug: p.slug || p.id,
         price: Number(p.price),
         precio: Number(p.precio),
         peso: p.peso ? Number(p.peso) : null,
@@ -649,15 +658,20 @@ export async function bulkUploadProducts(formData: FormData) {
                 const rawDescDetallada = getVal(['Descripción Detallada', 'Descripcion Detallada', 'Desc. Detallada', 'descripcionDetallada']);
                 const rawDescLarga = getVal(['Descripción Larga', 'Descripcion Larga', 'Desc. Larga', 'descripcionLarga']);
 
+                const cleanName = fixEncoding(String(name || ''));
+                let baseSlug = cleanName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+                const slug = baseSlug ? `${baseSlug}-${String(sku || '').toLowerCase().replace(/[^a-z0-9]+/g, '-')}` : String(sku);
+
                 // Prepare base data (scalars)
                 const baseData = {
                     // Product Identification
                     sku: String(sku || `PROD-${Date.now()}-${Math.random().toString(36).substr(2, 9)}`),
+                    slug: slug || `PROD-${Date.now()}`,
                     codigoAlfa: getVal(['Cód. Fab.', 'Cód Fab', 'Cod. Fab.', 'codigo_alfa']) ? String(getVal(['Cód. Fab.', 'Cód Fab', 'Cod. Fab.', 'codigo_alfa'])) : null,
                     codigoProducto: sku ? String(sku) : null,
 
                     // Basic Information
-                    name: fixEncoding(String(name || '')),
+                    name: cleanName,
                     description: fixEncoding(String(rawDescDetallada || rawDescLarga || getVal(['description', 'Description']) || '')),
                     categoria: catName ? fixEncoding(String(catName)) : null,
                     subCategoria: null,

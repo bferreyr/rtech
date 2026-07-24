@@ -108,11 +108,16 @@ export async function syncElitProducts() {
                 // Image
                 const imageUrl = item.imagenes && item.imagenes.length > 0 ? item.imagenes[0] : null;
 
+                const cleanName = fixEncoding(item.nombre);
+                let baseSlug = cleanName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+                const slug = baseSlug ? `${baseSlug}-${sku.toLowerCase().replace(/[^a-z0-9]+/g, '-')}` : sku;
+
                 const baseData = {
                     sku,
+                    slug,
                     codigoAlfa: item.codigo_alfa ? String(item.codigo_alfa) : null,
                     codigoProducto: item.codigo_producto ? String(item.codigo_producto) : null,
-                    name: fixEncoding(item.nombre),
+                    name: cleanName,
                     description: item.atributos ? JSON.stringify(item.atributos) : '', // Storing attributes as description temporarily
                     categoria: item.categoria ? fixEncoding(item.categoria) : null,
                     subCategoria: item.sub_categoria ? fixEncoding(item.sub_categoria) : null,

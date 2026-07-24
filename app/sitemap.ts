@@ -5,11 +5,11 @@ export const dynamic = 'force-dynamic';
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     const products = await prisma.product.findMany({
-        select: { id: true, updatedAt: true },
+        select: { id: true, slug: true, updatedAt: true },
     });
 
     const productEntries: MetadataRoute.Sitemap = products.map((product) => ({
-        url: `https://rtech-store.com/products/${product.id}`,
+        url: `https://rincontech.ar/products/${product.slug || product.id}`,
         lastModified: product.updatedAt,
         changeFrequency: 'daily',
         priority: 0.8,
@@ -17,13 +17,13 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 
     return [
         {
-            url: "https://rtech-store.com",
+            url: "https://rincontech.ar",
             lastModified: new Date(),
             changeFrequency: "daily",
             priority: 1,
         },
         {
-            url: "https://rtech-store.com/products",
+            url: "https://rincontech.ar/products",
             lastModified: new Date(),
             changeFrequency: "daily",
             priority: 0.9,
