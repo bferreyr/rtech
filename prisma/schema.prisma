@@ -75,6 +75,8 @@ model Product {
   provider             String          @default("ELIT") // ELIT or MOBE
   createdAt            DateTime        @default(now())
   updatedAt            DateTime        @updatedAt
+  igLastPublishedAt    DateTime?
+  igPostId             String?
   items                OrderItem[]
   category             Category?       @relation(fields: [categoryId], references: [id])
   reviews              Review[]
@@ -379,3 +381,18 @@ model WarrantyRequest {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model InstagramSchedule {
+  id              String    @id @default(cuid())
+  cronExpression  String?   // For recurring e.g. "0 18 * * 5"
+  specificDate    DateTime? // For a specific date/time
+  startDate       DateTime? // For date ranges
+  endDate         DateTime? // For date ranges
+  
+  isActive        Boolean   @default(true)
+  postType        String    @default("FEED") // FEED, STORY, BOTH
+  
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+}
+

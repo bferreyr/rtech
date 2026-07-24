@@ -4,6 +4,7 @@ import { useState, useTransition } from 'react';
 import Link from 'next/link';
 import { Pencil, Trash2, Link as LinkIcon, ShieldCheck, AlertCircle, CheckSquare, Square, Loader2 } from 'lucide-react';
 import { deleteProduct, deleteProducts, deleteAllProducts } from '@/app/actions/products';
+import { InstagramPublishButton } from './InstagramPublishButton';
 
 interface ProductTableProps {
     products: any[];
@@ -266,6 +267,7 @@ export function ProductTable({ products, globalMarkup, exchangeRate, provider = 
                                                     <LinkIcon size={16} />
                                                 </a>
                                             )}
+                                            <InstagramPublishButton productId={product.id} productName={product.name} />
                                             <Link href={`/admin/products/${product.id}/edit`} className="p-2 hover:text-[color:var(--accent-primary)] transition-colors">
                                                 <Pencil size={18} />
                                             </Link>

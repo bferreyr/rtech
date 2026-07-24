@@ -1,0 +1,118 @@
+'use server';
+
+import { prisma } from '@/lib/prisma';
+import { revalidatePath } from 'next/cache';
+
+const IG_ACCOUNT_ID = process.env.IG_ACCOUNT_ID;
+const IG_ACCESS_TOKEN = process.env.IG_ACCESS_TOKEN;
+const SITE_URL = process.env.NEXT_PUBLIC_SITE_URL || 'https://rincontech.ar';
+
+async function createMediaContainer(imageUrl: string, caption: string, isStory: boolean = false) {
+    if (!IG_ACCOUNT_ID || !IG_ACCESS_TOKEN) {
+        throw new Error('Instagram credentials not configured in environment variables.');
+    }
+
+    const url = `https://graph.facebook.com/v19.0/${IG_ACCOUNT_ID}/media`;
+    
+    const params = new URLSearchParams({
+        image_url: imageUrl,
+        access_token: IG_ACCESS_TOKEN
+    });
+
+    if (isStory) {
+        params.append('media_type', 'STORIES');
+    } else {
+        params.append('caption', caption);
+    }
+
+    const res = await fetch(`${url}?${params.toString()}`, { method: 'POST' });
+    const data = await res.json();
+
+    if (data.error) {
+        throw new Error(`Instagram API Error: ${data.error.message}`);
+    }
+
+    return data.id; // creation_id
+}
+
+async function publishMediaContainer(creationId: string) {
+    const url = `https://graph.facebook.com/v19.0/${IG_ACCOUNT_ID}/media_publish`;
+    
+    const params = new URLSearchParams({
+        creation_id: creationId,
+        access_token: IG_ACCESS_TOKEN as string
+    });
+
+    // We might need to wait for the container to be ready, but usually images are instant.
+    // If it fails with "Media ID is not available", we should add a delay/retry logic.
+    let retries = 3;
+    while (retries > 0) {
+        const res = await fetch(`${url}?${params.toString()}`, { method: 'POST' });
+        const data = await res.json();
+
+        if (data.error) {
+            if (data.error.code === 9007 || data.error.message.includes('not published')) {
+                // Not ready yet
+                await new Promise(r => setTimeout(r, 3000));
+                retries--;
+                continue;
+            }
+            throw new Error(`Instagram Publish Error: ${data.error.message}`);
+        }
+
+        return data.id; // post_id
+    }
+    throw new Error('Timeout waiting for Instagram media container to be ready.');
+}
+
+function formatPrice(amount: number) {
+    return new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' }).format(amount);
+}
+
+export async function publishToInstagram(productId: string, type: 'FEED' | 'STORY' | 'BOTH') {
+    try {
+        const product = await prisma.product.findUnique({
+            where: { id: productId }
+        });
+
+        if (!product) throw new Error('Product not found');
+        if (!product.imageUrl) throw new Error('Product has no image');
+
+        const formatter = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' });
+        const formattedPrice = formatter.format(Number(product.price)); // Assuming price is calculated final ARS or USD, we should use calculated frontend logic, but for simplicity here we just show what's in DB or call a helper.
+        // Wait, product.price in DB is USD or ARS? Usually USD base cost, but we need ARS final.
+        // Let's just use a generic caption if we don't have runtime exchange rate here easily.
+        // Or we can import exchange rate:
+        
+        let postIds: string[] = [];
+
+        if (type === 'FEED' || type === 'BOTH') {
+            const caption = `🔥 ${product.name}\n\n💻 ¡Mejora tu setup hoy mismo con Rincón Tech!\n✅ En Stock\n🔗 Link en bio o búscalo en nuestra web como: ${product.slug}\n\n#hardware #gamer #rincontech #tecnologia #pcgamer #gaming`;
+            const creationId = await createMediaContainer(product.imageUrl, caption, false);
+            const postId = await publishMediaContainer(creationId);
+            postIds.push(postId);
+        }
+
+        if (type === 'STORY' || type === 'BOTH') {
+            const storyImageUrl = `${SITE_URL}/api/instagram/generate-story-image?productId=${product.id}`;
+            const creationId = await createMediaContainer(storyImageUrl, '', true);
+            const postId = await publishMediaContainer(creationId);
+            postIds.push(postId);
+        }
+
+        // Update DB
+        await prisma.product.update({
+            where: { id: productId },
+            data: {
+                igLastPublishedAt: new Date(),
+                igPostId: postIds[0] // Save at least one
+            }
+        });
+
+        revalidatePath('/admin/products');
+        return { success: true, message: `Publicado exitosamente en Instagram (${postIds.length} posts)` };
+    } catch (error: any) {
+        console.error('publishToInstagram Error:', error);
+        return { success: false, error: error.message };
+    }
+}
