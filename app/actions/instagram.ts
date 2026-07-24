@@ -93,7 +93,7 @@ export async function publishToInstagram(productId: string, type: 'FEED' | 'STOR
             if (process.env.GEMINI_API_KEY) {
                 try {
                     const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-                    const model = genAI.getGenerativeModel({ model: "gemini-2.5-flash" });
+                    const model = genAI.getGenerativeModel({ model: "gemini-1.5-flash" });
                     const prompt = `Escribe un caption llamativo para Instagram para vender este producto de hardware:
 Nombre: ${product.name}
 Marca: ${product.marca || 'Genérica'}
