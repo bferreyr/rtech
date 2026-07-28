@@ -116,14 +116,34 @@ Reglas:
                 }
             }
 
-            const feedImageUrl = `${SITE_URL}/api/instagram/generate-image?format=feed&productId=${product.id}&t=${Date.now()}`;
+            const generateUrl = `${SITE_URL}/api/instagram/generate-image?format=feed&productId=${product.id}`;
+            const res = await fetch(generateUrl);
+            if (!res.ok) throw new Error("Failed to generate feed image");
+            
+            const buffer = Buffer.from(await res.arrayBuffer());
+            const fileName = `feed-${product.id}-${Date.now()}.jpg`;
+            const cacheDir = require('path').join(process.cwd(), 'public', 'ig-cache');
+            await require('fs').promises.mkdir(cacheDir, { recursive: true });
+            await require('fs').promises.writeFile(require('path').join(cacheDir, fileName), buffer);
+            
+            const feedImageUrl = `${SITE_URL}/ig-cache/${fileName}`;
             const creationId = await createMediaContainer(feedImageUrl, caption, false);
             const postId = await publishMediaContainer(creationId);
             postIds.push(postId);
         }
 
         if (type === 'STORY' || type === 'BOTH') {
-            const storyImageUrl = `${SITE_URL}/api/instagram/generate-image?format=story&productId=${product.id}&t=${Date.now()}`;
+            const generateUrl = `${SITE_URL}/api/instagram/generate-image?format=story&productId=${product.id}`;
+            const res = await fetch(generateUrl);
+            if (!res.ok) throw new Error("Failed to generate story image");
+            
+            const buffer = Buffer.from(await res.arrayBuffer());
+            const fileName = `story-${product.id}-${Date.now()}.jpg`;
+            const cacheDir = require('path').join(process.cwd(), 'public', 'ig-cache');
+            await require('fs').promises.mkdir(cacheDir, { recursive: true });
+            await require('fs').promises.writeFile(require('path').join(cacheDir, fileName), buffer);
+            
+            const storyImageUrl = `${SITE_URL}/ig-cache/${fileName}`;
             const creationId = await createMediaContainer(storyImageUrl, '', true);
             const postId = await publishMediaContainer(creationId);
             postIds.push(postId);
