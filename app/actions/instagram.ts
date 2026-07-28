@@ -121,12 +121,12 @@ Reglas:
             if (!res.ok) throw new Error("Failed to generate feed image");
             
             const buffer = Buffer.from(await res.arrayBuffer());
-            const fileName = `feed-${product.id}-${Date.now()}.jpg`;
-            const cacheDir = require('path').join(process.cwd(), 'public', 'ig-cache');
+            const fileName = `feed-${product.id}-${Date.now()}`;
+            const cacheDir = require('path').join(process.cwd(), '.next', 'cache', 'ig');
             await require('fs').promises.mkdir(cacheDir, { recursive: true });
-            await require('fs').promises.writeFile(require('path').join(cacheDir, fileName), buffer);
+            await require('fs').promises.writeFile(require('path').join(cacheDir, `${fileName}.jpg`), buffer);
             
-            const feedImageUrl = `${SITE_URL}/ig-cache/${fileName}`;
+            const feedImageUrl = `${SITE_URL}/api/instagram/serve?id=${fileName}`;
             const creationId = await createMediaContainer(feedImageUrl, caption, false);
             const postId = await publishMediaContainer(creationId);
             postIds.push(postId);
@@ -138,12 +138,12 @@ Reglas:
             if (!res.ok) throw new Error("Failed to generate story image");
             
             const buffer = Buffer.from(await res.arrayBuffer());
-            const fileName = `story-${product.id}-${Date.now()}.jpg`;
-            const cacheDir = require('path').join(process.cwd(), 'public', 'ig-cache');
+            const fileName = `story-${product.id}-${Date.now()}`;
+            const cacheDir = require('path').join(process.cwd(), '.next', 'cache', 'ig');
             await require('fs').promises.mkdir(cacheDir, { recursive: true });
-            await require('fs').promises.writeFile(require('path').join(cacheDir, fileName), buffer);
+            await require('fs').promises.writeFile(require('path').join(cacheDir, `${fileName}.jpg`), buffer);
             
-            const storyImageUrl = `${SITE_URL}/ig-cache/${fileName}`;
+            const storyImageUrl = `${SITE_URL}/api/instagram/serve?id=${fileName}`;
             const creationId = await createMediaContainer(storyImageUrl, '', true);
             const postId = await publishMediaContainer(creationId);
             postIds.push(postId);
