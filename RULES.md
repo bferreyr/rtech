@@ -95,3 +95,12 @@ Estas reglas aplican a **todos los agentes** sin excepción. Deben respetarse en
   4. ¿Impacta negativamente la performance?
 - No generar código comentado ("código muerto") en la entrega final.
 - No dejar `TODO` o `FIXME` sin descripción clara de qué falta y por qué.
+
+---
+
+## 11. Flujo de Producción y Despliegue
+
+- **Entorno Único:** El usuario trabaja y realiza pruebas directamente sobre el servidor de producción. Nunca asumas un entorno de desarrollo local aislado.
+- **Base de Datos (Prohibido `prisma db push`):** Está estrictamente prohibido pedirle al usuario que use `npx prisma db push` o comandos automatizados de migración de Prisma para alterar la estructura de la base de datos de producción.
+- **SQL Explícito:** Ante cualquier cambio en el esquema de Prisma (`schema.prisma`), debes generar y entregar el código SQL crudo (Raw SQL) correspondiente para que el usuario lo ejecute manualmente en su motor PostgreSQL.
+- **Comandos de Servidor:** Si una tarea requiere instalar nuevas dependencias (ej. `npm install`), configurar variables de entorno o reiniciar servicios (ej. `pm2 restart`), debes entregar los comandos de terminal exactos y explícitos que el usuario debe ejecutar en su servidor.

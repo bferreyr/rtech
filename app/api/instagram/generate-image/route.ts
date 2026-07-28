@@ -85,40 +85,71 @@ export async function GET(request: Request) {
         `;
 
         let finalImageBuffer;
+        const aiKey = process.env.GEMINI_API_KEY;
+        let baseImageBuffer;
 
-        // Both use dark blurred background now
-        const background = await sharp(imageBuffer)
-            .resize(width, height, { fit: 'cover' })
-            .blur(30)
-            .modulate({ brightness: 0.3 })
-            .toBuffer();
+        if (aiKey) {
+            try {
+                const { GoogleGenAI } = await import('@google/genai');
+                const ai = new GoogleGenAI({ apiKey: aiKey });
+                
+                const prompt = "A highly aesthetic, professional 4k product photography shot. Place the product in a modern, dark moody gaming setup environment with subtle neon lights. Ensure there is empty negative space at the bottom for text. Do not add any text, letters, or watermarks.";
 
-        if (format === 'story') {
+                const response = await ai.models.generateContent({
+                    model: 'gemini-3.1-flash-image',
+                    contents: [
+                        { text: prompt },
+                        { inlineData: { mimeType: 'image/jpeg', data: imageBuffer.toString('base64') } }
+                    ]
+                });
+
+                // Google Gen AI SDK response handling for images
+                let base64Data = null;
+                if (response.candidates && response.candidates.length > 0) {
+                    const firstPart = response.candidates[0].content?.parts?.[0];
+                    if (firstPart?.inlineData?.data) {
+                        base64Data = firstPart.inlineData.data;
+                    }
+                }
+                
+                if (base64Data) {
+                    const aiImage = Buffer.from(base64Data, 'base64');
+                    // Ensure the AI image matches our requested dimensions
+                    baseImageBuffer = await sharp(aiImage)
+                        .resize(width, height, { fit: 'cover' })
+                        .toBuffer();
+                }
+            } catch (err) {
+                console.error("Nano Banana (Gemini Image) generation failed:", err);
+            }
+        }
+
+        if (!baseImageBuffer) {
+            // Fallback to old blurred background + foreground composite if AI fails or no key
+            const background = await sharp(imageBuffer)
+                .resize(width, height, { fit: 'cover' })
+                .blur(30)
+                .modulate({ brightness: 0.3 })
+                .toBuffer();
+
             const foreground = await sharp(imageBuffer)
-                .resize(900, 900, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
+                .resize(900, format === 'story' ? 900 : 650, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
                 .toBuffer();
 
-            finalImageBuffer = await sharp(background)
+            baseImageBuffer = await sharp(background)
                 .composite([
-                    { input: foreground, top: 300, left: 90 },
-                    { input: Buffer.from(svg), top: 0, left: 0 }
+                    { input: foreground, top: format === 'story' ? 300 : 50, left: 90 }
                 ])
-                .jpeg({ quality: 90 })
-                .toBuffer();
-        } else {
-            // Feed logic: 1080x1080 image
-            const foreground = await sharp(imageBuffer)
-                .resize(900, 650, { fit: 'contain', background: { r: 0, g: 0, b: 0, alpha: 0 } })
-                .toBuffer();
-
-            finalImageBuffer = await sharp(background)
-                .composite([
-                    { input: foreground, top: 50, left: 90 },
-                    { input: Buffer.from(svg), top: 0, left: 0 }
-                ])
-                .jpeg({ quality: 90 })
                 .toBuffer();
         }
+
+        // Add the SVG text overlay on top of the base image
+        finalImageBuffer = await sharp(baseImageBuffer)
+            .composite([
+                { input: Buffer.from(svg), top: 0, left: 0 }
+            ])
+            .jpeg({ quality: 90 })
+            .toBuffer();
 
         return new NextResponse(finalImageBuffer, {
             headers: {

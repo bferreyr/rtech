@@ -2,7 +2,7 @@
 
 import { prisma } from '@/lib/prisma';
 import { revalidatePath } from 'next/cache';
-import { GoogleGenerativeAI } from '@google/generative-ai';
+import { GoogleGenAI } from '@google/genai';
 
 const IG_ACCOUNT_ID = process.env.IG_ACCOUNT_ID;
 const IG_ACCESS_TOKEN = process.env.IG_ACCESS_TOKEN;
@@ -92,8 +92,7 @@ export async function publishToInstagram(productId: string, type: 'FEED' | 'STOR
 
             if (process.env.GEMINI_API_KEY) {
                 try {
-                    const genAI = new GoogleGenerativeAI(process.env.GEMINI_API_KEY);
-                    const model = genAI.getGenerativeModel({ model: "gemini-3.1-flash-lite" });
+                    const ai = new GoogleGenAI({ apiKey: process.env.GEMINI_API_KEY });
                     const prompt = `Escribe un caption llamativo para Instagram para vender este producto de hardware:
 Nombre: ${product.name}
 Marca: ${product.marca || 'Genérica'}
@@ -107,8 +106,11 @@ Reglas:
 - Mantén el texto por debajo de las 100 palabras.
 - Incluye 5 hashtags relevantes al final.`;
                     
-                    const result = await model.generateContent(prompt);
-                    caption = result.response.text();
+                    const result = await ai.models.generateContent({
+                        model: "gemini-3.1-flash-lite",
+                        contents: prompt
+                    });
+                    caption = result.text || caption;
                 } catch (e) {
                     console.error("Gemini API Error, falling back to static caption:", e);
                 }
