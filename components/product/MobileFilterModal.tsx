@@ -16,7 +16,7 @@ interface MobileFilterModalProps {
         brands?: string[];
         priceMin?: number;
         priceMax?: number;
-        inStock?: boolean;
+        outOfStock?: boolean;
         categoryId?: string;
     };
     onFilterChange: (filters: any) => void;

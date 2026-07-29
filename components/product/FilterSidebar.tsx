@@ -1,6 +1,8 @@
 'use client';
 
 import { CategoryFilter } from './filters/CategoryFilter';
+import { BrandFilter } from './filters/BrandFilter';
+import { StockFilter } from './filters/StockFilter';
 import { X, SlidersHorizontal } from 'lucide-react';
 
 interface Brand {
@@ -28,7 +30,7 @@ interface ActiveFilters {
     brands?: string[];
     priceMin?: number;
     priceMax?: number;
-    inStock?: boolean;
+    outOfStock?: boolean;
     category?: string;
 }
 
@@ -43,7 +45,7 @@ export function FilterSidebar({ filters, activeFilters, onFilterChange }: Filter
         (activeFilters.brands && activeFilters.brands.length > 0) ||
         activeFilters.priceMin !== undefined ||
         activeFilters.priceMax !== undefined ||
-        activeFilters.inStock;
+        activeFilters.outOfStock;
 
     const clearFilters = () => {
         onFilterChange({});
@@ -85,6 +87,25 @@ export function FilterSidebar({ filters, activeFilters, onFilterChange }: Filter
                 ) : (
                     <p className="text-sm text-[hsl(var(--text-tertiary))]">No hay categorías disponibles</p>
                 )}
+                
+                {/* Brand Filter */}
+                {filters.brands && filters.brands.length > 0 && (
+                    <>
+                        <hr className="border-white/10 my-4" />
+                        <BrandFilter
+                            brands={filters.brands}
+                            selected={activeFilters.brands}
+                            onChange={(brands) => onFilterChange({ ...activeFilters, brands })}
+                        />
+                    </>
+                )}
+
+                {/* Stock Filter */}
+                <hr className="border-white/10 my-4" />
+                <StockFilter
+                    outOfStock={activeFilters.outOfStock}
+                    onChange={(outOfStock) => onFilterChange({ ...activeFilters, outOfStock: outOfStock ? true : undefined })}
+                />
             </div>
 
             {/* Active Filters Count */}
@@ -95,7 +116,7 @@ export function FilterSidebar({ filters, activeFilters, onFilterChange }: Filter
                             let count = 0;
                             if (activeFilters.brands && activeFilters.brands.length > 0) count += activeFilters.brands.length;
                             if (activeFilters.priceMin !== undefined || activeFilters.priceMax !== undefined) count++;
-                            if (activeFilters.inStock) count++;
+                            if (activeFilters.outOfStock) count++;
                             return `${count} filtro${count !== 1 ? 's' : ''} activo${count !== 1 ? 's' : ''}`;
                         })()}
                     </p>

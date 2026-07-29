@@ -50,7 +50,7 @@ export function StoreFront({ initialProducts, categories, pagination, availableF
         brands: searchParams.get('brands')?.split(',').filter(Boolean) || [],
         priceMin: searchParams.get('priceMin') ? Number(searchParams.get('priceMin')) : undefined,
         priceMax: searchParams.get('priceMax') ? Number(searchParams.get('priceMax')) : undefined,
-        inStock: searchParams.get('inStock') === 'true' || undefined,
+        outOfStock: searchParams.get('outOfStock') === 'true' || undefined,
         category: searchParams.get('category') || undefined,
     };
 
@@ -102,10 +102,10 @@ export function StoreFront({ initialProducts, categories, pagination, availableF
             updates.priceMax = null;
         }
 
-        if (filters.inStock) {
-            updates.inStock = 'true';
+        if (filters.outOfStock) {
+            updates.outOfStock = 'true';
         } else {
-            updates.inStock = null;
+            updates.outOfStock = null;
         }
 
         if (filters.category) {
@@ -127,7 +127,7 @@ export function StoreFront({ initialProducts, categories, pagination, availableF
         activeFilters.brands.length > 0,
         activeFilters.priceMin !== undefined,
         activeFilters.priceMax !== undefined,
-        activeFilters.inStock,
+        activeFilters.outOfStock,
     ].filter(Boolean).length;
 
     return (
@@ -203,15 +203,15 @@ export function StoreFront({ initialProducts, categories, pagination, availableF
                                 <X className="w-3 h-3" />
                             </button>
                         )}
-                        {activeFilters.inStock && (
+                        {activeFilters.outOfStock && (
                             <button
                                 onClick={() => handleFilterChange({
                                     ...activeFilters,
-                                    inStock: undefined
+                                    outOfStock: undefined
                                 })}
                                 className="flex items-center gap-1 px-3 py-1 rounded-full bg-[hsl(var(--accent-primary))]/20 border border-[hsl(var(--accent-primary))]/40 text-sm hover:bg-[hsl(var(--accent-primary))]/30 transition-colors"
                             >
-                                <span>Con stock</span>
+                                <span>Sin stock</span>
                                 <X className="w-3 h-3" />
                             </button>
                         )}
