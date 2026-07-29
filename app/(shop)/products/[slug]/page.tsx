@@ -5,7 +5,7 @@ import { AddToCartButton } from "@/components/cart/AddToCartButton";
 import { WhatsAppProductButton } from "@/components/product/WhatsAppProductButton";
 import { Metadata } from "next";
 import { getExchangeRate, getGlobalMarkup } from "@/app/actions/settings";
-import { ShieldCheck } from "lucide-react";
+import { ShieldCheck, Info } from "lucide-react";
 import { ReviewsSection } from "@/components/product/ReviewsSection";
 import { ProductImageGallery } from "@/components/product/ProductImageGallery";
 import { ProductDescription } from "@/components/product/ProductDescription";
@@ -170,58 +170,57 @@ export default async function ProductPage({ params }: Props) {
                     </div>
 
                     {/* Product Specifications */}
-                    <div className="rounded-xl border border-[color:var(--border-color)] bg-[color:var(--bg-secondary)] p-5">
-                        <h3 className="mb-4 text-sm font-semibold uppercase tracking-wider text-[color:var(--text-secondary)]">Especificaciones del Producto</h3>
-                        <div className="grid grid-cols-2 gap-y-4 gap-x-6 text-sm">
-                            <div>
-                                <span className="block text-xs text-[color:var(--text-tertiary)] uppercase tracking-wider mb-1">Marca</span>
-                                <span className="font-medium text-[color:var(--text-primary)]">{(product as any).marca || 'N/A'}</span>
+                    <div className="rounded-2xl border border-white/10 bg-[#09090b]/80 backdrop-blur-md p-6 shadow-xl">
+                        <h3 className="mb-5 text-sm font-bold uppercase tracking-widest text-[color:var(--text-secondary)] flex items-center gap-2">
+                            <Info size={16} className="text-[hsl(var(--accent-primary))]" />
+                            Especificaciones Principales
+                        </h3>
+                        <div className="grid grid-cols-2 sm:grid-cols-3 gap-3">
+                            <div className="bg-white/5 rounded-xl p-3 border border-white/5 hover:bg-white/10 transition-colors group">
+                                <span className="block text-[10px] text-[color:var(--text-tertiary)] uppercase tracking-widest mb-1 group-hover:text-white/70 transition-colors">Marca</span>
+                                <span className="font-semibold text-[color:var(--text-primary)] text-sm">{(product as any).marca || 'N/A'}</span>
                             </div>
-                            <div>
-                                <span className="block text-xs text-[color:var(--text-tertiary)] uppercase tracking-wider mb-1">Modelo / SKU</span>
-                                <span className="font-mono text-[color:var(--text-primary)]">{product.sku}</span>
+                            <div className="bg-white/5 rounded-xl p-3 border border-white/5 hover:bg-white/10 transition-colors group">
+                                <span className="block text-[10px] text-[color:var(--text-tertiary)] uppercase tracking-widest mb-1 group-hover:text-white/70 transition-colors">Modelo / SKU</span>
+                                <span className="font-mono text-[color:var(--text-primary)] text-sm truncate block" title={product.sku}>{product.sku}</span>
                             </div>
+                            {(product as any).codigoAlfa && (
+                                <div className="bg-white/5 rounded-xl p-3 border border-white/5 hover:bg-white/10 transition-colors group">
+                                    <span className="block text-[10px] text-[color:var(--text-tertiary)] uppercase tracking-widest mb-1 group-hover:text-white/70 transition-colors">Cód. Alfa</span>
+                                    <span className="font-mono text-[color:var(--text-primary)] text-sm">{(product as any).codigoAlfa}</span>
+                                </div>
+                            )}
+                            {(product as any).ean && (
+                                <div className="bg-white/5 rounded-xl p-3 border border-white/5 hover:bg-white/10 transition-colors group">
+                                    <span className="block text-[10px] text-[color:var(--text-tertiary)] uppercase tracking-widest mb-1 group-hover:text-white/70 transition-colors">EAN</span>
+                                    <span className="font-mono text-[color:var(--text-primary)] text-sm truncate block" title={(product as any).ean}>{(product as any).ean}</span>
+                                </div>
+                            )}
+                            <div className="bg-white/5 rounded-xl p-3 border border-white/5 hover:bg-white/10 transition-colors group">
+                                <span className="block text-[10px] text-[color:var(--text-tertiary)] uppercase tracking-widest mb-1 group-hover:text-white/70 transition-colors">ID Sistema</span>
+                                <span className="font-mono text-[color:var(--text-primary)] text-[10px] truncate block opacity-70" title={product.id}>{product.id}</span>
+                            </div>
+                        </div>
 
-                            <div>
-                                <span className="block text-xs text-[color:var(--text-tertiary)] uppercase tracking-wider mb-1">Código Producto</span>
-                                <span className="font-mono text-[color:var(--text-primary)]">{(product as any).codigoProducto || 'N/A'}</span>
-                            </div>
-                            <div>
-                                <span className="block text-xs text-[color:var(--text-tertiary)] uppercase tracking-wider mb-1">Código Alfa</span>
-                                <span className="font-mono text-[color:var(--text-primary)]">{(product as any).codigoAlfa || 'N/A'}</span>
-                            </div>
-
-                            <div>
-                                <span className="block text-xs text-[color:var(--text-tertiary)] uppercase tracking-wider mb-1">EAN</span>
-                                <span className="font-mono text-[color:var(--text-primary)]">{(product as any).ean || 'N/A'}</span>
-                            </div>
-                            <div>
-                                <span className="block text-xs text-[color:var(--text-tertiary)] uppercase tracking-wider mb-1">ID Sistema</span>
-                                <span className="font-mono text-[color:var(--text-primary)] text-xs truncate" title={product.id}>{product.id}</span>
-                            </div>
-
-                            <div className="col-span-2 border-t border-[color:var(--border-color)] pt-4 mt-2">
-                                <div className="flex flex-wrap items-end gap-x-8 gap-y-4">
-                                    {(product as any).garantia && (
-                                        <div>
-                                            <span className="block text-xs text-[color:var(--text-tertiary)] uppercase tracking-wider mb-2">Garantía Asegurada</span>
-                                            <div className="flex items-center gap-2 text-green-400 bg-green-500/10 w-fit px-3 py-1.5 rounded-lg border border-green-500/20">
-                                                <ShieldCheck size={16} />
-                                                <span className="font-semibold">{(product as any).garantia}</span>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    <div>
-                                        <span className="block text-xs text-[color:var(--text-tertiary)] uppercase tracking-wider mb-2">Disponibilidad de Stock</span>
-                                        <div className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold border ${product.stock > 0
-                                                ? 'bg-blue-500/10 text-blue-400 border-blue-500/20'
-                                                : 'bg-red-500/10 text-red-400 border-red-500/20'
-                                            }`}>
-                                            <div className={`w-2 h-2 rounded-full ${product.stock > 0 ? 'bg-blue-400' : 'bg-red-400'}`} />
-                                            {product.stock > 0 ? `ENTREGA INMEDIATA: ${product.stock} UNI.` : 'SIN STOCK DISPONIBLE'}
-                                        </div>
+                        <div className="mt-5 pt-5 border-t border-white/10 flex flex-wrap items-end gap-3">
+                            {(product as any).garantia && (
+                                <div className="flex-1 min-w-[180px]">
+                                    <span className="block text-[10px] text-[color:var(--text-tertiary)] uppercase tracking-widest mb-1.5">Garantía Asegurada</span>
+                                    <div className="flex items-center justify-center gap-2 text-emerald-400 bg-emerald-500/10 px-4 py-2.5 rounded-xl border border-emerald-500/20 w-full transition-all hover:bg-emerald-500/20">
+                                        <ShieldCheck size={16} />
+                                        <span className="font-bold text-xs">{(product as any).garantia}</span>
                                     </div>
+                                </div>
+                            )}
+
+                            <div className="flex-1 min-w-[180px]">
+                                <span className="block text-[10px] text-[color:var(--text-tertiary)] uppercase tracking-widest mb-1.5">Disponibilidad</span>
+                                <div className={`flex items-center justify-center gap-2 px-4 py-2.5 rounded-xl text-xs font-bold border transition-all w-full ${product.stock > 0
+                                        ? 'bg-blue-500/10 text-blue-400 border-blue-500/20 hover:bg-blue-500/20'
+                                        : 'bg-rose-500/10 text-rose-400 border-rose-500/20 hover:bg-rose-500/20'
+                                    }`}>
+                                    <div className={`w-2 h-2 rounded-full animate-pulse ${product.stock > 0 ? 'bg-blue-400' : 'bg-rose-400'}`} />
+                                    {product.stock > 0 ? `STOCK: ${product.stock} UNI.` : 'SIN STOCK'}
                                 </div>
                             </div>
                         </div>
