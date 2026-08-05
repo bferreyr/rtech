@@ -42,7 +42,7 @@ export default async function AdminMobeProductsPage(props: {
                 <div className="flex items-center gap-4">
                     <ExportProductsButton products={products} />
                     <BulkUploadButton provider={PROVIDER} />
-                    <NextLink href="/admin/products/new" className="btn btn-primary">
+                    <NextLink href="/admin/mobe/products/new" className="btn btn-primary">
                         <Plus size={20} className="mr-2" /> Nuevo
                     </NextLink>
                 </div>

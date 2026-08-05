@@ -22,6 +22,7 @@ export async function createProduct(formData: FormData) {
     const imageUrl = formData.get('imageUrl') as string;
     const categoryId = formData.get('categoryId') as string || null;
     const additionalImages = formData.getAll('additionalImages[]') as string[];
+    const provider = formData.get('provider') as string || 'ELIT';
 
     let baseSlug = name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
     const slug = baseSlug ? `${baseSlug}-${sku.toLowerCase().replace(/[^a-z0-9]+/g, '-')}` : sku;
@@ -36,6 +37,7 @@ export async function createProduct(formData: FormData) {
             stock,
             imageUrl,
             categoryId,
+            provider,
             // Sync new fields with legacy values
             // @ts-ignore
             precio: price,
@@ -58,9 +60,10 @@ export async function createProduct(formData: FormData) {
     }
 
     revalidatePath('/admin/products');
+    revalidatePath('/admin/mobe/products');
     revalidatePath('/products');
     revalidatePath('/'); // Home page featured
-    redirect('/admin/products');
+    redirect(provider === 'MOBE' ? '/admin/mobe/products' : '/admin/products');
 }
 
 export async function updateProduct(id: string, formData: FormData) {
@@ -78,6 +81,7 @@ export async function updateProduct(id: string, formData: FormData) {
     const imageUrl = formData.get('imageUrl') as string;
     const categoryId = formData.get('categoryId') as string || null;
     const additionalImages = formData.getAll('additionalImages[]') as string[];
+    const provider = formData.get('provider') as string || 'ELIT';
 
     let baseSlug = name.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
     const slug = baseSlug ? `${baseSlug}-${sku.toLowerCase().replace(/[^a-z0-9]+/g, '-')}` : sku;
@@ -93,6 +97,7 @@ export async function updateProduct(id: string, formData: FormData) {
             stock,
             imageUrl,
             categoryId,
+            provider,
             // Sync new fields with legacy values
             // @ts-ignore
             precio: price,
@@ -117,8 +122,9 @@ export async function updateProduct(id: string, formData: FormData) {
 
     revalidatePath(`/admin/products/${id}`);
     revalidatePath('/admin/products');
+    revalidatePath('/admin/mobe/products');
     revalidatePath('/products');
-    redirect('/admin/products');
+    redirect(provider === 'MOBE' ? '/admin/mobe/products' : '/admin/products');
 }
 
 

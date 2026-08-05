@@ -268,7 +268,7 @@ export function ProductTable({ products, globalMarkup, exchangeRate, provider = 
                                                 </a>
                                             )}
                                             <InstagramPublishButton productId={product.id} productName={product.name} />
-                                            <Link href={`/admin/products/${product.id}/edit`} className="p-2 hover:text-[color:var(--accent-primary)] transition-colors">
+                                            <Link href={provider === 'MOBE' ? `/admin/mobe/products/${product.id}/edit` : `/admin/products/${product.id}/edit`} className="p-2 hover:text-[color:var(--accent-primary)] transition-colors">
                                                 <Pencil size={18} />
                                             </Link>
                                             <button
