@@ -72,15 +72,45 @@ export async function GET(request: Request) {
                 
                 <text x="50%" y="${height - 280}" class="price" text-anchor="middle">${price}</text>
                 
-                <text x="50%" y="${height - 215}" class="cuotas" text-anchor="middle">💳 Hasta 24 cuotas fijas</text>
+                <g transform="translate(${(width/2) - 165}, ${height - 238})">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#60a5fa" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect width="20" height="14" x="2" y="5" rx="2" />
+                        <line x1="2" x2="22" y1="10" y2="10" />
+                    </svg>
+                    <text x="40" y="22" class="cuotas" text-anchor="start">Hasta 24 cuotas fijas</text>
+                </g>
                 
-                <text x="50%" y="${height - 175}" class="info" text-anchor="middle">🚚 Envíos a todo el país</text>
+                <g transform="translate(${(width/2) - 160}, ${height - 198})">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#e5e7eb" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10 17h4V5H2v12h3" />
+                        <path d="M20 17h2v-3.34a4 4 0 0 0-1.17-2.83L19 9h-5" />
+                        <path d="M14 17h1" />
+                        <circle cx="7.5" cy="17.5" r="2.5" />
+                        <circle cx="17.5" cy="17.5" r="2.5" />
+                    </svg>
+                    <text x="40" y="21" class="info" text-anchor="start">Envíos a todo el país</text>
+                </g>
                 
-                ${lowStock ? `<text x="50%" y="${height - 135}" class="alert" text-anchor="middle">⚠️ ¡Quedan pocos! No te quedes sin el tuyo</text>` : ''}
+                ${lowStock ? `
+                <g transform="translate(${(width/2) - 245}, ${height - 158})">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="#ef4444" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z" />
+                        <path d="M12 9v4" />
+                        <path d="M12 17h.01" />
+                    </svg>
+                    <text x="40" y="21" class="alert" text-anchor="start">¡Quedan pocos! No te quedes sin el tuyo</text>
+                </g>
+                ` : ''}
                 
                 <!-- CTA Button -->
                 <rect x="${(width/2) - 140}" y="${height - 110}" width="280" height="48" rx="24" fill="#3b82f6" />
-                <text x="50%" y="${height - 76}" class="cta" text-anchor="middle">🔗 Link en la BIO</text>
+                <g transform="translate(${(width/2) - 105}, ${height - 101})">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71" />
+                        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71" />
+                    </svg>
+                    <text x="40" y="22" class="cta" text-anchor="start">Link en la BIO</text>
+                </g>
             </svg>
         `;
 

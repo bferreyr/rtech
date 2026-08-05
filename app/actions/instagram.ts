@@ -88,7 +88,7 @@ export async function publishToInstagram(productId: string, type: 'FEED' | 'STOR
         let postIds: string[] = [];
 
         if (type === 'FEED' || type === 'BOTH') {
-            let caption = `🔥 ${product.name}\n\n💻 ¡Mejora tu setup hoy mismo con Rincón Tech!\n✅ En Stock\n🔗 Link en bio o búscalo en nuestra web como: ${product.slug}\n\n#hardware #gamer #rincontech #tecnologia #pcgamer #gaming`;
+            let caption = `🔥 ${product.name}\n\n💻 ¡Mejora tu setup hoy mismo con Rincón Tech!\n✅ En Stock\n🚚 Envío a todo el país\n💳 Hasta 24 cuotas\n🔗 Link en bio o búscalo en nuestra web como: ${product.slug}\n\n#hardware #gamer #rincontech #tecnologia #pcgamer #gaming`;
 
             if (process.env.GEMINI_API_KEY) {
                 try {
@@ -102,6 +102,7 @@ Atributos: ${product.atributos || product.description || ''}
 Reglas:
 - Tono: Entusiasta, gamer, profesional.
 - Incluye emojis.
+- Incluye explícitamente "🚚 Envío a todo el país" y "💳 Hasta 24 cuotas" en la descripción.
 - Agrega una llamada a la acción invitando a comprar en rincontech.ar (busca el producto como: ${product.slug}).
 - Mantén el texto por debajo de las 100 palabras.
 - Incluye 5 hashtags relevantes al final.`;
