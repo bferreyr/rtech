@@ -78,12 +78,6 @@ export async function publishToInstagram(productId: string, type: 'FEED' | 'STOR
 
         if (!product) throw new Error('Product not found');
         if (!product.imageUrl) throw new Error('Product has no image');
-
-        const formatter = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' });
-        const formattedPrice = formatter.format(Number(product.price)); // Assuming price is calculated final ARS or USD, we should use calculated frontend logic, but for simplicity here we just show what's in DB or call a helper.
-        // Wait, product.price in DB is USD or ARS? Usually USD base cost, but we need ARS final.
-        // Let's just use a generic caption if we don't have runtime exchange rate here easily.
-        // Or we can import exchange rate:
         
         let postIds: string[] = [];
 

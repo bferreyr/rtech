@@ -2,7 +2,7 @@ import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/prisma';
 import sharp from 'sharp';
 
-import { getExchangeRate } from '@/app/actions/settings';
+import { getExchangeRate, getGlobalMarkup } from '@/app/actions/settings';
 
 export async function GET(request: Request) {
     const { searchParams } = new URL(request.url);
@@ -26,8 +26,12 @@ export async function GET(request: Request) {
         let height = format === 'feed' ? 1080 : 1920;
         
         const settings = await getExchangeRate();
+        const globalMarkup = await getGlobalMarkup();
         const formatter = new Intl.NumberFormat('es-AR', { style: 'currency', currency: 'ARS' });
-        const finalPriceInARS = Number(product.price) * settings.rate;
+        
+        const base = product.pvpUsd ? Number(product.pvpUsd) : (product.precio || product.price);
+        const finalUsd = Number(base) * (1 + globalMarkup / 100);
+        const finalPriceInARS = finalUsd * settings.rate;
         const price = formatter.format(finalPriceInARS);
         
         const isGamer = product.categoria?.toLowerCase().includes('gamer') || product.name.toLowerCase().includes('gamer');
