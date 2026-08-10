@@ -133,12 +133,16 @@ export async function GET(request: Request) {
                         environment = "professional, well-lit workshop or garage desk environment with subtle industrial vibes";
                     } else if (cat.includes('almacenamiento') || cat.includes('disco') || cat.includes('ssd') || cat.includes('memoria')) {
                         environment = "clean, high-tech minimalist desk setup with soft cool lighting";
-                    } else if (cat.includes('notebook') || cat.includes('laptop')) {
+                    } else if (cat.includes('notebook') || cat.includes('laptop') || cat.includes('computadora')) {
                         environment = "modern, sleek office desk setup with natural window light";
                     } else if (cat.includes('silla') || cat.includes('mueble')) {
                         environment = "modern, stylish room interior with warm ambient lighting";
+                    } else if (cat.includes('jardin') || cat.includes('aire libre') || cat.includes('exterior') || cat.includes('pileta') || cat.includes('deporte')) {
+                        environment = "beautiful sunny outdoor patio or lush green garden setting with natural sunlight";
+                    } else if (cat.includes('hogar') || cat.includes('electrodomestico') || cat.includes('cocina')) {
+                        environment = "modern, clean, well-lit home interior or kitchen setting";
                     } else if (!isGamer) {
-                        environment = `aesthetic, professional environment suitable for ${product.categoria}`;
+                        environment = "clean, premium, brightly lit lifestyle studio setting with subtle elegant props";
                     }
                 }
                 
