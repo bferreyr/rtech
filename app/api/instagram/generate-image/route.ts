@@ -125,9 +125,23 @@ export async function GET(request: Request) {
         if (aiKey) {
             try {
                 const { GoogleGenAI } = await import('@google/genai');
-                const ai = new GoogleGenAI({ apiKey: aiKey });
+                let environment = "modern, dark moody gaming setup environment with subtle neon lights";
+                if (product.categoria) {
+                    const cat = product.categoria.toLowerCase();
+                    if (cat.includes('herramienta')) {
+                        environment = "professional, well-lit workshop or garage desk environment with subtle industrial vibes";
+                    } else if (cat.includes('almacenamiento') || cat.includes('disco') || cat.includes('ssd') || cat.includes('memoria')) {
+                        environment = "clean, high-tech minimalist desk setup with soft cool lighting";
+                    } else if (cat.includes('notebook') || cat.includes('laptop')) {
+                        environment = "modern, sleek office desk setup with natural window light";
+                    } else if (cat.includes('silla') || cat.includes('mueble')) {
+                        environment = "modern, stylish room interior with warm ambient lighting";
+                    } else if (!isGamer) {
+                        environment = `aesthetic, professional environment suitable for ${product.categoria}`;
+                    }
+                }
                 
-                const prompt = "A highly aesthetic, professional 4k product photography shot. Place the product in a modern, dark moody gaming setup environment with subtle neon lights. Ensure there is empty negative space at the bottom for text. Do not add any text, letters, or watermarks.";
+                const prompt = `A highly aesthetic, professional 4k product photography shot. Place the product in a ${environment}. Ensure there is empty negative space at the bottom for text. Do not add any text, letters, or watermarks.`;
 
                 const response = await ai.models.generateContent({
                     model: 'gemini-3.1-flash-image',
