@@ -125,6 +125,7 @@ export async function GET(request: Request) {
         if (aiKey) {
             try {
                 const { GoogleGenAI } = await import('@google/genai');
+                const ai = new GoogleGenAI({ apiKey: aiKey });
                 let environment = "modern, dark moody gaming setup environment with subtle neon lights";
                 if (product.categoria) {
                     const cat = product.categoria.toLowerCase();
