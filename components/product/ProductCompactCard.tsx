@@ -43,9 +43,7 @@ export function ProductCompactCard({ product }: Props) {
                     {product.sku}
                 </div>
 
-                <div className="hidden md:block w-16 shrink-0 text-sm text-[hsl(var(--text-secondary))]">
-                    {product.iva ? `${Number(product.iva)} %` : '21 %'}
-                </div>
+
 
                 <div className="flex items-center gap-4 ml-auto md:ml-0">
                     <div className="w-auto md:w-32 shrink-0 text-right font-bold text-[hsl(var(--text-primary))]">

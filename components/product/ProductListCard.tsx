@@ -52,7 +52,7 @@ export function ProductListCard({ product }: Props) {
                 </div>
             </div>
 
-            <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 text-xs text-[hsl(var(--text-secondary))] pt-3 border-t border-white/5">
+            <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 text-xs text-[hsl(var(--text-secondary))] pt-3 border-t border-white/5">
                 <div className="flex flex-col">
                     <span className="uppercase text-[10px] text-[hsl(var(--text-tertiary))]">SKU</span>
                     <span className="font-medium text-[hsl(var(--text-secondary))] truncate">{product.sku}</span>
@@ -64,10 +64,6 @@ export function ProductListCard({ product }: Props) {
                 <div className="flex flex-col">
                     <span className="uppercase text-[10px] text-[hsl(var(--text-tertiary))]">Marca</span>
                     <span className="font-medium text-[hsl(var(--text-secondary))] truncate">{product.marca || '-'}</span>
-                </div>
-                <div className="flex flex-col">
-                    <span className="uppercase text-[10px] text-[hsl(var(--text-tertiary))]">iva</span>
-                    <span className="font-medium text-[hsl(var(--text-secondary))]">{product.iva ? `${Number(product.iva)} %` : '21 %'}</span>
                 </div>
             </div>
         </div>
