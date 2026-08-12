@@ -5,9 +5,11 @@ import { ProductCard } from '@/components/product/ProductCard';
 import { FilterSidebar } from '@/components/product/FilterSidebar';
 import { SearchBar } from '@/components/product/SearchBar';
 import { MobileFilterModal } from '@/components/product/MobileFilterModal';
-import { ChevronDown, X, ChevronLeft, ChevronRight, SlidersHorizontal } from 'lucide-react';
+import { ChevronDown, X, ChevronLeft, ChevronRight, SlidersHorizontal, LayoutGrid, Rows4, List } from 'lucide-react';
 import { useCurrency } from '@/context/CurrencyContext';
 import { useState, useEffect } from 'react';
+import { ProductCompactCard } from '@/components/product/ProductCompactCard';
+import { ProductListCard } from '@/components/product/ProductListCard';
 
 interface StoreFrontProps {
     initialProducts: any[];
@@ -31,6 +33,20 @@ export function StoreFront({ initialProducts, categories, pagination, availableF
     const { formatUSD } = useCurrency();
     const [isCategoryMenuOpen, setIsCategoryMenuOpen] = useState(false);
     const [isFilterMenuOpen, setIsFilterMenuOpen] = useState(false);
+    const [viewMode, setViewMode] = useState<'grid' | 'compact' | 'list'>('grid');
+
+    // Load viewMode from localStorage
+    useEffect(() => {
+        const savedView = localStorage.getItem('storeViewMode') as 'grid' | 'compact' | 'list' | null;
+        if (savedView && ['grid', 'compact', 'list'].includes(savedView)) {
+            setViewMode(savedView);
+        }
+    }, []);
+
+    const handleViewModeChange = (mode: 'grid' | 'compact' | 'list') => {
+        setViewMode(mode);
+        localStorage.setItem('storeViewMode', mode);
+    };
 
     // Prevent scrolling when mobile menu is open
     useEffect(() => {
@@ -326,11 +342,35 @@ export function StoreFront({ initialProducts, categories, pagination, availableF
                                 </button>
                             ))}
                         </div>
+
+                        {/* View Mode Toggles */}
+                        <div className="hidden lg:flex bg-white/5 p-1 rounded-xl border border-white/10 ml-auto">
+                            <button
+                                onClick={() => handleViewModeChange('grid')}
+                                className={`p-2 rounded-lg transition-colors ${viewMode === 'grid' ? 'bg-[hsl(var(--accent-primary))] text-white shadow-lg' : 'text-[hsl(var(--text-secondary))] hover:text-white hover:bg-white/5'}`}
+                                title="Vista de cuadrícula"
+                            >
+                                <LayoutGrid size={18} />
+                            </button>
+                            <button
+                                onClick={() => handleViewModeChange('compact')}
+                                className={`p-2 rounded-lg transition-colors ${viewMode === 'compact' ? 'bg-[hsl(var(--accent-primary))] text-white shadow-lg' : 'text-[hsl(var(--text-secondary))] hover:text-white hover:bg-white/5'}`}
+                                title="Vista compacta"
+                            >
+                                <Rows4 size={18} />
+                            </button>
+                            <button
+                                onClick={() => handleViewModeChange('list')}
+                                className={`p-2 rounded-lg transition-colors ${viewMode === 'list' ? 'bg-[hsl(var(--accent-primary))] text-white shadow-lg' : 'text-[hsl(var(--text-secondary))] hover:text-white hover:bg-white/5'}`}
+                                title="Vista de lista"
+                            >
+                                <List size={18} />
+                            </button>
+                        </div>
                     </div>
                 </div>
 
-                {/* Product Grid */}
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6 px-4">
+                <div className={`px-4 ${viewMode === 'grid' ? 'grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6' : 'flex flex-col gap-2'}`}>
                     {initialProducts.length > 0 ? (
                         initialProducts.map((product, idx) => (
                             <div
@@ -338,7 +378,9 @@ export function StoreFront({ initialProducts, categories, pagination, availableF
                                 className="animate-in fade-in slide-in-from-bottom-4 duration-500"
                                 style={{ animationDelay: `${idx * 50}ms` }}
                             >
-                                <ProductCard product={product} />
+                                {viewMode === 'grid' && <ProductCard product={product} />}
+                                {viewMode === 'compact' && <ProductCompactCard product={product} />}
+                                {viewMode === 'list' && <ProductListCard product={product} />}
                             </div>
                         ))
                     ) : (
