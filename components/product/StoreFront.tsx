@@ -344,7 +344,7 @@ export function StoreFront({ initialProducts, categories, pagination, availableF
                         </div>
 
                         {/* View Mode Toggles */}
-                        <div className="hidden lg:flex bg-white/5 p-1 rounded-xl border border-white/10 ml-auto">
+                        <div className="flex bg-white/5 p-1 rounded-xl border border-white/10 ml-auto">
                             <button
                                 onClick={() => handleViewModeChange('grid')}
                                 className={`p-2 rounded-lg transition-colors ${viewMode === 'grid' ? 'bg-[hsl(var(--accent-primary))] text-white shadow-lg' : 'text-[hsl(var(--text-secondary))] hover:text-white hover:bg-white/5'}`}
