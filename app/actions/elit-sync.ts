@@ -110,11 +110,11 @@ export async function syncElitProducts() {
 
                 const cleanName = fixEncoding(item.nombre);
                 let baseSlug = cleanName.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
-                const slug = baseSlug ? `${baseSlug}-${sku.toLowerCase().replace(/[^a-z0-9]+/g, '-')}` : sku;
+                // Use item.id to guarantee uniqueness, since SKUs might differ only by special chars
+                const slug = baseSlug ? `${baseSlug}-${item.id}` : String(item.id);
 
                 const baseData = {
                     sku,
-                    slug,
                     codigoAlfa: item.codigo_alfa ? String(item.codigo_alfa) : null,
                     codigoProducto: item.codigo_producto ? String(item.codigo_producto) : null,
                     name: cleanName,
@@ -164,6 +164,7 @@ export async function syncElitProducts() {
 
                 const createData: any = {
                     ...baseData,
+                    slug, // only set slug on create
                     category: categoryId ? { connect: { id: categoryId } } : undefined
                 };
 
