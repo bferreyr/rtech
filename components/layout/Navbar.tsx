@@ -75,9 +75,6 @@ export function Navbar() {
                             <Link href="/products" className="text-sm font-medium text-[hsl(var(--text-secondary))] hover:text-[hsl(var(--accent-primary))] transition-colors">
                                 Productos
                             </Link>
-                            <Link href="/extranet" className="text-sm font-medium text-[hsl(var(--text-secondary))] hover:text-[hsl(var(--accent-primary))] transition-colors">
-                                Mayorista
-                            </Link>
                             <Link href="/pc-builder" className="text-sm font-medium text-[hsl(var(--accent-primary))] bg-[hsl(var(--accent-primary))]/10 px-3 py-1.5 rounded-lg border border-[hsl(var(--accent-primary))]/20 hover:bg-[hsl(var(--accent-primary))]/20 transition-all">
                                 Armado de PC
                             </Link>
@@ -89,6 +86,10 @@ export function Navbar() {
 
                         {/* Actions */}
                         <div className="flex items-center space-x-3">
+                            <Link href="/mayorista" className="hidden md:flex text-sm font-bold text-[#111827] bg-[#f59e0b] px-4 py-1.5 rounded-lg hover:bg-[#d97706] transition-all shadow-[0_0_15px_rgba(245,158,11,0.4)]">
+                                Mayoristas
+                            </Link>
+
                             {/* Dollar Rate Display - Compact (Solo Admin) */}
                             {session?.user && (session.user as any).role === 'ADMIN' && (
                                 <div className="hidden lg:flex items-center gap-1.5 px-2 py-1 rounded-lg bg-gradient-to-r from-green-500/10 to-emerald-500/10 border border-green-500/20">
@@ -219,8 +220,9 @@ export function Navbar() {
                                     <Link href="/products" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 rounded-xl bg-white/10 hover:bg-white/15 font-medium transition-colors">
                                         Productos
                                     </Link>
-                                    <Link href="/extranet" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 rounded-xl bg-white/10 hover:bg-white/15 font-medium transition-colors">
-                                        Mayorista
+                                    
+                                    <Link href="/mayorista" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 rounded-xl bg-[#f59e0b] text-[#111827] font-bold shadow-[0_0_15px_rgba(245,158,11,0.4)] hover:bg-[#d97706] transition-colors">
+                                        Mayoristas
                                     </Link>
 
                                     <Link href="/pc-builder" onClick={() => setIsMobileMenuOpen(false)} className="px-4 py-3 rounded-xl bg-[hsl(var(--accent-primary))]/20 border border-[hsl(var(--accent-primary))]/40 font-medium text-[hsl(var(--accent-primary))] hover:bg-[hsl(var(--accent-primary))]/30 transition-colors">
