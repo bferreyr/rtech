@@ -168,12 +168,38 @@ export async function syncElitProducts() {
                     category: categoryId ? { connect: { id: categoryId } } : undefined
                 };
 
-                const product = await prisma.product.upsert({
-                    where: { sku: sku },
-                    update: updateData,
-                    create: createData,
-                    select: { id: true }
-                });
+                let product;
+                try {
+                    product = await prisma.product.upsert({
+                        where: { sku: sku },
+                        update: updateData,
+                        create: createData,
+                        select: { id: true }
+                    });
+                } catch (e: any) {
+                    if (e.code === 'P2002' && e.meta?.target?.includes('slug')) {
+                        console.warn(`Slug collision for ${slug}, appending random string...`);
+                        createData.slug = `${slug}-${Math.random().toString(36).substring(2, 7)}`;
+                        product = await prisma.product.upsert({
+                            where: { sku: sku },
+                            update: updateData,
+                            create: createData,
+                            select: { id: true }
+                        });
+                    } else if (e.code === 'P2002' && e.meta?.target?.includes('codigoProducto')) {
+                        console.warn(`codigoProducto collision for ${baseData.codigoProducto}, setting to null...`);
+                        updateData.codigoProducto = null;
+                        createData.codigoProducto = null;
+                        product = await prisma.product.upsert({
+                            where: { sku: sku },
+                            update: updateData,
+                            create: createData,
+                            select: { id: true }
+                        });
+                    } else {
+                        throw e;
+                    }
+                }
 
                 // Update additional images
                 if (item.imagenes && item.imagenes.length > 1) {
