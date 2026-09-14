@@ -177,7 +177,12 @@ export async function syncElitProducts() {
                         select: { id: true }
                     });
                 } catch (e: any) {
-                    if (e.code === 'P2002' && e.meta?.target?.includes('slug')) {
+                    const errorStr = e.message || '';
+                    const metaStr = e.meta ? JSON.stringify(e.meta) : '';
+                    const isSlugError = e.code === 'P2002' && (errorStr.includes('slug') || metaStr.includes('slug'));
+                    const isCodigoError = e.code === 'P2002' && (errorStr.includes('codigoProducto') || metaStr.includes('codigoProducto'));
+                    
+                    if (isSlugError) {
                         console.warn(`Slug collision for ${slug}, appending random string...`);
                         createData.slug = `${slug}-${Math.random().toString(36).substring(2, 7)}`;
                         product = await prisma.product.upsert({
@@ -186,7 +191,7 @@ export async function syncElitProducts() {
                             create: createData,
                             select: { id: true }
                         });
-                    } else if (e.code === 'P2002' && e.meta?.target?.includes('codigoProducto')) {
+                    } else if (isCodigoError) {
                         console.warn(`codigoProducto collision for ${baseData.codigoProducto}, setting to null...`);
                         updateData.codigoProducto = null;
                         createData.codigoProducto = null;
